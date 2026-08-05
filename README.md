@@ -6,7 +6,10 @@ Covers the Linux Audit Framework (`auditd`/kernel audit — authentication,
 account management, privilege use, process execution, file access, kernel
 modules, SELinux/AppArmor, netfilter), SSH protocol-level session events,
 and systemd/journald (unit lifecycle, service failures, session management,
-boot/shutdown, time changes, the journal itself).
+boot/shutdown, time changes, the journal itself). Also cross-referenced
+against the Australian Cyber Security Centre's Information Security
+Manual (ISM) via the `xccdf_org.ssgproject.content_profile_ism_o` SCAP
+profile — see `acsc_ism_control` below.
 
 This is a curated **seed catalogue** (61 events), not an exhaustive one —
 Windows' Event ID space is large enough that the source repo's bulk ETW
@@ -102,12 +105,34 @@ flagged low-confidence entries instead of guessing.
   - `priority_signal` — `Yes` on events curated as classic high-value
     security-monitoring signals (privilege escalation, log/audit tampering,
     MAC denials, brute-force indicators, kernel module loads, group
-    membership changes, and similar). **Unlike** `Winevent-catalogue`'s
-    `acsc_priority_log` field, this is this repo's own editorial curation —
-    ASD/ACSC's "Priority logs for SIEM ingestion" guidance is Windows/AD
-    specific, and no equivalent named, sourced Linux guidance document was
-    substituted for it. Treat it as a reasonable starting point for
-    alerting, not a citation.
+    membership changes, and similar). This remains this repo's own
+    editorial curation, not sourced from a named guidance document — see
+    `acsc_ism_control` below for the field that *is* sourced.
+  - `acsc_ism_control` — ID(s) of the Australian Cyber Security Centre
+    Information Security Manual (ISM) OFFICIAL-level control(s) this event
+    helps satisfy, semicolon-separated, blank otherwise. Unlike
+    `priority_signal`, this one **is** genuinely sourced: from
+    `controls/ism_o.yml` in
+    [`ComplianceAsCode/content`](https://github.com/ComplianceAsCode/content) —
+    the project that maintains the `xccdf_org.ssgproject.content_profile_ism_o`
+    SCAP profile — fetched directly from the upstream repo rather than
+    guessed. 33 of this catalogue's 61 events are tagged, covering 4 of the
+    profile's 41 controls (the ones whose rule list actually corresponds to
+    an auditing mechanism this catalogue documents; the other 37 controls
+    are about password policy, MFA, SSH hardening, antivirus, and similar,
+    outside this catalogue's event-log scope). Mapped at the subcategory
+    level, the same granularity `nist_800_53_au` already uses — and in a
+    couple of places, the profile's specific SSG rule uses a different
+    underlying mechanism than the event it's tagged on (e.g. control 0582
+    includes `audit_rules_session_events_utmp/btmp/wtmp`, which are `auditd`
+    watches on the traditional `/var/log/wtmp`/`btmp` accounting files, a
+    different mechanism from the PAM `USER_START`/`USER_END` records this
+    catalogue's Logon/Logoff events actually document) — both serve the
+    control's stated objective, but that's a real distinction, not a false
+    equivalence, so it's called out here rather than left implicit. See
+    `data/reference/acsc_ism_controls.csv` for the full control list with
+    its complete related-rules text, and the "ACSC ISM OFFICIAL controls"
+    section of the Reference tables tab.
   - `nist_800_53_au` — NIST SP 800-53 Audit and Accountability (AU) control
     ID(s): `AU-9` (Protection of Audit Information) for log/audit-tampering
     events, `AU-8` (Time Stamps) for the clock-change event, `AU-4` (Audit
@@ -168,6 +193,12 @@ flagged low-confidence entries instead of guessing.
   escalation via sudo/capabilities, account manipulation, rootkit/kernel
   module persistence, log tampering, MAC-policy evasion, firewall
   tampering, container/host escape via MAC denial).
+- `data/reference/acsc_ism_controls.csv` / `.json` — the 4 ACSC ISM OFFICIAL
+  controls (of the `xccdf_org.ssgproject.content_profile_ism_o` profile's 41
+  total) whose ComplianceAsCode rule list corresponds to this catalogue's
+  events, each with its title, applicability level, the related SSG rule
+  names, and a link to the ISM itself — the source for `acsc_ism_control`
+  above.
 - `docs/event-log-operations.md` — `ausearch`/`aureport`/`journalctl`
   snippets for querying, exporting, and clearing audit/journal logs,
   including a working example for auditing user account creation (event ID
@@ -186,17 +217,19 @@ or keyword; filter by Log or Category via searchable multi-select
 comboboxes (3 log families — `audit`, `ssh`, `systemd` — each with a
 handful of sub-logs, so the plain grouped-combobox approach the Windows
 repo already uses for its 188 logs works here without any further UI work);
-toggle to show only curated priority-signal events; active filters surface
+toggle to show only curated priority-signal events, plus a second toggle
+for events mapped to an ACSC ISM OFFICIAL control; active filters surface
 as removable chips above the results. View full detail — description,
-sample log text, field schema, MITRE ATT&CK mapping, and how-to-collect
-configuration steps — plus inline reference tables where they're directly
-relevant to the selected event (PAM result codes on credential-validation
-events, the capabilities table on the CAPSET event, common errno codes on
-the SYSCALL event, the full SSH disconnect table on any `ssh/protocol`
-event). A Reference tables tab covers all 8 reference tables with the same
-single-search-filters-everything, sticky-jump-nav, height-capped-scrolling,
-collapsed-by-default-accordion behavior as the Windows repo's Reference
-tab. Open it directly in a browser.
+sample log text, field schema, MITRE ATT&CK mapping, ACSC ISM control
+link, and how-to-collect configuration steps — plus inline reference
+tables where they're directly relevant to the selected event (PAM result
+codes on credential-validation events, the capabilities table on the
+CAPSET event, common errno codes on the SYSCALL event, the full SSH
+disconnect table on any `ssh/protocol` event). A Reference tables tab
+covers all 9 reference tables with the same single-search-filters-
+everything, sticky-jump-nav, height-capped-scrolling, collapsed-by-
+default-accordion behavior as the Windows repo's Reference tab. Open it
+directly in a browser.
 
 ## Source & verification
 
@@ -228,9 +261,20 @@ used, not written from memory:
   exactly.
 - **systemd message catalog UUIDs** — fetched from
   `catalog/systemd.catalog.in` in the `systemd/systemd` source.
+- **ACSC ISM controls** — fetched from `controls/ism_o.yml` in
+  `ComplianceAsCode/content`, the control-to-rule mapping backing the
+  `xccdf_org.ssgproject.content_profile_ism_o` SCAP profile; cross-checked
+  against the profile definition itself
+  (`products/rhel9/profiles/ism_o.profile`) to confirm it extends the
+  Essential Eight baseline and selects `ism_o:all` minus a documented
+  exclusion list. The rendered, published HTML guide for this profile
+  (`static.open-scap.org/ssg-guides/ssg-rhel9-guide-ism_o.html`) would have
+  been a good second, independent cross-check but was unreachable from
+  this environment (blocked the fetch outright) — flagging that rather
+  than skipping the caveat silently.
 
 The category/subcategory taxonomy, event selection, sample content, field
-schemas, MITRE/NIST mappings, and priority-signal curation are original
-editorial work for this repo, built to mirror `Winevent-catalogue`'s
-structure and depth rather than translated from any single existing Linux
-logging reference.
+schemas, MITRE/NIST mappings, ACSC ISM subcategory-level tagging, and
+priority-signal curation are original editorial work for this repo, built
+to mirror `Winevent-catalogue`'s structure and depth rather than
+translated from any single existing Linux logging reference.

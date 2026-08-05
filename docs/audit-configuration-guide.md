@@ -13,6 +13,18 @@ out explicitly below and should go in a file under `/etc/audit/rules.d/`
 followed by `augenrules --load` (or directly with `auditctl -a ...` for a
 rule that doesn't need to survive a reboot).
 
+Several of these subcategories also satisfy an ACSC Information Security
+Manual (ISM) OFFICIAL control from the `xccdf_org.ssgproject.content_profile_ism_o`
+SCAP profile — see the `acsc_ism_control` field on the corresponding events
+in `data/events.csv`/`.json` and the full control text in
+`data/reference/acsc_ism_controls.csv`/`.json`. Configuring auditd per this
+guide is necessary but not sufficient for that profile — the profile's
+actual SCAP rules also require the audit subsystem itself to be present
+and enabled (`package_audit_installed`, `service_auditd_enabled`) and, for
+control 0582 specifically, a documented retention/rotation configuration
+(`auditd_data_retention_flush` et al. in `/etc/audit/auditd.conf`) beyond
+what's covered here.
+
 ## Credential Validation
 - **Config:** `/etc/audit/rules.d/audit.rules`
 - **Steps:** Auditd ships with pam_unix/pam_faillock already wired to the
