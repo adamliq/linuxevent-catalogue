@@ -13,6 +13,7 @@
     "mitre_techniques": "T1078",
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-3, AU-12",
+    "acsc_ism_control": "0582; 1546",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -57,6 +58,7 @@
     "mitre_techniques": "T1110",
     "priority_signal": "Yes",
     "nist_800_53_au": "AU-2, AU-3, AU-12",
+    "acsc_ism_control": "0582; 1546",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -98,6 +100,7 @@
     "mitre_techniques": "",
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-3, AU-12",
+    "acsc_ism_control": "0582; 1546",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -142,6 +145,7 @@
     "mitre_techniques": "T1110",
     "priority_signal": "Yes",
     "nist_800_53_au": "AU-2, AU-3, AU-12",
+    "acsc_ism_control": "0582; 1546",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -183,6 +187,7 @@
     "mitre_techniques": "T1110",
     "priority_signal": "Yes",
     "nist_800_53_au": "AU-2, AU-3, AU-12",
+    "acsc_ism_control": "0582; 1546",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -224,6 +229,7 @@
     "mitre_techniques": "",
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-3, AU-12",
+    "acsc_ism_control": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -265,6 +271,7 @@
     "mitre_techniques": "",
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-3, AU-12",
+    "acsc_ism_control": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -305,6 +312,7 @@
     "mitre_techniques": "",
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-3, AU-12",
+    "acsc_ism_control": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -345,6 +353,7 @@
     "mitre_techniques": "T1078",
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-3, AU-12",
+    "acsc_ism_control": "0582",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -386,6 +395,7 @@
     "mitre_techniques": "T1021.004",
     "priority_signal": "Yes",
     "nist_800_53_au": "AU-2, AU-3, AU-12",
+    "acsc_ism_control": "0582",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -429,6 +439,7 @@
     "mitre_techniques": "",
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-3, AU-12",
+    "acsc_ism_control": "0582",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -471,6 +482,7 @@
     "mitre_techniques": "T1078",
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-3, AU-12",
+    "acsc_ism_control": "0582",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -511,6 +523,7 @@
     "mitre_techniques": "",
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-3, AU-12",
+    "acsc_ism_control": "0582",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -551,6 +564,7 @@
     "mitre_techniques": "",
     "priority_signal": "",
     "nist_800_53_au": "AU-3",
+    "acsc_ism_control": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -589,6 +603,7 @@
     "mitre_techniques": "T1548.003",
     "priority_signal": "Yes",
     "nist_800_53_au": "AU-2, AU-3, AU-12",
+    "acsc_ism_control": "0582; 1546",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -628,6 +643,7 @@
     "mitre_techniques": "T1548",
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-12",
+    "acsc_ism_control": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -664,6 +680,7 @@
     "mitre_techniques": "T1136.001",
     "priority_signal": "Yes",
     "nist_800_53_au": "AU-2, AU-3, AU-12",
+    "acsc_ism_control": "0582",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -704,6 +721,7 @@
     "mitre_techniques": "T1531",
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-3, AU-12",
+    "acsc_ism_control": "0582",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -744,6 +762,7 @@
     "mitre_techniques": "",
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-3, AU-12",
+    "acsc_ism_control": "0582",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -785,6 +804,7 @@
     "mitre_techniques": "",
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-3, AU-12",
+    "acsc_ism_control": "0582",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -825,6 +845,7 @@
     "mitre_techniques": "",
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-3, AU-12",
+    "acsc_ism_control": "0582",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -865,6 +886,7 @@
     "mitre_techniques": "T1098; T1548.003",
     "priority_signal": "Yes",
     "nist_800_53_au": "AU-2, AU-3, AU-12",
+    "acsc_ism_control": "0582",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -906,6 +928,7 @@
     "mitre_techniques": "T1059",
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-3, AU-12",
+    "acsc_ism_control": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -959,6 +982,7 @@
     "mitre_techniques": "T1059",
     "priority_signal": "",
     "nist_800_53_au": "AU-3",
+    "acsc_ism_control": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -990,6 +1014,7 @@
     "mitre_techniques": "T1059",
     "priority_signal": "",
     "nist_800_53_au": "AU-3",
+    "acsc_ism_control": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1018,6 +1043,7 @@
     "mitre_techniques": "",
     "priority_signal": "",
     "nist_800_53_au": "AU-3",
+    "acsc_ism_control": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1044,6 +1070,7 @@
     "mitre_techniques": "T1552.001",
     "priority_signal": "Yes",
     "nist_800_53_au": "AU-2, AU-3, AU-12",
+    "acsc_ism_control": "0582",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1080,6 +1107,7 @@
     "mitre_techniques": "T1547.006; T1014",
     "priority_signal": "Yes",
     "nist_800_53_au": "AU-2, AU-3, AU-12",
+    "acsc_ism_control": "0582",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1108,6 +1136,7 @@
     "mitre_techniques": "T1562.001",
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-9, AU-12",
+    "acsc_ism_control": "0582",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1143,6 +1172,7 @@
     "mitre_techniques": "T1562.001",
     "priority_signal": "Yes",
     "nist_800_53_au": "AU-2, AU-9, AU-12",
+    "acsc_ism_control": "0582",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1178,6 +1208,7 @@
     "mitre_techniques": "",
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-8",
+    "acsc_ism_control": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1214,6 +1245,7 @@
     "mitre_techniques": "",
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-8",
+    "acsc_ism_control": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1250,6 +1282,7 @@
     "mitre_techniques": "",
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-9",
+    "acsc_ism_control": "0582",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1285,6 +1318,7 @@
     "mitre_techniques": "T1070.002",
     "priority_signal": "Yes",
     "nist_800_53_au": "AU-2, AU-9",
+    "acsc_ism_control": "0582",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1320,6 +1354,7 @@
     "mitre_techniques": "",
     "priority_signal": "Yes",
     "nist_800_53_au": "AU-2, AU-9",
+    "acsc_ism_control": "0582",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1350,6 +1385,7 @@
     "mitre_techniques": "",
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-9",
+    "acsc_ism_control": "0582",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1382,6 +1418,7 @@
     "mitre_techniques": "T1611",
     "priority_signal": "Yes",
     "nist_800_53_au": "AU-2, AU-3, AU-12",
+    "acsc_ism_control": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1420,6 +1457,7 @@
     "mitre_techniques": "T1611",
     "priority_signal": "Yes",
     "nist_800_53_au": "AU-2, AU-3, AU-12",
+    "acsc_ism_control": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1458,6 +1496,7 @@
     "mitre_techniques": "",
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-9",
+    "acsc_ism_control": "0582",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1491,6 +1530,7 @@
     "mitre_techniques": "T1562.001",
     "priority_signal": "Yes",
     "nist_800_53_au": "AU-2, AU-9",
+    "acsc_ism_control": "0582",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1526,6 +1566,7 @@
     "mitre_techniques": "T1562.004",
     "priority_signal": "Yes",
     "nist_800_53_au": "AU-2, AU-12",
+    "acsc_ism_control": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1561,6 +1602,7 @@
     "mitre_techniques": "",
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-12",
+    "acsc_ism_control": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1594,6 +1636,7 @@
     "mitre_techniques": "",
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-3",
+    "acsc_ism_control": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1624,6 +1667,7 @@
     "mitre_techniques": "T1110",
     "priority_signal": "Yes",
     "nist_800_53_au": "AU-2, AU-3",
+    "acsc_ism_control": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1654,6 +1698,7 @@
     "mitre_techniques": "T1110; T1078",
     "priority_signal": "Yes",
     "nist_800_53_au": "AU-2, AU-3",
+    "acsc_ism_control": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1684,6 +1729,7 @@
     "mitre_techniques": "",
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-3",
+    "acsc_ism_control": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1714,6 +1760,7 @@
     "mitre_techniques": "",
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-12",
+    "acsc_ism_control": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1744,6 +1791,7 @@
     "mitre_techniques": "",
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-12",
+    "acsc_ism_control": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1775,6 +1823,7 @@
     "mitre_techniques": "",
     "priority_signal": "Yes",
     "nist_800_53_au": "AU-2, AU-12",
+    "acsc_ism_control": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1806,6 +1855,7 @@
     "mitre_techniques": "",
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-12",
+    "acsc_ism_control": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1836,6 +1886,7 @@
     "mitre_techniques": "",
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-12",
+    "acsc_ism_control": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1867,6 +1918,7 @@
     "mitre_techniques": "",
     "priority_signal": "Yes",
     "nist_800_53_au": "AU-2, AU-12",
+    "acsc_ism_control": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1895,6 +1947,7 @@
     "mitre_techniques": "",
     "priority_signal": "",
     "nist_800_53_au": "AU-2",
+    "acsc_ism_control": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1923,6 +1976,7 @@
     "mitre_techniques": "",
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-8",
+    "acsc_ism_control": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1949,6 +2003,7 @@
     "mitre_techniques": "",
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-8",
+    "acsc_ism_control": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1975,6 +2030,7 @@
     "mitre_techniques": "T1078",
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-3, AU-12",
+    "acsc_ism_control": "0582",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -2005,6 +2061,7 @@
     "mitre_techniques": "",
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-3, AU-12",
+    "acsc_ism_control": "0582",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -2034,6 +2091,7 @@
     "mitre_techniques": "",
     "priority_signal": "Yes",
     "nist_800_53_au": "AU-2, AU-8",
+    "acsc_ism_control": "0988",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -2060,6 +2118,7 @@
     "mitre_techniques": "",
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-9",
+    "acsc_ism_control": "1405",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -2089,6 +2148,7 @@
     "mitre_techniques": "T1070.002",
     "priority_signal": "Yes",
     "nist_800_53_au": "AU-2, AU-9",
+    "acsc_ism_control": "1405",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -2118,6 +2178,7 @@
     "mitre_techniques": "",
     "priority_signal": "",
     "nist_800_53_au": "AU-4, AU-9",
+    "acsc_ism_control": "1405",
     "field_schema": {
       "header": {
         "log_name": "string",
