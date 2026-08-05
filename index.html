@@ -1,0 +1,1405 @@
+<meta charset="utf-8" />
+<title>Linux Event Code Lookup</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  :root {
+    --bg: #f5f7f8;
+    --surface: #ffffff;
+    --surface-2: #eaeef0;
+    --ink: #161c1e;
+    --muted: #5c6b70;
+    --faint: #93a3a8;
+    --line: rgba(15,23,25,0.12);
+    --line-strong: rgba(15,23,25,0.22);
+    --accent: #1a7a72;
+    --accent-ink: #f6fffd;
+    --shadow: 0 8px 24px rgba(15,23,25,0.08);
+    /* --log-* custom properties are generated at runtime, one pair per
+       distinct log value (see generateLogPalette in the script below) */
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #101617;
+      --surface: #171e20;
+      --surface-2: #1f282a;
+      --ink: #e6efee;
+      --muted: #93a8ac;
+      --faint: #5c7176;
+      --line: rgba(230,239,238,0.1);
+      --line-strong: rgba(230,239,238,0.18);
+      --accent: #3fcabc;
+      --accent-ink: #08211d;
+      --shadow: 0 8px 28px rgba(0,0,0,0.4);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #101617;
+    --surface: #171e20;
+    --surface-2: #1f282a;
+    --ink: #e6efee;
+    --muted: #93a8ac;
+    --faint: #5c7176;
+    --line: rgba(230,239,238,0.1);
+    --line-strong: rgba(230,239,238,0.18);
+    --accent: #3fcabc;
+    --accent-ink: #08211d;
+    --shadow: 0 8px 28px rgba(0,0,0,0.4);
+  }
+  :root[data-theme="light"] {
+    --bg: #f5f7f8;
+    --surface: #ffffff;
+    --surface-2: #eaeef0;
+    --ink: #161c1e;
+    --muted: #5c6b70;
+    --faint: #93a3a8;
+    --line: rgba(15,23,25,0.12);
+    --line-strong: rgba(15,23,25,0.22);
+    --accent: #1a7a72;
+    --accent-ink: #f6fffd;
+    --shadow: 0 8px 24px rgba(15,23,25,0.08);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 15px/1.5 ui-sans-serif, system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .mono {
+    font-family: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, "Liberation Mono", monospace;
+  }
+  ::selection { background: var(--accent); color: var(--accent-ink); }
+
+  a { color: var(--accent); }
+
+  .app {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 28px 20px 60px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    min-height: 100%;
+  }
+
+  header.top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 16px;
+  }
+  header.top .title-group h1 {
+    font-size: 1.5rem;
+    margin: 0 0 2px;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+  header.top .title-group p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.86rem;
+  }
+  .stat {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .stat b { color: var(--ink); font-weight: 600; }
+
+  nav.tabs {
+    display: flex;
+    gap: 4px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 3px;
+    width: fit-content;
+  }
+  nav.tabs button {
+    appearance: none;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    font: inherit;
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 7px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  nav.tabs button.active {
+    background: var(--surface);
+    color: var(--ink);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+  }
+  nav.tabs button:not(.active):hover { color: var(--ink); }
+
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* ---- search / filters ---- */
+  .search-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    position: relative;
+  }
+  .search-box {
+    position: relative;
+    flex: 1 1 320px;
+  }
+  .search-box input {
+    width: 100%;
+    font: inherit;
+    font-size: 0.95rem;
+    padding: 11px 14px 11px 38px;
+    border-radius: 9px;
+    border: 1px solid var(--line-strong);
+    background: var(--surface);
+    color: var(--ink);
+    outline: none;
+  }
+  .search-box input:focus { border-color: var(--accent); }
+  .search-box svg {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    stroke: var(--muted);
+    pointer-events: none;
+  }
+
+  /* ---- filter comboboxes (searchable multi-select) ---- */
+  .combo { position: relative; }
+  .combo-btn {
+    display: inline-flex; align-items: center; gap: 8px; font: inherit; font-size: 0.85rem;
+    font-weight: 600; padding: 10px 13px; border-radius: 9px; border: 1px solid var(--line-strong);
+    background: var(--surface); color: var(--ink); cursor: pointer; white-space: nowrap;
+  }
+  .combo-btn:hover { background: var(--surface-2); }
+  .combo-btn.has-selection { border-color: var(--accent); color: var(--accent); }
+  .combo-btn .count-pill {
+    font-family: ui-monospace, monospace; font-size: 0.72rem; font-weight: 700;
+    background: var(--accent); color: var(--accent-ink); border-radius: 999px;
+    padding: 1px 7px; min-width: 1.4em; text-align: center;
+  }
+  .combo-btn .chev { width: 12px; height: 12px; stroke: currentColor; opacity: 0.6; flex-shrink: 0; }
+
+  .combo-panel {
+    position: absolute; top: calc(100% + 6px); left: 0; width: 340px; max-width: 90vw;
+    background: var(--surface); border: 1px solid var(--line-strong); border-radius: 12px;
+    box-shadow: var(--shadow); z-index: 20; display: none; flex-direction: column;
+    max-height: 420px; overflow: hidden;
+  }
+  .combo-panel.open { display: flex; }
+  .combo-panel .panel-search { padding: 10px; border-bottom: 1px solid var(--line); flex-shrink: 0; }
+  .combo-panel .panel-search input {
+    width: 100%; font: inherit; font-size: 0.85rem; padding: 7px 10px; border-radius: 7px;
+    border: 1px solid var(--line-strong); background: var(--surface-2); color: var(--ink); outline: none;
+  }
+  .combo-panel .panel-search input:focus { border-color: var(--accent); }
+  .combo-list { overflow-y: auto; flex: 1 1 auto; padding: 6px; }
+  .combo-group-header {
+    font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--faint);
+    padding: 8px 8px 4px; display: flex; justify-content: space-between; align-items: center;
+    position: sticky; top: 0; background: var(--surface); z-index: 1;
+  }
+  .combo-option {
+    display: flex; align-items: center; gap: 9px; padding: 6px 8px; border-radius: 7px;
+    cursor: pointer; font-size: 0.85rem;
+  }
+  .combo-option:hover { background: var(--surface-2); }
+  .combo-option input[type="checkbox"] { accent-color: var(--accent); width: 15px; height: 15px; flex-shrink: 0; }
+  .combo-option .opt-label { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .combo-option .opt-count { font-family: ui-monospace, monospace; font-size: 0.74rem; color: var(--muted); flex-shrink: 0; }
+  .combo-panel .panel-footer {
+    display: flex; justify-content: space-between; align-items: center; gap: 8px;
+    padding: 9px 12px; border-top: 1px solid var(--line); flex-shrink: 0; background: var(--surface-2);
+  }
+  .panel-footer button {
+    appearance: none; border: none; background: none; color: var(--accent); font: inherit;
+    font-size: 0.78rem; font-weight: 600; cursor: pointer; padding: 4px 6px;
+  }
+  .panel-footer .footer-note { font-size: 0.74rem; color: var(--muted); }
+
+  .priority-toggle {
+    display: inline-flex; align-items: center; gap: 7px; font: inherit; font-size: 0.85rem;
+    font-weight: 600; padding: 10px 13px; border-radius: 9px; border: 1px solid var(--line-strong);
+    background: var(--surface); color: var(--muted); cursor: pointer; white-space: nowrap;
+    margin-left: auto;
+  }
+  .priority-toggle .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; opacity: 0.5; }
+  .priority-toggle.on {
+    color: var(--accent); border-color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 12%, var(--surface));
+  }
+  .priority-toggle.on .dot { opacity: 1; background: var(--accent); }
+
+  /* ---- active filter chips ---- */
+  .active-filters { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+  .active-filters:empty { margin: 0; }
+  .af-chip {
+    display: inline-flex; align-items: center; gap: 6px; font-size: 0.78rem; font-weight: 500;
+    background: var(--surface-2); border: 1px solid var(--line); color: var(--ink);
+    border-radius: 999px; padding: 4px 6px 4px 11px;
+  }
+  .af-chip .af-kind { color: var(--muted); }
+  .af-chip button {
+    appearance: none; border: none; background: var(--surface-3, var(--surface-2)); color: var(--muted);
+    width: 17px; height: 17px; border-radius: 50%; cursor: pointer; font-size: 0.7rem;
+    display: flex; align-items: center; justify-content: center; padding: 0;
+  }
+  .af-chip button:hover { color: var(--ink); }
+  .af-clear-all {
+    appearance: none; border: none; background: none; color: var(--accent); font: inherit;
+    font-size: 0.78rem; font-weight: 600; cursor: pointer; padding: 4px 4px;
+  }
+
+  /* ---- main split ---- */
+  .split {
+    display: grid;
+    grid-template-columns: minmax(280px, 380px) 1fr;
+    gap: 16px;
+    align-items: start;
+  }
+  @media (max-width: 860px) {
+    .split { grid-template-columns: 1fr; }
+  }
+
+  .list-wrap {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .list-count {
+    padding: 10px 14px;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    border-bottom: 1px solid var(--line);
+    font-family: ui-monospace, monospace;
+  }
+  .list {
+    max-height: 68vh;
+    overflow-y: auto;
+  }
+  .row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    width: 100%;
+    text-align: left;
+    padding: 10px 14px;
+    border: none;
+    border-bottom: 1px solid var(--line);
+    background: transparent;
+    color: var(--ink);
+    font: inherit;
+    cursor: pointer;
+  }
+  .row:last-child { border-bottom: none; }
+  .row:hover { background: var(--surface-2); }
+  .row.selected { background: var(--surface-2); box-shadow: inset 3px 0 0 var(--accent); }
+  .row .rid {
+    font-family: ui-monospace, monospace;
+    font-weight: 700;
+    font-size: 0.8rem;
+    min-width: 4.6em;
+    max-width: 6.5em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+    padding-top: 2px;
+  }
+  .row .rbody { flex: 1; min-width: 0; }
+  .row .rdesc {
+    font-size: 0.83rem;
+    color: var(--muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .row .rmeta { display: flex; gap: 6px; margin-top: 4px; flex-wrap: wrap; }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    font-family: ui-monospace, monospace;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    padding: 2px 7px;
+    border-radius: 5px;
+  }
+  .empty-list {
+    padding: 40px 20px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.88rem;
+  }
+
+  /* ---- detail pane ---- */
+  .detail {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    padding: 24px 26px 28px;
+    min-height: 68vh;
+  }
+  .detail-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 68vh;
+    color: var(--faint);
+    font-size: 0.9rem;
+    text-align: center;
+    padding: 20px;
+  }
+  .detail-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+  }
+  .detail-id {
+    font-family: ui-monospace, monospace;
+    font-weight: 700;
+    font-size: 1.7rem;
+    line-height: 1.15;
+    max-width: 15ch;
+    word-break: break-word;
+  }
+  .detail-id-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+  .detail-desc {
+    font-size: 1.02rem;
+    text-wrap: balance;
+    padding-top: 2px;
+    flex: 1 1 260px;
+  }
+
+  .field-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 14px 20px;
+    margin-bottom: 20px;
+  }
+  .field dt {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-bottom: 3px;
+  }
+  .field dd {
+    margin: 0;
+    font-family: ui-monospace, monospace;
+    font-size: 0.85rem;
+    word-break: break-word;
+  }
+
+  section.block { margin-top: 22px; }
+  section.block h3 {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin: 0 0 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  section.block h3::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+  }
+
+  pre.sample {
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-family: ui-monospace, monospace;
+    font-size: 0.82rem;
+    line-height: 1.55;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+    margin: 0;
+  }
+
+  .config-card {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 12px 15px;
+    margin-bottom: 10px;
+    background: var(--surface-2);
+  }
+  .config-card:last-child { margin-bottom: 0; }
+  .config-card h4 {
+    margin: 0 0 6px;
+    font-size: 0.86rem;
+  }
+  .config-card .path {
+    font-family: ui-monospace, monospace;
+    font-size: 0.76rem;
+    color: var(--muted);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    padding: 6px 9px;
+    margin-bottom: 8px;
+    overflow-x: auto;
+    white-space: pre;
+  }
+  .config-card .steps { font-size: 0.85rem; color: var(--ink); }
+  .config-card .ref { font-size: 0.78rem; margin-top: 8px; word-break: break-all; }
+
+  table.ref-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.84rem;
+  }
+  table.ref-table th, table.ref-table td {
+    text-align: left;
+    padding: 7px 10px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  table.ref-table th {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+    background: var(--surface);
+  }
+  table.ref-table td:first-child, table.ref-table th:first-child {
+    font-family: ui-monospace, monospace;
+    white-space: nowrap;
+  }
+  .table-scroll { overflow-x: auto; overflow-y: auto; max-height: 400px; }
+
+  .reflink-btn {
+    appearance: none;
+    border: 1px solid var(--line-strong);
+    background: var(--surface);
+    color: var(--accent);
+    font: inherit;
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 6px 11px;
+    border-radius: 7px;
+    cursor: pointer;
+  }
+  .reflink-btn:hover { background: var(--surface-2); }
+
+  /* ---- field schema tree ---- */
+  .schema-tree { display: flex; flex-direction: column; gap: 10px; }
+  .schema-group {
+    border: 1px solid var(--line); border-radius: 8px; background: var(--surface-2); overflow: hidden;
+  }
+  .schema-group-header {
+    padding: 8px 12px; font-size: 0.78rem; font-weight: 700; color: var(--ink);
+    background: color-mix(in srgb, var(--accent) 7%, var(--surface-2));
+    border-bottom: 1px solid var(--line);
+  }
+  .schema-row {
+    display: grid; grid-template-columns: minmax(140px, 1fr) 110px;
+    gap: 10px; padding: 6px 12px; font-size: 0.81rem; border-top: 1px solid var(--line);
+  }
+  .schema-row:first-child { border-top: none; }
+  .schema-row .f-name { font-family: ui-monospace, monospace; color: var(--ink); word-break: break-word; }
+  .schema-row .f-type {
+    font-family: ui-monospace, monospace; font-size: 0.72rem; color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 12%, transparent); border-radius: 5px;
+    padding: 1px 6px; height: fit-content; white-space: nowrap; justify-self: start;
+  }
+  .schema-scalar {
+    display: grid; grid-template-columns: minmax(140px, 1fr) 110px;
+    gap: 10px; padding: 7px 12px; font-size: 0.81rem; align-items: center;
+  }
+
+  /* ---- reference tables tab ---- */
+  .ref-section {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    padding: 20px 22px 24px;
+    margin-bottom: 18px;
+    scroll-margin-top: 76px;
+  }
+  .ref-section.no-match { display: none; }
+  .ref-empty-state {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.88rem;
+    padding: 40px 20px;
+  }
+  .ref-section h2 {
+    font-size: 1.02rem;
+    margin: 0;
+  }
+  .ref-section p.sub {
+    margin: 0 0 14px;
+    color: var(--muted);
+    font-size: 0.83rem;
+  }
+  .ref-toggle {
+    appearance: none;
+    border: none;
+    background: none;
+    padding: 0;
+    margin: 0 0 4px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    font: inherit;
+    text-align: left;
+    color: inherit;
+    cursor: pointer;
+  }
+  .ref-toggle-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+  .ref-badge {
+    font-family: ui-monospace, monospace;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--muted);
+    background: var(--surface-2);
+    border-radius: 999px;
+    padding: 2px 8px;
+  }
+  .ref-chev {
+    width: 14px;
+    height: 14px;
+    color: var(--muted);
+    flex-shrink: 0;
+    transform: rotate(-90deg);
+    transition: transform 0.15s ease;
+  }
+  .ref-section.expanded .ref-chev { transform: rotate(0deg); }
+  .ref-section:not(.expanded) .table-scroll { display: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .ref-chev { transition: none; }
+  }
+
+  .ref-toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: var(--bg);
+    padding: 12px 0 14px;
+    margin-bottom: 4px;
+    border-bottom: 1px solid var(--line);
+  }
+  .ref-toolbar .search-box { margin-bottom: 10px; }
+  .ref-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .ref-nav a.no-match { display: none; }
+  .ref-nav a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.76rem;
+    font-weight: 600;
+    color: var(--ink);
+    text-decoration: none;
+    background: var(--surface);
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    padding: 5px 6px 5px 12px;
+    white-space: nowrap;
+  }
+  .ref-nav a:hover { border-color: var(--accent); color: var(--accent); }
+  .ref-nav a .count {
+    font-family: ui-monospace, monospace;
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--muted);
+    background: var(--surface-2);
+    border-radius: 999px;
+    padding: 1px 7px;
+  }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+  }
+
+  footer.foot {
+    color: var(--faint);
+    font-size: 0.76rem;
+    text-align: center;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+  }
+</style>
+
+<div class="app">
+  <header class="top">
+    <div class="title-group">
+      <h1>Linux Event Code Lookup</h1>
+      <p>Search Linux security &amp; system events by ID, keyword, log, or audit category — with how‑to‑collect steps.</p>
+    </div>
+    <div class="stat" id="header-stat"></div>
+  </header>
+
+  <nav class="tabs" id="tabs">
+    <button class="active" data-panel="events">Events</button>
+    <button data-panel="reference">Reference tables</button>
+  </nav>
+
+  <div class="panel active" id="panel-events">
+    <div class="search-row" style="margin-bottom:10px;">
+      <div class="search-box">
+        <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <input id="search" type="text" placeholder="e.g. 1123, sudo, AVC denial, kernel module…" autocomplete="off" />
+      </div>
+
+      <div class="combo" id="combo-log">
+        <button class="combo-btn" id="btn-log" type="button">
+          <span>Log</span><span class="count-pill" id="log-count-pill" style="display:none"></span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="combo-panel" id="panel-log">
+          <div class="panel-search"><input type="text" id="log-search" placeholder="Filter logs… (e.g. syscall, mac, ssh)" /></div>
+          <div class="combo-list" id="log-list"></div>
+          <div class="panel-footer">
+            <button type="button" id="log-clear">Clear</button>
+            <span class="footer-note" id="log-footer-note"></span>
+            <button type="button" id="log-done">Done</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="combo" id="combo-cat">
+        <button class="combo-btn" id="btn-cat" type="button">
+          <span>Category</span><span class="count-pill" id="cat-count-pill" style="display:none"></span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="combo-panel" id="panel-cat">
+          <div class="panel-search"><input type="text" id="cat-search" placeholder="Filter categories…" /></div>
+          <div class="combo-list" id="cat-list"></div>
+          <div class="panel-footer">
+            <button type="button" id="cat-clear">Clear</button>
+            <span class="footer-note" id="cat-footer-note"></span>
+            <button type="button" id="cat-done">Done</button>
+          </div>
+        </div>
+      </div>
+
+      <button id="priority-filter" class="priority-toggle" type="button" title="Show only events curated as classic high-value security monitoring signals">
+        <span class="dot"></span>Priority signals only
+      </button>
+    </div>
+    <div class="active-filters" id="active-filters" style="margin-bottom:12px;"></div>
+
+    <div class="split">
+      <div class="list-wrap">
+        <div class="list-count" id="list-count"></div>
+        <div class="list" id="list"></div>
+      </div>
+      <div class="detail" id="detail">
+        <div class="detail-empty">Select an event on the left, or search by ID or keyword, to see full details — description, sample log text, and how to configure auditing to collect it.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" id="panel-reference">
+    <div class="ref-toolbar" id="ref-toolbar">
+      <div class="search-box" id="ref-search-box">
+        <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <input id="ref-global-search" type="text" placeholder="Search all reference tables — codes, names, descriptions…" autocomplete="off" />
+      </div>
+      <nav class="ref-nav" id="ref-nav"></nav>
+    </div>
+    <p class="ref-empty-state" id="ref-empty-state" hidden>No matches in any reference table.</p>
+
+    <div class="ref-section" id="sec-audit-record-types">
+      <button type="button" class="ref-toggle" aria-expanded="false" data-target="audit-record-types">
+        <h2>Linux audit record type codes</h2>
+        <span class="ref-toggle-right"><span class="ref-badge" id="badge-audit-record-types"></span><svg class="ref-chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg></span>
+      </button>
+      <p class="sub">The <span class="mono">type=</span> field of every kernel audit record — verified against
+        <span class="mono">include/uapi/linux/audit.h</span> in the upstream Linux kernel source. This is the field
+        that doubles as this catalogue's Event ID for every <span class="mono">audit/*</span> log.</p>
+      <div class="table-scroll" id="ref-audit-record-types"></div>
+    </div>
+    <div class="ref-section" id="sec-pam">
+      <button type="button" class="ref-toggle" aria-expanded="false" data-target="pam">
+        <h2>PAM result codes</h2>
+        <span class="ref-toggle-right"><span class="ref-badge" id="badge-pam"></span><svg class="ref-chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg></span>
+      </button>
+      <p class="sub">Return codes from Linux-PAM's <span class="mono">_pam_types.h</span> — seen (as a name, not the
+        raw number) in the <span class="mono">res=</span> field of USER_AUTH, USER_ACCT, and USER_ERR records.</p>
+      <div class="table-scroll" id="ref-pam"></div>
+    </div>
+    <div class="ref-section" id="sec-capabilities">
+      <button type="button" class="ref-toggle" aria-expanded="false" data-target="capabilities">
+        <h2>Linux capabilities</h2>
+        <span class="ref-toggle-right"><span class="ref-badge" id="badge-capabilities"></span><svg class="ref-chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg></span>
+      </button>
+      <p class="sub">A curated 27-capability subset (of 41 total) of the <span class="mono">CAP_*</span> bits from <span class="mono">include/uapi/linux/capability.h</span> —
+        each is one bit position in the <span class="mono">cap_pe</span>/<span class="mono">cap_pp</span>/<span class="mono">cap_pi</span>
+        hex masks of a CAPSET record (event ID 1322).</p>
+      <div class="table-scroll" id="ref-capabilities"></div>
+    </div>
+    <div class="ref-section" id="sec-errno">
+      <button type="button" class="ref-toggle" aria-expanded="false" data-target="errno">
+        <h2>errno codes</h2>
+        <span class="ref-toggle-right"><span class="ref-badge" id="badge-errno"></span><svg class="ref-chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg></span>
+      </button>
+      <p class="sub">A curated set of the standard Linux <span class="mono">errno.h</span> values — seen (negated) in
+        the <span class="mono">exit=</span> field of a failed SYSCALL record (event ID 1300).</p>
+      <div class="table-scroll" id="ref-errno"></div>
+    </div>
+    <div class="ref-section" id="sec-ssh-disconnect">
+      <button type="button" class="ref-toggle" aria-expanded="false" data-target="ssh-disconnect">
+        <h2>SSH disconnect reason codes</h2>
+        <span class="ref-toggle-right"><span class="ref-badge" id="badge-ssh-disconnect"></span><svg class="ref-chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg></span>
+      </button>
+      <p class="sub">The 15 <span class="mono">SSH_DISCONNECT_*</span> reason codes from RFC 4253 §11.1 — sshd prints
+        the raw number in its "Received disconnect from ⋯" syslog line, and this catalogue uses that number as the
+        Event ID for the <span class="mono">ssh/protocol</span> log.</p>
+      <div class="table-scroll" id="ref-ssh-disconnect"></div>
+    </div>
+    <div class="ref-section" id="sec-systemd-catalog">
+      <button type="button" class="ref-toggle" aria-expanded="false" data-target="systemd-catalog">
+        <h2>systemd message catalog</h2>
+        <span class="ref-toggle-right"><span class="ref-badge" id="badge-systemd-catalog"></span><svg class="ref-chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg></span>
+      </button>
+      <p class="sub">Real <span class="mono">MESSAGE_ID</span> UUIDs from systemd's own catalog
+        (<span class="mono">catalog/systemd.catalog.in</span> upstream) — the closest Linux analogue to a numeric
+        Windows Event ID for anything that isn't routed through the kernel audit subsystem.</p>
+      <div class="table-scroll" id="ref-systemd-catalog"></div>
+    </div>
+    <div class="ref-section" id="sec-mitre">
+      <button type="button" class="ref-toggle" aria-expanded="false" data-target="mitre">
+        <h2>MITRE ATT&amp;CK ↔ Event ID mapping</h2>
+        <span class="ref-toggle-right"><span class="ref-badge" id="badge-mitre"></span><svg class="ref-chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg></span>
+      </button>
+      <p class="sub">Technique–event associations for the events in this catalogue. Search by technique ID,
+        technique name, or event ID.</p>
+      <div class="table-scroll" id="ref-mitre"></div>
+    </div>
+    <div class="ref-section" id="sec-audit-configuration">
+      <button type="button" class="ref-toggle" aria-expanded="false" data-target="audit-configuration">
+        <h2>Full audit configuration reference</h2>
+        <span class="ref-toggle-right"><span class="ref-badge" id="badge-audit-configuration"></span><svg class="ref-chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg></span>
+      </button>
+      <p class="sub">Every subcategory's config path, steps, event IDs, and NIST 800-53 AU mapping — the same data
+        shown inline on each event's detail view, browsable as one table. See also
+        <span class="mono">docs/audit-configuration-guide.md</span>.</p>
+      <div class="table-scroll" id="ref-audit-configuration"></div>
+    </div>
+  </div>
+
+  <footer class="foot">Linux analogue of <a href="https://github.com/adamliq/Winevent-catalogue" target="_blank" rel="noopener">Winevent-catalogue</a> · 61 events indexed · <a href="https://github.com/adamliq/linuxevent-catalogue" target="_blank" rel="noopener">linuxevent-catalogue</a> data files</footer>
+</div>
+
+<script>
+const DATA = {"events":[{"event_id":"1100","log":"audit/USER","source":"sudo (pam_unix)","category":"Account Logon","subcategory":"Credential Validation","description":"PAM authentication attempt for a sudo command","sample":"Log Name:      audit/USER\nSource:        sudo (pam_unix)\nEvent ID:      1100 (USER_AUTH)\nLevel:         Notice\nHost:          web01.prod.example.org\nDescription:\nA user's password was checked while starting a sudo session.\ntype=USER_AUTH msg=audit(1732200011.221:48812): pid=18432 uid=1000 auid=1000 ses=12\nsubj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023\nmsg='op=PAM:authentication grantors=pam_unix acct=\"jsmith\" exe=\"/usr/bin/sudo\"\nhostname=? addr=? terminal=/dev/pts/3 res=success'","reference":"See PAM result codes reference table for the full set of `res=`/failure values.","how_to_collect":"Credential Validation","sample_type":"illustrative","mitre_techniques":"T1078","priority_signal":"","nist_800_53_au":"AU-2, AU-3, AU-12","field_schema":{"header":{"log_name":"string","source":"string","event_id":"integer","level":"enum","host":"string","description":"string"},"process":{"pid":"integer","exe":"path"},"subject":{"uid":"integer","auid":"integer","ses":"integer","subj":"string"},"message":{"op":"string","grantors":"string","acct":"principal","hostname":"string","addr":"ip","terminal":"path","res":"enum"}}},{"event_id":"1100","log":"audit/USER","source":"su (pam_unix)","category":"Account Logon","subcategory":"Credential Validation","description":"PAM authentication attempt for su failed — wrong password","sample":"Log Name:      audit/USER\nSource:        su (pam_unix)\nEvent ID:      1100 (USER_AUTH)\nLevel:         Warning\nHost:          db01.prod.example.org\nDescription:\nA user's password was checked while starting an su session, and the check failed.\ntype=USER_AUTH msg=audit(1732200098.554:48901): pid=20211 uid=1000 auid=1000 ses=14\nsubj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023\nmsg='op=PAM:authentication grantors=? acct=\"root\" exe=\"/usr/bin/su\"\nhostname=? addr=? terminal=/dev/pts/1 res=failed'","reference":"","how_to_collect":"Credential Validation","sample_type":"illustrative","mitre_techniques":"T1110","priority_signal":"Yes","nist_800_53_au":"AU-2, AU-3, AU-12","field_schema":{"header":{"log_name":"string","source":"string","event_id":"integer","level":"enum","host":"string","description":"string"},"process":{"pid":"integer","exe":"path"},"subject":{"uid":"integer","auid":"integer","ses":"integer","subj":"string"},"message":{"op":"string","acct":"principal","terminal":"path","res":"enum"}}},{"event_id":"1101","log":"audit/USER","source":"sshd (pam_unix)","category":"Account Logon","subcategory":"Credential Validation","description":"PAM account validation for an SSH session (expiry/lockout checks)","sample":"Log Name:      audit/USER\nSource:        sshd (pam_unix)\nEvent ID:      1101 (USER_ACCT)\nLevel:         Information\nHost:          bastion01.prod.example.org\nDescription:\nThe account was checked for validity (not expired, not locked) after authentication succeeded.\ntype=USER_ACCT msg=audit(1732201200.100:49020): pid=8891 uid=0 auid=1000 ses=88\nsubj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023\nmsg='op=PAM:accounting grantors=pam_unix,pam_faillock acct=\"mchen\" exe=\"/usr/sbin/sshd\"\nhostname=203.0.113.44 addr=203.0.113.44 terminal=ssh res=success'","reference":"","how_to_collect":"Credential Validation","sample_type":"illustrative","mitre_techniques":"","priority_signal":"","nist_800_53_au":"AU-2, AU-3, AU-12","field_schema":{"header":{"log_name":"string","source":"string","event_id":"integer","level":"enum","host":"string","description":"string"},"process":{"pid":"integer","exe":"path"},"subject":{"uid":"integer","auid":"integer","ses":"integer","subj":"string"},"message":{"op":"string","grantors":"list<string>","acct":"principal","hostname":"string","addr":"ip","terminal":"string","res":"enum"}}},{"event_id":"1101","log":"audit/USER","source":"login (pam_faillock)","category":"Account Logon","subcategory":"Credential Validation","description":"Account temporarily locked after repeated failed logins (pam_faillock)","sample":"Log Name:      audit/USER\nSource:        login (pam_faillock)\nEvent ID:      1101 (USER_ACCT)\nLevel:         Warning\nHost:          bastion02.prod.example.org\nDescription:\nAccount validation failed: the account is locked out by pam_faillock after too many\nconsecutive failed login attempts.\ntype=USER_ACCT msg=audit(1732201355.410:49101): pid=9013 uid=0 auid=4294967295 ses=4294967295\nsubj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023\nmsg='op=PAM:accounting grantors=? acct=\"rjones\" exe=\"/usr/bin/login\"\nhostname=? addr=198.51.100.23 terminal=/dev/tty1 res=failed'","reference":"faillock --user rjones shows the individual failed attempts that triggered the lock.","how_to_collect":"Credential Validation","sample_type":"illustrative","mitre_techniques":"T1110","priority_signal":"Yes","nist_800_53_au":"AU-2, AU-3, AU-12","field_schema":{"header":{"log_name":"string","source":"string","event_id":"integer","level":"enum","host":"string","description":"string"},"process":{"pid":"integer","exe":"path"},"subject":{"uid":"integer","auid":"integer","ses":"integer"},"message":{"op":"string","acct":"principal","addr":"ip","terminal":"path","res":"enum"}}},{"event_id":"1109","log":"audit/USER","source":"sshd (pam_unix)","category":"Account Logon","subcategory":"Credential Validation","description":"PAM error: repeated bad password on an SSH login attempt","sample":"Log Name:      audit/USER\nSource:        sshd (pam_unix)\nEvent ID:      1109 (USER_ERR)\nLevel:         Warning\nHost:          bastion01.prod.example.org\nDescription:\nA PAM module reported an error while processing an authentication request — here,\nan incorrect password.\ntype=USER_ERR msg=audit(1732201410.005:49150): pid=8977 uid=0 auid=4294967295 ses=4294967295\nsubj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023\nmsg='PAM: bad password attempt for user \"admin\" exe=\"/usr/sbin/sshd\"\nhostname=192.0.2.15 addr=192.0.2.15 terminal=ssh res=failed'","reference":"See PAM result codes reference table.","how_to_collect":"Credential Validation","sample_type":"illustrative","mitre_techniques":"T1110","priority_signal":"Yes","nist_800_53_au":"AU-2, AU-3, AU-12","field_schema":{"header":{"log_name":"string","source":"string","event_id":"integer","level":"enum","host":"string","description":"string"},"process":{"pid":"integer","exe":"path"},"subject":{"uid":"integer","auid":"integer","ses":"integer"},"message":{"acct":"principal","hostname":"string","addr":"ip","terminal":"string","res":"enum"}}},{"event_id":"1103","log":"audit/USER","source":"login (pam_unix)","category":"Account Logon","subcategory":"Credential Lifecycle","description":"PAM credentials acquired at the start of a login session","sample":"Log Name:      audit/USER\nSource:        login (pam_unix)\nEvent ID:      1103 (CRED_ACQ)\nLevel:         Information\nHost:          web01.prod.example.org\nDescription:\nThe credentials associated with the user (group memberships, supplementary\ncapabilities) were established for the new session.\ntype=CRED_ACQ msg=audit(1732200500.010:48950): pid=15012 uid=0 auid=1000 ses=15\nsubj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023\nmsg='op=PAM:setcred grantors=pam_unix acct=\"jsmith\" exe=\"/usr/bin/login\"\nhostname=? addr=? terminal=tty2 res=success'","reference":"","how_to_collect":"Credential Lifecycle","sample_type":"illustrative","mitre_techniques":"","priority_signal":"","nist_800_53_au":"AU-2, AU-3, AU-12","field_schema":{"header":{"log_name":"string","source":"string","event_id":"integer","level":"enum","host":"string","description":"string"},"process":{"pid":"integer","exe":"path"},"subject":{"uid":"integer","auid":"integer","ses":"integer"},"message":{"op":"string","grantors":"string","acct":"principal","terminal":"string","res":"enum"}}},{"event_id":"1104","log":"audit/USER","source":"login (pam_unix)","category":"Account Logon","subcategory":"Credential Lifecycle","description":"PAM credentials disposed of at session logoff","sample":"Log Name:      audit/USER\nSource:        login (pam_unix)\nEvent ID:      1104 (CRED_DISP)\nLevel:         Information\nHost:          web01.prod.example.org\nDescription:\nThe credentials established at session start were released as the session ended.\ntype=CRED_DISP msg=audit(1732204100.010:49900): pid=15012 uid=0 auid=1000 ses=15\nsubj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023\nmsg='op=PAM:setcred grantors=pam_unix acct=\"jsmith\" exe=\"/usr/bin/login\"\nhostname=? addr=? terminal=tty2 res=success'","reference":"","how_to_collect":"Credential Lifecycle","sample_type":"illustrative","mitre_techniques":"","priority_signal":"","nist_800_53_au":"AU-2, AU-3, AU-12","field_schema":{"header":{"log_name":"string","source":"string","event_id":"integer","level":"enum","host":"string","description":"string"},"process":{"pid":"integer","exe":"path"},"subject":{"uid":"integer","auid":"integer","ses":"integer"},"message":{"op":"string","acct":"principal","terminal":"string","res":"enum"}}},{"event_id":"1110","log":"audit/USER","source":"sudo (pam_unix)","category":"Account Logon","subcategory":"Credential Lifecycle","description":"sudo's cached authentication timestamp was refreshed instead of re-prompting","sample":"Log Name:      audit/USER\nSource:        sudo (pam_unix)\nEvent ID:      1110 (CRED_REFR)\nLevel:         Information\nHost:          web01.prod.example.org\nDescription:\nA user ran a further sudo command inside the timestamp_timeout window, so PAM\nrefreshed the existing credential instead of asking for the password again.\ntype=CRED_REFR msg=audit(1732200070.900:48830): pid=18500 uid=1000 auid=1000 ses=12\nsubj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023\nmsg='op=PAM:setcred grantors=pam_unix acct=\"jsmith\" exe=\"/usr/bin/sudo\"\nhostname=? addr=? terminal=/dev/pts/3 res=success'","reference":"","how_to_collect":"Credential Lifecycle","sample_type":"illustrative","mitre_techniques":"","priority_signal":"","nist_800_53_au":"AU-2, AU-3, AU-12","field_schema":{"header":{"log_name":"string","source":"string","event_id":"integer","level":"enum","host":"string","description":"string"},"process":{"pid":"integer","exe":"path"},"subject":{"uid":"integer","auid":"integer","ses":"integer"},"message":{"op":"string","acct":"principal","terminal":"path","res":"enum"}}},{"event_id":"1105","log":"audit/USER","source":"login (pam_unix)","category":"Logon/Logoff","subcategory":"Logon","description":"PAM session opened for an interactive console login","sample":"Log Name:      audit/USER\nSource:        login (pam_unix)\nEvent ID:      1105 (USER_START)\nLevel:         Information\nHost:          web01.prod.example.org\nDescription:\nA session was opened for a user (the Linux analogue of a Windows logon event).\ntype=USER_START msg=audit(1732200500.020:48951): pid=15012 uid=0 auid=1000 ses=15\nsubj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023\nmsg='op=PAM:session_open grantors=pam_unix,pam_limits,pam_systemd acct=\"jsmith\"\nexe=\"/usr/bin/login\" hostname=? addr=? terminal=tty2 res=success'","reference":"","how_to_collect":"Logon","sample_type":"illustrative","mitre_techniques":"T1078","priority_signal":"","nist_800_53_au":"AU-2, AU-3, AU-12","field_schema":{"header":{"log_name":"string","source":"string","event_id":"integer","level":"enum","host":"string","description":"string"},"process":{"pid":"integer","exe":"path"},"subject":{"uid":"integer","auid":"integer","ses":"integer"},"message":{"op":"string","grantors":"list<string>","acct":"principal","terminal":"string","res":"enum"}}},{"event_id":"1105","log":"audit/USER","source":"sshd (pam_unix)","category":"Logon/Logoff","subcategory":"Logon","description":"PAM session opened for an SSH login","sample":"Log Name:      audit/USER\nSource:        sshd (pam_unix)\nEvent ID:      1105 (USER_START)\nLevel:         Information\nHost:          bastion01.prod.example.org\nDescription:\nA session was opened for a user connecting over SSH.\ntype=USER_START msg=audit(1732201200.150:49021): pid=8891 uid=0 auid=1000 ses=88\nsubj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023\nmsg='op=PAM:session_open grantors=pam_unix,pam_limits,pam_systemd acct=\"mchen\"\nexe=\"/usr/sbin/sshd\" hostname=203.0.113.44 addr=203.0.113.44 terminal=ssh res=success'","reference":"","how_to_collect":"Logon","sample_type":"illustrative","mitre_techniques":"T1021.004","priority_signal":"Yes","nist_800_53_au":"AU-2, AU-3, AU-12","field_schema":{"header":{"log_name":"string","source":"string","event_id":"integer","level":"enum","host":"string","description":"string"},"process":{"pid":"integer","exe":"path"},"subject":{"uid":"integer","auid":"integer","ses":"integer"},"message":{"op":"string","grantors":"list<string>","acct":"principal","hostname":"string","addr":"ip","terminal":"string","res":"enum"}}},{"event_id":"1106","log":"audit/USER","source":"sshd (pam_unix)","category":"Logon/Logoff","subcategory":"Logoff","description":"PAM session closed at the end of an SSH login","sample":"Log Name:      audit/USER\nSource:        sshd (pam_unix)\nEvent ID:      1106 (USER_END)\nLevel:         Information\nHost:          bastion01.prod.example.org\nDescription:\nA previously opened session was closed.\ntype=USER_END msg=audit(1732204800.030:50100): pid=8891 uid=0 auid=1000 ses=88\nsubj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023\nmsg='op=PAM:session_close grantors=pam_unix,pam_limits,pam_systemd acct=\"mchen\"\nexe=\"/usr/sbin/sshd\" hostname=203.0.113.44 addr=203.0.113.44 terminal=ssh res=success'","reference":"","how_to_collect":"Logoff","sample_type":"illustrative","mitre_techniques":"","priority_signal":"","nist_800_53_au":"AU-2, AU-3, AU-12","field_schema":{"header":{"log_name":"string","source":"string","event_id":"integer","level":"enum","host":"string","description":"string"},"process":{"pid":"integer","exe":"path"},"subject":{"uid":"integer","auid":"integer","ses":"integer"},"message":{"op":"string","acct":"principal","hostname":"string","addr":"ip","terminal":"string","res":"enum"}}},{"event_id":"1112","log":"audit/USER","source":"login","category":"Logon/Logoff","subcategory":"Logon","description":"User has logged in at a local console (login(1))","sample":"Log Name:      audit/USER\nSource:        login\nEvent ID:      1112 (USER_LOGIN)\nLevel:         Information\nHost:          web01.prod.example.org\nDescription:\nlogin(1) recorded a successful interactive logon.\ntype=USER_LOGIN msg=audit(1732200500.040:48952): pid=15012 uid=0 auid=1000 ses=15\nsubj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023\nmsg='op=login id=1000 exe=\"/usr/bin/login\" hostname=? addr=? terminal=tty2 res=success'","reference":"","how_to_collect":"Logon","sample_type":"illustrative","mitre_techniques":"T1078","priority_signal":"","nist_800_53_au":"AU-2, AU-3, AU-12","field_schema":{"header":{"log_name":"string","source":"string","event_id":"integer","level":"enum","host":"string","description":"string"},"process":{"pid":"integer","exe":"path"},"subject":{"uid":"integer","auid":"integer","ses":"integer"},"message":{"op":"string","id":"integer","terminal":"string","res":"enum"}}},{"event_id":"1113","log":"audit/USER","source":"login","category":"Logon/Logoff","subcategory":"Logoff","description":"User has logged out at a local console (login(1))","sample":"Log Name:      audit/USER\nSource:        login\nEvent ID:      1113 (USER_LOGOUT)\nLevel:         Information\nHost:          web01.prod.example.org\nDescription:\nlogin(1) recorded a session ending normally.\ntype=USER_LOGOUT msg=audit(1732204100.030:49901): pid=15012 uid=0 auid=1000 ses=15\nsubj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023\nmsg='op=logout id=1000 exe=\"/usr/bin/login\" hostname=? addr=? terminal=tty2 res=success'","reference":"","how_to_collect":"Logoff","sample_type":"illustrative","mitre_techniques":"","priority_signal":"","nist_800_53_au":"AU-2, AU-3, AU-12","field_schema":{"header":{"log_name":"string","source":"string","event_id":"integer","level":"enum","host":"string","description":"string"},"process":{"pid":"integer","exe":"path"},"subject":{"uid":"integer","auid":"integer","ses":"integer"},"message":{"op":"string","id":"integer","terminal":"string","res":"enum"}}},{"event_id":"1124","log":"audit/USER","source":"sudo (pam_unix)","category":"Logon/Logoff","subcategory":"TTY Tracking","description":"Controlling TTY recorded for a sudo session","sample":"Log Name:      audit/USER\nSource:        sudo (pam_unix)\nEvent ID:      1124 (USER_TTY)\nLevel:         Information\nHost:          web01.prod.example.org\nDescription:\nThe keystrokes/TTY device associated with a privileged session were recorded for\nlater replay (e.g. with `aureport --tty`).\ntype=USER_TTY msg=audit(1732200011.230:48813): pid=18432 uid=1000 auid=1000 ses=12\nsubj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023\nmsg='tty=/dev/pts/3 data=6C730D0A comm=\"sudo\"'","reference":"`data` is the hex-encoded keystrokes; decode with `aureport --tty` or `ausearch --tty`.","how_to_collect":"TTY Tracking","sample_type":"illustrative","mitre_techniques":"","priority_signal":"","nist_800_53_au":"AU-3","field_schema":{"header":{"log_name":"string","source":"string","event_id":"integer","level":"enum","host":"string","description":"string"},"process":{"pid":"integer","comm":"string"},"subject":{"uid":"integer","auid":"integer","ses":"integer"},"record":{"tty":"path","data":"hex"}}},{"event_id":"1123","log":"audit/USER","source":"sudo","category":"Privilege Use","subcategory":"Command Execution","description":"A user ran a command as root (or another user) via sudo","sample":"Log Name:      audit/USER\nSource:        sudo\nEvent ID:      1123 (USER_CMD)\nLevel:         Notice\nHost:          db01.prod.example.org\nDescription:\nsudo logged the exact command that was authorized and about to be run.\ntype=USER_CMD msg=audit(1732200012.500:48814): pid=18432 uid=1000 auid=1000 ses=12\nsubj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023\nmsg='cwd=\"/home/jsmith\" cmd=737973746D6374 6C20726573746172742073736864\nterminal=/dev/pts/3 res=success'","reference":"cmd= is hex-encoded; `systemctl restart sshd` in this sample decodes to \"systemctl restart sshd\".","how_to_collect":"Command Execution","sample_type":"illustrative","mitre_techniques":"T1548.003","priority_signal":"Yes","nist_800_53_au":"AU-2, AU-3, AU-12","field_schema":{"header":{"log_name":"string","source":"string","event_id":"integer","level":"enum","host":"string","description":"string"},"process":{"pid":"integer"},"subject":{"uid":"integer","auid":"integer","ses":"integer"},"message":{"cwd":"path","cmd":"hex","terminal":"path","res":"enum"}}},{"event_id":"1322","log":"audit/SYSCALL","source":"kernel (capset)","category":"Privilege Use","subcategory":"Capability Use","description":"A process explicitly set its capability set via capset(2)","sample":"Log Name:      audit/SYSCALL\nSource:        kernel (capset)\nEvent ID:      1322 (CAPSET)\nLevel:         Notice\nHost:          web01.prod.example.org\nDescription:\nA process changed its own effective/permitted/inheritable capability sets — worth\nreviewing whenever the resulting set includes something like CAP_SYS_ADMIN outside\nof a known service's expected startup sequence.\ntype=CAPSET msg=audit(1732205000.100:50210): pid=22190 comm=\"nginx\"\ncap_pi=0 cap_pp=3fffffffff cap_pe=3fffffffff cap_pa=0\nfrontier=400000000000","reference":"See the Linux capabilities reference table for what each bit in cap_pe/cap_pp/cap_pi means.","how_to_collect":"Capability Use","sample_type":"illustrative","mitre_techniques":"T1548","priority_signal":"","nist_800_53_au":"AU-2, AU-12","field_schema":{"header":{"log_name":"string","source":"string","event_id":"integer","level":"enum","host":"string","description":"string"},"process":{"pid":"integer","comm":"string"},"record":{"cap_pi":"hex","cap_pp":"hex","cap_pe":"hex","cap_pa":"hex","frontier":"hex"}}},{"event_id":"1114","log":"audit/USER","source":"useradd","category":"Account Management","subcategory":"User Account","description":"A new local user account was created","sample":"Log Name:      audit/USER\nSource:        useradd\nEvent ID:      1114 (ADD_USER)\nLevel:         Notice\nHost:          web01.prod.example.org\nDescription:\nA new user account was added to the local account database.\ntype=ADD_USER msg=audit(1732205500.200:50300): pid=25011 uid=0 auid=1000 ses=12\nsubj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023\nmsg='op=adduser id=1010 exe=\"/usr/sbin/useradd\" hostname=? addr=? terminal=/dev/pts/3\nres=success'","reference":"","how_to_collect":"User Account","sample_type":"illustrative","mitre_techniques":"T1136.001","priority_signal":"Yes","nist_800_53_au":"AU-2, AU-3, AU-12","field_schema":{"header":{"log_name":"string","source":"string","event_id":"integer","level":"enum","host":"string","description":"string"},"process":{"pid":"integer","exe":"path"},"subject":{"uid":"integer","auid":"integer","ses":"integer"},"message":{"op":"string","id":"integer","terminal":"path","res":"enum"}}},{"event_id":"1115","log":"audit/USER","source":"userdel","category":"Account Management","subcategory":"User Account","description":"A local user account was deleted","sample":"Log Name:      audit/USER\nSource:        userdel\nEvent ID:      1115 (DEL_USER)\nLevel:         Notice\nHost:          web01.prod.example.org\nDescription:\nA user account was removed from the local account database.\ntype=DEL_USER msg=audit(1732206000.200:50400): pid=25099 uid=0 auid=1000 ses=12\nsubj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023\nmsg='op=deluser id=1005 exe=\"/usr/sbin/userdel\" hostname=? addr=? terminal=/dev/pts/3\nres=success'","reference":"","how_to_collect":"User Account","sample_type":"illustrative","mitre_techniques":"T1531","priority_signal":"","nist_800_53_au":"AU-2, AU-3, AU-12","field_schema":{"header":{"log_name":"string","source":"string","event_id":"integer","level":"enum","host":"string","description":"string"},"process":{"pid":"integer","exe":"path"},"subject":{"uid":"integer","auid":"integer","ses":"integer"},"message":{"op":"string","id":"integer","terminal":"path","res":"enum"}}},{"event_id":"1125","log":"audit/USER","source":"usermod","category":"Account Management","subcategory":"User Account","description":"A user account's UID was changed","sample":"Log Name:      audit/USER\nSource:        usermod\nEvent ID:      1125 (CHUSER_ID)\nLevel:         Notice\nHost:          web01.prod.example.org\nDescription:\nA user's UID (or GID) was modified after account creation — unusual outside initial\nprovisioning, and worth investigating if it targets an existing, in-use account.\ntype=CHUSER_ID msg=audit(1732206100.200:50410): pid=25110 uid=0 auid=1000 ses=12\nsubj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023\nmsg='op=modify-uid id=1010 old-id=1010 exe=\"/usr/sbin/usermod\" hostname=? addr=?\nterminal=/dev/pts/3 res=success'","reference":"","how_to_collect":"User Account","sample_type":"illustrative","mitre_techniques":"","priority_signal":"","nist_800_53_au":"AU-2, AU-3, AU-12","field_schema":{"header":{"log_name":"string","source":"string","event_id":"integer","level":"enum","host":"string","description":"string"},"process":{"pid":"integer","exe":"path"},"subject":{"uid":"integer","auid":"integer","ses":"integer"},"message":{"op":"string","id":"integer","old_id":"integer","terminal":"path","res":"enum"}}},{"event_id":"1116","log":"audit/USER","source":"groupadd","category":"Account Management","subcategory":"Group Management","description":"A new local group was created","sample":"Log Name:      audit/USER\nSource:        groupadd\nEvent ID:      1116 (ADD_GROUP)\nLevel:         Notice\nHost:          web01.prod.example.org\nDescription:\nA new group was added to the local group database.\ntype=ADD_GROUP msg=audit(1732206200.200:50420): pid=25130 uid=0 auid=1000 ses=12\nsubj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023\nmsg='op=add-group id=1010 exe=\"/usr/sbin/groupadd\" hostname=? addr=? terminal=/dev/pts/3\nres=success'","reference":"","how_to_collect":"Group Management","sample_type":"illustrative","mitre_techniques":"","priority_signal":"","nist_800_53_au":"AU-2, AU-3, AU-12","field_schema":{"header":{"log_name":"string","source":"string","event_id":"integer","level":"enum","host":"string","description":"string"},"process":{"pid":"integer","exe":"path"},"subject":{"uid":"integer","auid":"integer","ses":"integer"},"message":{"op":"string","id":"integer","terminal":"path","res":"enum"}}},{"event_id":"1117","log":"audit/USER","source":"groupdel","category":"Account Management","subcategory":"Group Management","description":"A local group was deleted","sample":"Log Name:      audit/USER\nSource:        groupdel\nEvent ID:      1117 (DEL_GROUP)\nLevel:         Notice\nHost:          web01.prod.example.org\nDescription:\nA group was removed from the local group database.\ntype=DEL_GROUP msg=audit(1732206300.200:50430): pid=25150 uid=0 auid=1000 ses=12\nsubj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023\nmsg='op=del-group id=1010 exe=\"/usr/sbin/groupdel\" hostname=? addr=? terminal=/dev/pts/3\nres=success'","reference":"","how_to_collect":"Group Management","sample_type":"illustrative","mitre_techniques":"","priority_signal":"","nist_800_53_au":"AU-2, AU-3, AU-12","field_schema":{"header":{"log_name":"string","source":"string","event_id":"integer","level":"enum","host":"string","description":"string"},"process":{"pid":"integer","exe":"path"},"subject":{"uid":"integer","auid":"integer","ses":"integer"},"message":{"op":"string","id":"integer","terminal":"path","res":"enum"}}},{"event_id":"1132","log":"audit/USER","source":"usermod","category":"Account Management","subcategory":"Group Management","description":"A user was added to a privileged group (e.g. sudo/wheel)","sample":"Log Name:      audit/USER\nSource:        usermod\nEvent ID:      1132 (GRP_MGMT)\nLevel:         Warning\nHost:          web01.prod.example.org\nDescription:\nA user's group membership was changed — here, added to the `sudo` group, granting\nthem the ability to run privileged commands. The single highest-value account-\nmanagement event to alert on in this catalogue.\ntype=GRP_MGMT msg=audit(1732206400.200:50440): pid=25170 uid=0 auid=1000 ses=12\nsubj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023\nmsg='op=add-supplementary-group grp=sudo acct=\"rjones\" exe=\"/usr/sbin/usermod\"\nhostname=? addr=? terminal=/dev/pts/3 res=success'","reference":"","how_to_collect":"Group Management","sample_type":"illustrative","mitre_techniques":"T1098; T1548.003","priority_signal":"Yes","nist_800_53_au":"AU-2, AU-3, AU-12","field_schema":{"header":{"log_name":"string","source":"string","event_id":"integer","level":"enum","host":"string","description":"string"},"process":{"pid":"integer","exe":"path"},"subject":{"uid":"integer","auid":"integer","ses":"integer"},"message":{"op":"string","grp":"string","acct":"principal","terminal":"path","res":"enum"}}},{"event_id":"1300","log":"audit/SYSCALL","source":"kernel (execve)","category":"Detailed Tracking","subcategory":"Process Execution","description":"A new process was created via execve() (paired with EXECVE/CWD/PROCTITLE/EOE)","sample":"Log Name:      audit/SYSCALL\nSource:        kernel (execve)\nEvent ID:      1300 (SYSCALL)\nLevel:         Information\nHost:          db01.prod.example.org\nDescription:\nThe kernel-level record of a monitored system call — here, execve(), the Linux\nanalogue of Windows Event ID 4688 (process creation). Always emitted together with\nan EXECVE record (arguments), a CWD record, a PROCTITLE record, and an EOE record\nclosing the group, all sharing the same audit(...) timestamp:serial pair.\ntype=SYSCALL msg=audit(1732207000.300:50600): arch=c000003e syscall=59 success=yes\nexit=0 a0=55a1e2f3c0d0 a1=55a1e2f3c120 a2=55a1e2f3c1a0 a3=0 items=2 ppid=18432\npid=25400 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts3\nses=12 comm=\"systemctl\" exe=\"/usr/bin/systemctl\"\nsubj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=\"exec\"","reference":"Companion records: EXECVE (arguments), PROCTITLE (raw cmdline), EOE (end marker).","how_to_collect":"Process Execution","sample_type":"illustrative","mitre_techniques":"T1059","priority_signal":"","nist_800_53_au":"AU-2, AU-3, AU-12","field_schema":{"header":{"log_name":"string","source":"string","event_id":"integer","level":"enum","host":"string","description":"string"},"process":{"pid":"integer","ppid":"integer","comm":"string","exe":"path","tty":"string"},"subject":{"auid":"integer","uid":"integer","gid":"integer","euid":"integer","suid":"integer","fsuid":"integer","egid":"integer","sgid":"integer","fsgid":"integer","ses":"integer","subj":"string"},"syscall":{"arch":"hex","syscall":"integer","success":"enum","exit":"integer","items":"integer","key":"string"}}},{"event_id":"1309","log":"audit/SYSCALL","source":"kernel (execve)","category":"Detailed Tracking","subcategory":"Process Arguments","description":"The argument list passed to an audited execve() call","sample":"Log Name:      audit/SYSCALL\nSource:        kernel (execve)\nEvent ID:      1309 (EXECVE)\nLevel:         Information\nHost:          db01.prod.example.org\nDescription:\nCompanion record to SYSCALL: the argv[] array the process was launched with.\ntype=EXECVE msg=audit(1732207000.300:50600): argc=3 a0=\"systemctl\" a1=\"restart\"\na2=\"sshd\"","reference":"Shares the audit(...) timestamp:serial with its parent SYSCALL record.","how_to_collect":"Process Arguments","sample_type":"illustrative","mitre_techniques":"T1059","priority_signal":"","nist_800_53_au":"AU-3","field_schema":{"header":{"log_name":"string","source":"string","event_id":"integer","level":"enum","host":"string","description":"string"},"record":{"argc":"integer","a0":"string","a1":"string","a2":"string"}}},{"event_id":"1327","log":"audit/SYSCALL","source":"kernel (execve)","category":"Detailed Tracking","subcategory":"Process Command Line","description":"The full raw command line of an audited process, as one string","sample":"Log Name:      audit/SYSCALL\nSource:        kernel (execve)\nEvent ID:      1327 (PROCTITLE)\nLevel:         Information\nHost:          db01.prod.example.org\nDescription:\nCompanion record to SYSCALL: /proc/pid/cmdline captured at exec time, hex-encoded.\ntype=PROCTITLE msg=audit(1732207000.300:50600):\nproctitle=73797374656D6374 6C007265737461727400737368 64","reference":"Hex-decodes to \"systemctl restart sshd\" — decode with `ausearch -i` rather than by hand.","how_to_collect":"Process Command Line","sample_type":"illustrative","mitre_techniques":"T1059","priority_signal":"","nist_800_53_au":"AU-3","field_schema":{"header":{"log_name":"string","source":"string","event_id":"integer","level":"enum","host":"string","description":"string"},"record":{"proctitle":"hex"}}},{"event_id":"1320","log":"audit/SYSCALL","source":"kernel (audit)","category":"Detailed Tracking","subcategory":"Process Execution","description":"Marks the end of a multi-record audit event","sample":"Log Name:      audit/SYSCALL\nSource:        kernel (audit)\nEvent ID:      1320 (EOE)\nLevel:         Information\nHost:          db01.prod.example.org\nDescription:\nCloses out a group of related records (e.g. SYSCALL+EXECVE+CWD+PROCTITLE) that\nshare the same audit(...) timestamp:serial pair — tools like ausearch use this to\nknow a logical \"event\" is complete.\ntype=EOE msg=audit(1732207000.300:50600):","reference":"","how_to_collect":"Process Execution","sample_type":"illustrative","mitre_techniques":"","priority_signal":"","nist_800_53_au":"AU-3","field_schema":{"header":{"log_name":"string","source":"string","event_id":"integer","level":"enum","host":"string","description":"string"},"record":{}}},{"event_id":"1302","log":"audit/SYSCALL","source":"kernel (fs watch)","category":"Object Access","subcategory":"File Access (Watch)","description":"A file under an audit watch (-w) was read","sample":"Log Name:      audit/SYSCALL\nSource:        kernel (fs watch)\nEvent ID:      1302 (PATH)\nLevel:         Notice\nHost:          db01.prod.example.org\nDescription:\nA path matched by an auditctl -w watch rule was accessed — here, a read of\n/etc/shadow outside of any known password-management tool.\ntype=PATH msg=audit(1732207500.400:50700): item=0 name=\"/etc/shadow\" inode=131099\ndev=fd:01 mode=0100640 ouid=0 ogid=42 rdev=00:00\nobjtype=NORMAL key=\"sensitive_read\"","reference":"Paired with a SYSCALL record giving the process (pid/comm/exe) that made the access.","how_to_collect":"File Access (Watch)","sample_type":"illustrative","mitre_techniques":"T1552.001","priority_signal":"Yes","nist_800_53_au":"AU-2, AU-3, AU-12","field_schema":{"header":{"log_name":"string","source":"string","event_id":"integer","level":"enum","host":"string","description":"string"},"record":{"item":"integer","name":"path","inode":"integer","dev":"string","mode":"hex","ouid":"integer","ogid":"integer","objtype":"enum","key":"string"}}},{"event_id":"1330","log":"audit/SYSCALL","source":"kernel (module loader)","category":"Object Access","subcategory":"Kernel Module","description":"A kernel module was loaded","sample":"Log Name:      audit/SYSCALL\nSource:        kernel (module loader)\nEvent ID:      1330 (KERN_MODULE)\nLevel:         Warning\nHost:          web01.prod.example.org\nDescription:\nA kernel module was inserted via init_module()/finit_module() — legitimate for\nhardware/driver support, but also a classic rootkit persistence technique, so\nunexpected modules on a server are worth immediate review.\ntype=KERN_MODULE msg=audit(1732208000.500:50800): name=\"xt_nat\"","reference":"Pair with a SYSCALL record (comm/exe/pid) to see which process loaded it.","how_to_collect":"Kernel Module","sample_type":"illustrative","mitre_techniques":"T1547.006; T1014","priority_signal":"Yes","nist_800_53_au":"AU-2, AU-3, AU-12","field_schema":{"header":{"log_name":"string","source":"string","event_id":"integer","level":"enum","host":"string","description":"string"},"record":{"name":"string"}}},{"event_id":"1305","log":"audit/SYSCALL","source":"auditctl","category":"Policy Change","subcategory":"Audit Configuration","description":"An audit rule was added or removed","sample":"Log Name:      audit/SYSCALL\nSource:        auditctl\nEvent ID:      1305 (CONFIG_CHANGE)\nLevel:         Notice\nHost:          web01.prod.example.org\nDescription:\nThe running audit rule set was changed — a watch, syscall rule, or filter was\nadded or removed.\ntype=CONFIG_CHANGE msg=audit(1732208200.600:50820): auid=1000 ses=12\nsubj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023\nop=add_rule key=\"identity\" list=4 res=1","reference":"","how_to_collect":"Audit Configuration","sample_type":"illustrative","mitre_techniques":"T1562.001","priority_signal":"","nist_800_53_au":"AU-2, AU-9, AU-12","field_schema":{"header":{"log_name":"string","source":"string","event_id":"integer","level":"enum","host":"string","description":"string"},"subject":{"auid":"integer","ses":"integer"},"record":{"op":"string","key":"string","list":"integer","res":"enum"}}},{"event_id":"1305","log":"audit/SYSCALL","source":"auditctl","category":"Policy Change","subcategory":"Audit Configuration","description":"Auditing was disabled at the kernel level (auditctl -e 0)","sample":"Log Name:      audit/SYSCALL\nSource:        auditctl\nEvent ID:      1305 (CONFIG_CHANGE)\nLevel:         Critical\nHost:          web01.prod.example.org\nDescription:\nThe kernel audit subsystem itself was disabled — the direct Linux analogue of\nWindows Event ID 1102 \"The audit log was cleared\". After this point nothing is\nbeing recorded until it's re-enabled; forward this event off-box immediately.\ntype=CONFIG_CHANGE msg=audit(1732208300.700:50830): auid=0 ses=99\nsubj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023\nop=set audit_enabled=0 old=1 auid=0 ses=99 res=1","reference":"If this wasn't an authorized maintenance window, treat it as an active incident.","how_to_collect":"Audit Configuration","sample_type":"illustrative","mitre_techniques":"T1562.001","priority_signal":"Yes","nist_800_53_au":"AU-2, AU-9, AU-12","field_schema":{"header":{"log_name":"string","source":"string","event_id":"integer","level":"enum","host":"string","description":"string"},"subject":{"auid":"integer","ses":"integer"},"record":{"op":"string","audit_enabled":"enum","old":"enum","res":"enum"}}},{"event_id":"1127","log":"audit/USER","source":"kernel (init)","category":"System","subcategory":"Boot/Shutdown","description":"The system booted","sample":"Log Name:      audit/USER\nSource:        kernel (init)\nEvent ID:      1127 (SYSTEM_BOOT)\nLevel:         Information\nHost:          web01.prod.example.org\nDescription:\nRecorded once auditd is up during early boot, confirming when the audit trail for\nthis boot cycle began.\ntype=SYSTEM_BOOT msg=audit(1732190000.000:1): pid=1 uid=0 auid=4294967295\nsubj=kernel msg='comm=\"systemd\" res=success'","reference":"","how_to_collect":"Boot/Shutdown","sample_type":"illustrative","mitre_techniques":"","priority_signal":"","nist_800_53_au":"AU-2, AU-8","field_schema":{"header":{"log_name":"string","source":"string","event_id":"integer","level":"enum","host":"string","description":"string"},"process":{"pid":"integer"},"subject":{"uid":"integer","auid":"integer"},"message":{"comm":"string","res":"enum"}}},{"event_id":"1128","log":"audit/USER","source":"kernel (init)","category":"System","subcategory":"Boot/Shutdown","description":"The system is shutting down","sample":"Log Name:      audit/USER\nSource:        kernel (init)\nEvent ID:      1128 (SYSTEM_SHUTDOWN)\nLevel:         Information\nHost:          web01.prod.example.org\nDescription:\nRecorded as systemd tears the system down — the last audit record before the\ntrail picks back up at the next SYSTEM_BOOT.\ntype=SYSTEM_SHUTDOWN msg=audit(1732290000.000:99999): pid=1 uid=0 auid=4294967295\nsubj=kernel msg='comm=\"systemd-shutdow\" res=success'","reference":"","how_to_collect":"Boot/Shutdown","sample_type":"illustrative","mitre_techniques":"","priority_signal":"","nist_800_53_au":"AU-2, AU-8","field_schema":{"header":{"log_name":"string","source":"string","event_id":"integer","level":"enum","host":"string","description":"string"},"process":{"pid":"integer"},"subject":{"uid":"integer","auid":"integer"},"message":{"comm":"string","res":"enum"}}},{"event_id":"1200","log":"audit/DAEMON","source":"auditd","category":"System","subcategory":"Audit Daemon","description":"The audit daemon started","sample":"Log Name:      audit/DAEMON\nSource:        auditd\nEvent ID:      1200 (DAEMON_START)\nLevel:         Information\nHost:          web01.prod.example.org\nDescription:\nauditd itself came up and began writing records to /var/log/audit/audit.log.\ntype=DAEMON_START msg=audit(1732190000.100:2): op=start ver=3.1.2\nformat=enriched kernel=6.8.0-generic auid=4294967295 pid=612 subj=auditd res=success","reference":"","how_to_collect":"Audit Daemon","sample_type":"illustrative","mitre_techniques":"","priority_signal":"","nist_800_53_au":"AU-2, AU-9","field_schema":{"header":{"log_name":"string","source":"string","event_id":"integer","level":"enum","host":"string","description":"string"},"process":{"pid":"integer"},"record":{"op":"string","ver":"string","format":"enum","kernel":"string","res":"enum"}}},{"event_id":"1201","log":"audit/DAEMON","source":"auditd","category":"System","subcategory":"Audit Daemon","description":"The audit daemon stopped","sample":"Log Name:      audit/DAEMON\nSource:        auditd\nEvent ID:      1201 (DAEMON_END)\nLevel:         Warning\nHost:          web01.prod.example.org\nDescription:\nauditd exited — either a clean shutdown/restart, or, if unexpected, a sign the\naudit trail may have gaps. The Linux analogue of the Windows \"Event log service\nwas stopped\" condition.\ntype=DAEMON_END msg=audit(1732208900.200:50900): op=terminate auid=0 pid=612\nsubj=auditd res=success","reference":"Cross-check against a planned maintenance window before treating this as benign.","how_to_collect":"Audit Daemon","sample_type":"illustrative","mitre_techniques":"T1070.002","priority_signal":"Yes","nist_800_53_au":"AU-2, AU-9","field_schema":{"header":{"log_name":"string","source":"string","event_id":"integer","level":"enum","host":"string","description":"string"},"process":{"pid":"integer"},"subject":{"auid":"integer"},"record":{"op":"string","res":"enum"}}},{"event_id":"1202","log":"audit/DAEMON","source":"auditd","category":"System","subcategory":"Audit Daemon","description":"The audit daemon aborted startup due to a configuration error","sample":"Log Name:      audit/DAEMON\nSource:        auditd\nEvent ID:      1202 (DAEMON_ABORT)\nLevel:         Error\nHost:          web01.prod.example.org\nDescription:\nauditd failed to start because its configuration (auditd.conf or a rules file)\ncould not be parsed — the host is running with no active audit trail until fixed.\ntype=DAEMON_ABORT msg=audit(1732190005.000:3): auditd error halt=1 reason=RULE_LOAD\nerror_count=1 subj=auditd","reference":"Check `journalctl -u auditd` and validate rules with `auditctl -R <file>` before restarting.","how_to_collect":"Audit Daemon","sample_type":"illustrative","mitre_techniques":"","priority_signal":"Yes","nist_800_53_au":"AU-2, AU-9","field_schema":{"header":{"log_name":"string","source":"string","event_id":"integer","level":"enum","host":"string","description":"string"},"record":{"halt":"enum","reason":"string","error_count":"integer"}}},{"event_id":"1203","log":"audit/DAEMON","source":"auditd","category":"System","subcategory":"Audit Daemon","description":"The audit daemon reloaded its configuration","sample":"Log Name:      audit/DAEMON\nSource:        auditd\nEvent ID:      1203 (DAEMON_CONFIG)\nLevel:         Information\nHost:          web01.prod.example.org\nDescription:\nauditd re-read auditd.conf (e.g. after `service auditd reload` or a SIGHUP).\ntype=DAEMON_CONFIG msg=audit(1732209000.300:50950): op=reload-config auid=0\nsubj=auditd res=success","reference":"","how_to_collect":"Audit Daemon","sample_type":"illustrative","mitre_techniques":"","priority_signal":"","nist_800_53_au":"AU-2, AU-9","field_schema":{"header":{"log_name":"string","source":"string","event_id":"integer","level":"enum","host":"string","description":"string"},"subject":{"auid":"integer"},"record":{"op":"string","res":"enum"}}},{"event_id":"1400","log":"audit/MAC","source":"kernel (SELinux)","category":"Mandatory Access Control","subcategory":"SELinux AVC","description":"SELinux denied an operation (AVC denial)","sample":"Log Name:      audit/MAC\nSource:        kernel (SELinux)\nEvent ID:      1400 (AVC)\nLevel:         Warning\nHost:          web01.prod.example.org\nDescription:\nA process was blocked from performing an operation its type enforcement policy\ndoesn't allow. Investigate whether this reflects a real intrusion attempt (a\nprocess operating outside its expected profile) or a legitimate app needing a\npolicy update — `audit2allow -w -a` explains which.\ntype=AVC msg=audit(1732209500.400:51000): avc:  denied  { write } for  pid=22190\ncomm=\"httpd\" name=\"shadow\" dev=\"dm-0\" ino=131099\nscontext=system_u:system_r:httpd_t:s0\ntcontext=system_u:object_r:shadow_t:s0 tclass=file permissive=0","reference":"AVC is also the audit type AppArmor denials use — see the AppArmor AVC entry below.","how_to_collect":"SELinux AVC","sample_type":"illustrative","mitre_techniques":"T1611","priority_signal":"Yes","nist_800_53_au":"AU-2, AU-3, AU-12","field_schema":{"header":{"log_name":"string","source":"string","event_id":"integer","level":"enum","host":"string","description":"string"},"process":{"pid":"integer","comm":"string"},"record":{"name":"string","dev":"string","ino":"integer","scontext":"string","tcontext":"string","tclass":"string","permissive":"enum"}}},{"event_id":"1400","log":"audit/MAC","source":"kernel (AppArmor)","category":"Mandatory Access Control","subcategory":"AppArmor AVC","description":"AppArmor denied an operation","sample":"Log Name:      audit/MAC\nSource:        kernel (AppArmor)\nEvent ID:      1400 (AVC)\nLevel:         Warning\nHost:          bastion01.prod.example.org\nDescription:\nAppArmor blocked an operation outside a confined process's profile. AppArmor\nreuses the same AUDIT_AVC (1400) message type as SELinux — the two are told apart\nby the message content (apparmor=\"...\" vs avc: denied), not the type code.\ntype=AVC msg=audit(1732209600.500:51010): apparmor=\"DENIED\" operation=\"open\"\nprofile=\"/usr/sbin/nginx\" name=\"/etc/shadow\" pid=22301 comm=\"nginx\"\nrequested_mask=\"r\" denied_mask=\"r\" fsuid=33 ouid=0","reference":"aa-status shows loaded profiles and their mode; aa-logprof turns logged denials into profile updates.","how_to_collect":"AppArmor AVC","sample_type":"illustrative","mitre_techniques":"T1611","priority_signal":"Yes","nist_800_53_au":"AU-2, AU-3, AU-12","field_schema":{"header":{"log_name":"string","source":"string","event_id":"integer","level":"enum","host":"string","description":"string"},"process":{"pid":"integer","comm":"string"},"record":{"operation":"string","profile":"path","name":"path","requested_mask":"string","denied_mask":"string","fsuid":"integer","ouid":"integer"}}},{"event_id":"1403","log":"audit/MAC","source":"semodule","category":"Mandatory Access Control","subcategory":"MAC Policy","description":"The SELinux policy was (re)loaded","sample":"Log Name:      audit/MAC\nSource:        semodule\nEvent ID:      1403 (MAC_POLICY_LOAD)\nLevel:         Notice\nHost:          web01.prod.example.org\nDescription:\nA new or updated SELinux policy was loaded into the kernel, e.g. via `semodule -i`.\ntype=MAC_POLICY_LOAD msg=audit(1732209700.600:51020): policy loaded auid=0\nses=4294967295 subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 res=1","reference":"","how_to_collect":"MAC Policy","sample_type":"illustrative","mitre_techniques":"","priority_signal":"","nist_800_53_au":"AU-2, AU-9","field_schema":{"header":{"log_name":"string","source":"string","event_id":"integer","level":"enum","host":"string","description":"string"},"subject":{"auid":"integer","ses":"integer","subj":"string"},"record":{"res":"enum"}}},{"event_id":"1404","log":"audit/MAC","source":"setenforce","category":"Mandatory Access Control","subcategory":"MAC Policy","description":"SELinux enforcement mode was changed (enforcing ↔ permissive)","sample":"Log Name:      audit/MAC\nSource:        setenforce\nEvent ID:      1404 (MAC_STATUS)\nLevel:         Critical\nHost:          web01.prod.example.org\nDescription:\nSELinux was switched from enforcing to permissive (or vice versa) — while\npermissive, SELinux logs what it *would* have denied but blocks nothing, so this\nis a high-value event to alert on outside a maintenance window.\ntype=MAC_STATUS msg=audit(1732209800.700:51030): enforcing=0 old_enforcing=1\nauid=0 ses=12 subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 res=1","reference":"","how_to_collect":"MAC Policy","sample_type":"illustrative","mitre_techniques":"T1562.001","priority_signal":"Yes","nist_800_53_au":"AU-2, AU-9","field_schema":{"header":{"log_name":"string","source":"string","event_id":"integer","level":"enum","host":"string","description":"string"},"subject":{"auid":"integer","ses":"integer","subj":"string"},"record":{"enforcing":"enum","old_enforcing":"enum","res":"enum"}}},{"event_id":"1325","log":"audit/SYSCALL","source":"kernel (netfilter)","category":"Network","subcategory":"Netfilter Configuration","description":"A netfilter (nftables/iptables) table was registered or replaced","sample":"Log Name:      audit/SYSCALL\nSource:        kernel (netfilter)\nEvent ID:      1325 (NETFILTER_CFG)\nLevel:         Notice\nHost:          web01.prod.example.org\nDescription:\nThe active firewall ruleset changed — a full table load/replace, e.g. from\n`nft -f /etc/nftables.conf` or `iptables-restore`.\ntype=NETFILTER_CFG msg=audit(1732209900.800:51040): table=filter family=2\nentries=48 op=register pid=910 subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023\ncomm=\"nft\"","reference":"","how_to_collect":"Netfilter Configuration","sample_type":"illustrative","mitre_techniques":"T1562.004","priority_signal":"Yes","nist_800_53_au":"AU-2, AU-12","field_schema":{"header":{"log_name":"string","source":"string","event_id":"integer","level":"enum","host":"string","description":"string"},"process":{"pid":"integer","comm":"string"},"record":{"table":"string","family":"integer","entries":"integer","op":"enum"}}},{"event_id":"1324","log":"audit/SYSCALL","source":"kernel (netfilter)","category":"Network","subcategory":"Netfilter Packet Log","description":"A packet matched a logging firewall rule","sample":"Log Name:      audit/SYSCALL\nSource:        kernel (netfilter)\nEvent ID:      1324 (NETFILTER_PKT)\nLevel:         Information\nHost:          web01.prod.example.org\nDescription:\nAn individual packet was logged by a rule with the AUDIT (or nft `log`) target —\nthe Linux analogue of Windows Filtering Platform event 5157 \"connection blocked\".\ntype=NETFILTER_PKT msg=audit(1732210000.900:51050): mark=0 saddr=203.0.113.44\ndaddr=10.20.30.5 proto=6 sport=51422 dport=22 action=drop","reference":"","how_to_collect":"Netfilter Packet Log","sample_type":"illustrative","mitre_techniques":"","priority_signal":"","nist_800_53_au":"AU-2, AU-12","field_schema":{"header":{"log_name":"string","source":"string","event_id":"integer","level":"enum","host":"string","description":"string"},"record":{"saddr":"ip","daddr":"ip","proto":"integer","sport":"integer","dport":"integer","action":"enum"}}},{"event_id":"11","log":"ssh/protocol","source":"sshd","category":"Logon/Logoff","subcategory":"SSH Session Disconnect","description":"Client-initiated disconnect after a normal session","sample":"Log Name:      ssh/protocol\nSource:        sshd\nEvent ID:      11 (SSH_DISCONNECT_BY_APPLICATION)\nLevel:         Information\nHost:          bastion01.prod.example.org\nDescription:\nThe client or server cleanly ended the SSH session — by far the most common\ndisconnect reason, logged with the numeric code straight from the SSH wire\nprotocol (RFC 4253).\nReceived disconnect from 203.0.113.44 port 54211:11: disconnected by user","reference":"See the SSH disconnect reason codes reference table for the full set of 15 codes.","how_to_collect":"SSH Session Disconnect","sample_type":"illustrative","mitre_techniques":"","priority_signal":"","nist_800_53_au":"AU-2, AU-3","field_schema":{"header":{"log_name":"string","source":"string","event_id":"integer","level":"enum","host":"string","description":"string"},"record":{"remote_addr":"ip","remote_port":"integer","reason_code":"integer"}}},{"event_id":"2","log":"ssh/protocol","source":"sshd","category":"Logon/Logoff","subcategory":"SSH Session Disconnect","description":"Malformed or out-of-sequence SSH packet received","sample":"Log Name:      ssh/protocol\nSource:        sshd\nEvent ID:      2 (SSH_DISCONNECT_PROTOCOL_ERROR)\nLevel:         Warning\nHost:          bastion01.prod.example.org\nDescription:\nsshd rejected the connection because the peer sent an invalid or out-of-order\nprotocol message — normal for network scanners probing port 22, unusual from a\nreal SSH client.\nReceived disconnect from 198.51.100.23 port 41190:2: Too many authentication failures","reference":"","how_to_collect":"SSH Session Disconnect","sample_type":"illustrative","mitre_techniques":"T1110","priority_signal":"Yes","nist_800_53_au":"AU-2, AU-3","field_schema":{"header":{"log_name":"string","source":"string","event_id":"integer","level":"enum","host":"string","description":"string"},"record":{"remote_addr":"ip","remote_port":"integer","reason_code":"integer"}}},{"event_id":"14","log":"ssh/protocol","source":"sshd","category":"Logon/Logoff","subcategory":"SSH Session Disconnect","description":"All configured authentication methods were exhausted","sample":"Log Name:      ssh/protocol\nSource:        sshd\nEvent ID:      14 (SSH_DISCONNECT_NO_MORE_AUTH_METHODS_AVAILABLE)\nLevel:         Warning\nHost:          bastion01.prod.example.org\nDescription:\nThe client tried every authentication method sshd offered (e.g. publickey, then\npassword) without success — a classic brute-force / credential-stuffing signature\nwhen it recurs rapidly from the same source.\nReceived disconnect from 192.0.2.15 port 33210:14: No more authentication methods\navailable","reference":"Correlate with repeated USER_AUTH failures from the same addr= for the same window.","how_to_collect":"SSH Session Disconnect","sample_type":"illustrative","mitre_techniques":"T1110; T1078","priority_signal":"Yes","nist_800_53_au":"AU-2, AU-3","field_schema":{"header":{"log_name":"string","source":"string","event_id":"integer","level":"enum","host":"string","description":"string"},"record":{"remote_addr":"ip","remote_port":"integer","reason_code":"integer"}}},{"event_id":"10","log":"ssh/protocol","source":"sshd","category":"Logon/Logoff","subcategory":"SSH Session Disconnect","description":"The SSH connection was lost at the network level","sample":"Log Name:      ssh/protocol\nSource:        sshd\nEvent ID:      10 (SSH_DISCONNECT_CONNECTION_LOST)\nLevel:         Information\nHost:          bastion02.prod.example.org\nDescription:\nThe TCP connection dropped without a clean SSH-level close — a flaky network path,\na client that crashed, or a firewall/NAT timeout, rather than either side\nintentionally ending the session.\nConnection reset by 10.20.30.5 port 60112 [preauth]","reference":"","how_to_collect":"SSH Session Disconnect","sample_type":"illustrative","mitre_techniques":"","priority_signal":"","nist_800_53_au":"AU-2, AU-3","field_schema":{"header":{"log_name":"string","source":"string","event_id":"integer","level":"enum","host":"string","description":"string"},"record":{"remote_addr":"ip","remote_port":"integer","reason_code":"integer"}}},{"event_id":"7d4958e8-42da-4a75-8f6c-1cdc7b36dcc5","log":"systemd/journal","source":"systemd","category":"Service Management","subcategory":"Unit Lifecycle","description":"A unit's start job has begun execution","sample":"Log Name:      systemd/journal\nSource:        systemd\nEvent ID:      7d4958e8-42da-4a75-8f6c-1cdc7b36dcc5\nLevel:         Information\nHost:          web01.prod.example.org\nDescription:\nsystemd began starting a unit — the first half of a start job, paired with either\na \"succeeded\" or \"failed\" message once the job completes.\nMESSAGE_ID=7d4958e842da4a758f6c1cdc7b36dcc5\nUNIT=nginx.service\nJOB_ID=482\nJOB_TYPE=start\n_COMM=systemd\n_PID=1","reference":"","how_to_collect":"Unit Lifecycle","sample_type":"illustrative","mitre_techniques":"","priority_signal":"","nist_800_53_au":"AU-2, AU-12","field_schema":{"header":{"log_name":"string","source":"string","event_id":"guid","level":"enum","host":"string","description":"string"},"record":{"unit":"string","job_id":"integer","job_type":"enum"}}},{"event_id":"39f53479-d3a0-45ac-8e11-786248231fbf","log":"systemd/journal","source":"systemd","category":"Service Management","subcategory":"Unit Lifecycle","description":"A unit's start job has finished successfully","sample":"Log Name:      systemd/journal\nSource:        systemd\nEvent ID:      39f53479-d3a0-45ac-8e11-786248231fbf\nLevel:         Information\nHost:          web01.prod.example.org\nDescription:\nThe unit reached the \"active\" state cleanly.\nMESSAGE_ID=39f53479d3a045ac8e11786248231fbf\nUNIT=nginx.service\nJOB_ID=482\nJOB_TYPE=start\nJOB_RESULT=done\n_COMM=systemd\n_PID=1","reference":"","how_to_collect":"Unit Lifecycle","sample_type":"illustrative","mitre_techniques":"","priority_signal":"","nist_800_53_au":"AU-2, AU-12","field_schema":{"header":{"log_name":"string","source":"string","event_id":"guid","level":"enum","host":"string","description":"string"},"record":{"unit":"string","job_id":"integer","job_type":"enum","job_result":"enum"}}},{"event_id":"be02cf68-55d2-428b-a40d-f7e9d022f03d","log":"systemd/journal","source":"systemd","category":"Service Management","subcategory":"Unit Failure","description":"A unit's start job has failed","sample":"Log Name:      systemd/journal\nSource:        systemd\nEvent ID:      be02cf68-55d2-428b-a40d-f7e9d022f03d\nLevel:         Error\nHost:          db01.prod.example.org\nDescription:\nA unit failed to reach the active state — the flagship \"service failed to start\"\nevent, worth alerting on for anything security- or availability-critical\n(sshd, auditd, the firewall service, etc.).\nMESSAGE_ID=be02cf6855d2428ba40df7e9d022f03d\nUNIT=postgresql.service\nJOB_ID=610\nJOB_TYPE=start\nJOB_RESULT=failed\n_COMM=systemd\n_PID=1","reference":"`systemctl status <unit>` and `journalctl -u <unit>` for the underlying failure reason.","how_to_collect":"Unit Failure","sample_type":"illustrative","mitre_techniques":"","priority_signal":"Yes","nist_800_53_au":"AU-2, AU-12","field_schema":{"header":{"log_name":"string","source":"string","event_id":"guid","level":"enum","host":"string","description":"string"},"record":{"unit":"string","job_id":"integer","job_type":"enum","job_result":"enum"}}},{"event_id":"de5b426a-63be-47a7-b6ac-3eaac82e2f6f","log":"systemd/journal","source":"systemd","category":"Service Management","subcategory":"Unit Lifecycle","description":"A unit's stop job has begun execution","sample":"Log Name:      systemd/journal\nSource:        systemd\nEvent ID:      de5b426a-63be-47a7-b6ac-3eaac82e2f6f\nLevel:         Information\nHost:          web01.prod.example.org\nDescription:\nsystemd began stopping a unit, e.g. from `systemctl stop`, a dependency change,\nor a shutdown in progress.\nMESSAGE_ID=de5b426a63be47a7b6ac3eaac82e2f6f\nUNIT=nginx.service\nJOB_ID=483\nJOB_TYPE=stop\n_COMM=systemd\n_PID=1","reference":"","how_to_collect":"Unit Lifecycle","sample_type":"illustrative","mitre_techniques":"","priority_signal":"","nist_800_53_au":"AU-2, AU-12","field_schema":{"header":{"log_name":"string","source":"string","event_id":"guid","level":"enum","host":"string","description":"string"},"record":{"unit":"string","job_id":"integer","job_type":"enum"}}},{"event_id":"9d1aaa27-d601-40bd-9636-5438aad20286","log":"systemd/journal","source":"systemd","category":"Service Management","subcategory":"Unit Lifecycle","description":"A unit's stop job has finished","sample":"Log Name:      systemd/journal\nSource:        systemd\nEvent ID:      9d1aaa27-d601-40bd-9636-5438aad20286\nLevel:         Information\nHost:          web01.prod.example.org\nDescription:\nThe unit reached the \"inactive\" (or \"failed\") state after being stopped.\nMESSAGE_ID=9d1aaa27d60140bd96365438aad20286\nUNIT=nginx.service\nJOB_ID=483\nJOB_TYPE=stop\nJOB_RESULT=done\n_COMM=systemd\n_PID=1","reference":"","how_to_collect":"Unit Lifecycle","sample_type":"illustrative","mitre_techniques":"","priority_signal":"","nist_800_53_au":"AU-2, AU-12","field_schema":{"header":{"log_name":"string","source":"string","event_id":"guid","level":"enum","host":"string","description":"string"},"record":{"unit":"string","job_id":"integer","job_type":"enum","job_result":"enum"}}},{"event_id":"d9b373ed-55a6-4feb-8242-e02dbe79a49c","log":"systemd/journal","source":"systemd","category":"Service Management","subcategory":"Unit Failure","description":"A unit has entered the failed state","sample":"Log Name:      systemd/journal\nSource:        systemd\nEvent ID:      d9b373ed-55a6-4feb-8242-e02dbe79a49c\nLevel:         Error\nHost:          db01.prod.example.org\nDescription:\nA running unit exited unexpectedly (non-zero exit code, a crash, or a failed\nhealth check) rather than being asked to stop — distinct from a start job simply\nnever succeeding.\nMESSAGE_ID=d9b373ed55a64feb8242e02dbe79a49c\nUNIT=postgresql.service\n_COMM=systemd\n_PID=1","reference":"","how_to_collect":"Unit Failure","sample_type":"illustrative","mitre_techniques":"","priority_signal":"Yes","nist_800_53_au":"AU-2, AU-12","field_schema":{"header":{"log_name":"string","source":"string","event_id":"guid","level":"enum","host":"string","description":"string"},"record":{"unit":"string"}}},{"event_id":"fe6faa94-e777-4663-a0da-52717891d8ef","log":"systemd/journal","source":"systemd","category":"Service Management","subcategory":"Resource Protection","description":"A process was killed by the OOM killer","sample":"Log Name:      systemd/journal\nSource:        systemd\nEvent ID:      fe6faa94-e777-4663-a0da-52717891d8ef\nLevel:         Warning\nHost:          db01.prod.example.org\nDescription:\nA process belonging to a unit was killed under memory pressure — by the classic\nin-kernel OOM killer or by systemd-oomd — and systemd correlated the kill back to\nthe owning unit for this journal message.\nMESSAGE_ID=fe6faa94e7774663a0da52717891d8ef\nUNIT=postgresql.service\n_COMM=systemd\n_PID=1","reference":"Follow up with `dmesg -T | grep -i 'killed process'` for the memory numbers at the time of the kill.","how_to_collect":"Resource Protection","sample_type":"illustrative","mitre_techniques":"","priority_signal":"","nist_800_53_au":"AU-2","field_schema":{"header":{"log_name":"string","source":"string","event_id":"guid","level":"enum","host":"string","description":"string"},"record":{"unit":"string"}}},{"event_id":"b07a249c-d024-414a-82dd-00cd181378ff","log":"systemd/journal","source":"systemd","category":"System","subcategory":"Boot/Shutdown","description":"System start-up is now complete","sample":"Log Name:      systemd/journal\nSource:        systemd\nEvent ID:      b07a249c-d024-414a-82dd-00cd181378ff\nLevel:         Information\nHost:          web01.prod.example.org\nDescription:\nsystemd finished bringing the system to its target run state — the last \"boot\"\nmilestone, useful for measuring boot time and confirming a clean start.\nMESSAGE_ID=b07a249cd024414a82dd00cd181378ff\n_COMM=systemd\n_PID=1","reference":"","how_to_collect":"Boot/Shutdown","sample_type":"illustrative","mitre_techniques":"","priority_signal":"","nist_800_53_au":"AU-2, AU-8","field_schema":{"header":{"log_name":"string","source":"string","event_id":"guid","level":"enum","host":"string","description":"string"},"record":{}}},{"event_id":"98268866-d1d5-4a49-9c4e-98921d93bc40","log":"systemd/journal","source":"systemd","category":"System","subcategory":"Boot/Shutdown","description":"System shutdown has been initiated","sample":"Log Name:      systemd/journal\nSource:        systemd\nEvent ID:      98268866-d1d5-4a49-9c4e-98921d93bc40\nLevel:         Notice\nHost:          web01.prod.example.org\nDescription:\nA shutdown/reboot/halt was requested and systemd began tearing units down.\nMESSAGE_ID=98268866d1d54a499c4e98921d93bc40\n_COMM=systemd\n_PID=1","reference":"","how_to_collect":"Boot/Shutdown","sample_type":"illustrative","mitre_techniques":"","priority_signal":"","nist_800_53_au":"AU-2, AU-8","field_schema":{"header":{"log_name":"string","source":"string","event_id":"guid","level":"enum","host":"string","description":"string"},"record":{}}},{"event_id":"8d45620c-1a43-48db-b174-10da57c60c66","log":"systemd/journal","source":"systemd-logind","category":"Logon/Logoff","subcategory":"Session Management","description":"A new login session was created","sample":"Log Name:      systemd/journal\nSource:        systemd-logind\nEvent ID:      8d45620c-1a43-48db-b174-10da57c60c66\nLevel:         Information\nHost:          web01.prod.example.org\nDescription:\nsystemd-logind registered a new session — for any kind of login (console, SSH,\ngraphical) once the PAM session hook fires.\nMESSAGE_ID=8d45620c1a4348dbb17410da57c60c66\nSESSION_ID=15\nUSER_ID=jsmith\nLEADER=15012\n_COMM=systemd-logind","reference":"loginctl show-session <id> for the full session class/type/state detail.","how_to_collect":"Session Management","sample_type":"illustrative","mitre_techniques":"T1078","priority_signal":"","nist_800_53_au":"AU-2, AU-3, AU-12","field_schema":{"header":{"log_name":"string","source":"string","event_id":"guid","level":"enum","host":"string","description":"string"},"record":{"session_id":"integer","user_id":"principal","leader":"integer"}}},{"event_id":"33549394-24b4-456d-9802-ca8333ed424a","log":"systemd/journal","source":"systemd-logind","category":"Logon/Logoff","subcategory":"Session Management","description":"A login session was terminated","sample":"Log Name:      systemd/journal\nSource:        systemd-logind\nEvent ID:      33549394-24b4-456d-9802-ca8333ed424a\nLevel:         Information\nHost:          web01.prod.example.org\nDescription:\nsystemd-logind cleaned up a session after the owning process exited.\nMESSAGE_ID=3354939424b4456d9802ca8333ed424a\nSESSION_ID=15\nUSER_ID=jsmith\n_COMM=systemd-logind","reference":"","how_to_collect":"Session Management","sample_type":"illustrative","mitre_techniques":"","priority_signal":"","nist_800_53_au":"AU-2, AU-3, AU-12","field_schema":{"header":{"log_name":"string","source":"string","event_id":"guid","level":"enum","host":"string","description":"string"},"record":{"session_id":"integer","user_id":"principal"}}},{"event_id":"c7a78707-9b35-4eaa-a9e7-7b371893cd27","log":"systemd/journal","source":"systemd-timedated","category":"System","subcategory":"Time Change","description":"The system clock was changed","sample":"Log Name:      systemd/journal\nSource:        systemd-timedated\nEvent ID:      c7a78707-9b35-4eaa-a9e7-7b371893cd27\nLevel:         Notice\nHost:          web01.prod.example.org\nDescription:\nThe wall clock stepped — manually (date/timedatectl set-time), or via an NTP step\ncorrection. A meaningful backward jump right after other suspicious activity is a\nclassic log-timeline-obfuscation signal, the Linux analogue of Windows Event ID\n4616 \"The system time was changed\".\nMESSAGE_ID=c7a787079b354eaaa9e77b371893cd27\n_COMM=systemd-timedated","reference":"Pair with an audit watch on /etc/adjtime and /etc/localtime to catch the configuration side too.","how_to_collect":"Time Change","sample_type":"illustrative","mitre_techniques":"","priority_signal":"Yes","nist_800_53_au":"AU-2, AU-8","field_schema":{"header":{"log_name":"string","source":"string","event_id":"guid","level":"enum","host":"string","description":"string"},"record":{}}},{"event_id":"f77379a8-490b-408b-be5f-6940505a777b","log":"systemd/journal","source":"systemd-journald","category":"System","subcategory":"Journal","description":"The journal service started","sample":"Log Name:      systemd/journal\nSource:        systemd-journald\nEvent ID:      f77379a8-490b-408b-be5f-6940505a777b\nLevel:         Information\nHost:          web01.prod.example.org\nDescription:\nsystemd-journald came up and began collecting log data — the Linux analogue of\nthe Windows \"Event log service was started\" condition.\nMESSAGE_ID=f77379a8490b408bbe5f6940505a777b\n_COMM=systemd-journald\n_PID=308","reference":"","how_to_collect":"Journal","sample_type":"illustrative","mitre_techniques":"","priority_signal":"","nist_800_53_au":"AU-2, AU-9","field_schema":{"header":{"log_name":"string","source":"string","event_id":"guid","level":"enum","host":"string","description":"string"},"process":{"pid":"integer"},"record":{}}},{"event_id":"d93fb3c9-c24d-451a-97ce-a615ce59c00b","log":"systemd/journal","source":"systemd-journald","category":"System","subcategory":"Journal","description":"The journal service stopped","sample":"Log Name:      systemd/journal\nSource:        systemd-journald\nEvent ID:      d93fb3c9-c24d-451a-97ce-a615ce59c00b\nLevel:         Warning\nHost:          web01.prod.example.org\nDescription:\nsystemd-journald exited — normal during a controlled shutdown/restart, but if it\nhappens mid-session it means logging has stopped on this host until it restarts.\nMESSAGE_ID=d93fb3c9c24d451a97cea615ce59c00b\n_COMM=systemd-journald\n_PID=308","reference":"","how_to_collect":"Journal","sample_type":"illustrative","mitre_techniques":"T1070.002","priority_signal":"Yes","nist_800_53_au":"AU-2, AU-9","field_schema":{"header":{"log_name":"string","source":"string","event_id":"guid","level":"enum","host":"string","description":"string"},"process":{"pid":"integer"},"record":{}}},{"event_id":"a596d6fe-7bfa-4994-828e-72309e95d61e","log":"systemd/journal","source":"systemd-journald","category":"System","subcategory":"Journal","description":"Log messages from a service were suppressed by rate limiting","sample":"Log Name:      systemd/journal\nSource:        systemd-journald\nEvent ID:      a596d6fe-7bfa-4994-828e-72309e95d61e\nLevel:         Notice\nHost:          web01.prod.example.org\nDescription:\nA unit logged faster than journald's RateLimitIntervalSec=/RateLimitBurst=\nthreshold, so some of its messages were dropped — worth widening the rate limit\n(or setting it to 0) for any unit whose every line matters for audit purposes.\nMESSAGE_ID=a596d6fe7bfa4994828e72309e95d61e\nUNIT=sshd.service\nNUMBER_OF_MESSAGES_SUPPRESSED=214\n_COMM=systemd-journald","reference":"","how_to_collect":"Journal","sample_type":"illustrative","mitre_techniques":"","priority_signal":"","nist_800_53_au":"AU-4, AU-9","field_schema":{"header":{"log_name":"string","source":"string","event_id":"guid","level":"enum","host":"string","description":"string"},"record":{"unit":"string","number_of_messages_suppressed":"integer"}}}],"audit_configuration":[{"subcategory":"Credential Validation","config_path":"/etc/audit/rules.d/audit.rules","steps":"Auditd ships with pam_unix/pam_faillock already wired to the audit subsystem on most distros. To be explicit: -w /etc/pam.d/ -p wa -k pam_config, then reload with augenrules --load.","event_ids":"1100, 1101, 1109","reference_url":"https://man7.org/linux/man-pages/man8/auditd.8.html","nist_800_53_au":"AU-2, AU-3, AU-12"},{"subcategory":"Credential Lifecycle","config_path":"PAM stack (/etc/pam.d/*)","steps":"No extra config needed — CRED_ACQ/CRED_DISP/CRED_REFR are emitted automatically by pam_unix.so whenever a PAM-aware service authenticates a user, as long as the audit subsystem is running (auditd active, or /proc/sys/kernel/audit_enabled=1).","event_ids":"1103, 1104, 1110","reference_url":"","nist_800_53_au":"AU-2, AU-3, AU-12"},{"subcategory":"Logon","config_path":"PAM session hooks (login, sshd, su)","steps":"Automatic once auditd is running: every PAM service that calls pam_open_session() (login, sshd, su, sudo -i, cron with PAM) generates USER_START; direct getty logins additionally generate USER_LOGIN via login(1).","event_ids":"1105, 1112","reference_url":"","nist_800_53_au":"AU-2, AU-3, AU-12"},{"subcategory":"Logoff","config_path":"PAM session hooks","steps":"Automatic — pam_close_session() generates USER_END; login(1)-managed sessions additionally generate USER_LOGOUT on exit.","event_ids":"1106, 1113","reference_url":"","nist_800_53_au":"AU-2, AU-3, AU-12"},{"subcategory":"TTY Tracking","config_path":"/etc/audit/rules.d/audit.rules","steps":"Enabled by default for sudo (pam_unix records the controlling TTY on every PAM session); no rule needed to see USER_TTY records for sudo sessions specifically.","event_ids":"1124","reference_url":"","nist_800_53_au":"AU-3"},{"subcategory":"Command Execution","config_path":"/etc/sudoers (Defaults log_input,log_output or just default sudo logging) + auditd running","steps":"sudo always emits a USER_CMD record via its PAM integration when auditd is active — no /etc/sudoers change required for the audit record itself; add Defaults logfile=/var/log/sudo.log for a parallel plaintext trail.","event_ids":"1123","reference_url":"https://man7.org/linux/man-pages/man5/sudoers.5.html","nist_800_53_au":"AU-2, AU-3, AU-12"},{"subcategory":"Capability Use","config_path":"/etc/audit/rules.d/audit.rules","steps":"auditctl -a always,exit -F arch=b64 -S capset -k cap_change (add -F a0=<uid> to scope to a specific process if needed), then augenrules --load.","event_ids":"1322","reference_url":"","nist_800_53_au":"AU-2, AU-12"},{"subcategory":"User Account","config_path":"/etc/audit/rules.d/audit.rules","steps":"auditctl -w /etc/passwd -p wa -k identity && auditctl -w /etc/shadow -p wa -k identity — watching the account databases catches useradd/userdel/usermod regardless of which tool made the change.","event_ids":"1114, 1115, 1125","reference_url":"https://linux-audit.com/","nist_800_53_au":"AU-2, AU-3, AU-12"},{"subcategory":"Group Management","config_path":"/etc/audit/rules.d/audit.rules","steps":"auditctl -w /etc/group -p wa -k identity && auditctl -w /etc/gshadow -p wa -k identity.","event_ids":"1116, 1117, 1132","reference_url":"","nist_800_53_au":"AU-2, AU-3, AU-12"},{"subcategory":"Process Execution","config_path":"/etc/audit/rules.d/audit.rules","steps":"auditctl -a always,exit -F arch=b64 -S execve -k exec (repeat with arch=b32 on mixed 32/64-bit systems); each matching execve produces a linked SYSCALL+EXECVE+CWD+PROCTITLE+EOE record group.","event_ids":"1300, 1320","reference_url":"https://linux-audit.com/audit-log-file-locations-and-how-to-configure-rules/","nist_800_53_au":"AU-2, AU-3, AU-12"},{"subcategory":"Process Arguments","config_path":"same rule as Process Execution","steps":"Automatically produced alongside SYSCALL whenever an execve rule matches — no separate rule needed.","event_ids":"1309","reference_url":"","nist_800_53_au":"AU-3"},{"subcategory":"Process Command Line","config_path":"same rule as Process Execution","steps":"Automatically produced alongside SYSCALL/EXECVE — PROCTITLE captures /proc/pid/cmdline at exec time.","event_ids":"1327","reference_url":"","nist_800_53_au":"AU-3"},{"subcategory":"File Access (Watch)","config_path":"/etc/audit/rules.d/audit.rules","steps":"auditctl -w /etc/shadow -p r -k sensitive_read (repeat per sensitive path — /etc/sudoers, SSH host keys, TLS private keys, etc.); p can be any combination of r/w/x/a.","event_ids":"1302","reference_url":"https://man7.org/linux/man-pages/man8/auditctl.8.html","nist_800_53_au":"AU-2, AU-3, AU-12"},{"subcategory":"Audit Configuration","config_path":"/etc/audit/rules.d/audit.rules + auditctl","steps":"Watch the rules themselves so tampering is visible: auditctl -w /etc/audit/ -p wa -k audit_config. The -e flag itself (enable/disable auditing) is always logged as CONFIG_CHANGE regardless of rules, as long as the kernel audit subsystem is compiled in.","event_ids":"1305","reference_url":"","nist_800_53_au":"AU-2, AU-9, AU-12"},{"subcategory":"Kernel Module","config_path":"/etc/audit/rules.d/audit.rules","steps":"auditctl -a always,exit -F arch=b64 -S init_module,finit_module,delete_module -k module_load.","event_ids":"1330","reference_url":"","nist_800_53_au":"AU-2, AU-12"},{"subcategory":"Boot/Shutdown","config_path":"PAM/init (automatic)","steps":"SYSTEM_BOOT/SYSTEM_SHUTDOWN are emitted automatically by the init system (systemd or sysvinit) via the audit netlink socket whenever auditd is running at boot.","event_ids":"1127, 1128","reference_url":"","nist_800_53_au":"AU-2, AU-8"},{"subcategory":"Audit Daemon","config_path":"systemctl status auditd (automatic)","steps":"DAEMON_START/DAEMON_END/DAEMON_ABORT/DAEMON_CONFIG are self-reported by auditd — no configuration needed, but forward them off-box (e.g. audisp-remote) so a local DAEMON_END from a compromised host can't just be deleted along with the rest of the log.","event_ids":"1200, 1201, 1202, 1203","reference_url":"https://man7.org/linux/man-pages/man8/auditd.8.html","nist_800_53_au":"AU-2, AU-9"},{"subcategory":"SELinux AVC","config_path":"SELinux enforcing or permissive mode (automatic)","steps":"AVC denials are logged automatically by the kernel whenever SELinux is loaded (getenforce != Disabled) and auditd is running; use audit2allow -w -a to translate a denial into the rule that would have allowed it.","event_ids":"1400","reference_url":"https://man7.org/linux/man-pages/man8/audit2allow.8.html","nist_800_53_au":"AU-2, AU-3, AU-12"},{"subcategory":"AppArmor AVC","config_path":"AppArmor profile in enforce or complain mode (automatic)","steps":"AppArmor DENIED/ALLOWED messages are logged automatically via the kernel audit subsystem once a profile is loaded (aa-status) — no separate audit rule required; use aa-logprof to interactively update a profile from logged denials.","event_ids":"1400","reference_url":"https://gitlab.com/apparmor/apparmor/-/wikis/Logging","nist_800_53_au":"AU-2, AU-3, AU-12"},{"subcategory":"MAC Policy","config_path":"SELinux (automatic)","steps":"MAC_POLICY_LOAD fires whenever `semodule` loads/reloads policy; MAC_STATUS fires on setenforce 0/1 or the enforce= boot parameter — both automatic once SELinux is active.","event_ids":"1403, 1404","reference_url":"","nist_800_53_au":"AU-2, AU-9"},{"subcategory":"Netfilter Configuration","config_path":"/etc/audit/rules.d/audit.rules","steps":"auditctl -a always,exit -F arch=b64 -S setsockopt -F a1=NETFILTER_CFG -k fw_config is impractical; in practice NETFILTER_CFG is emitted automatically by the kernel whenever nft/iptables replaces a table, as long as auditd is running — no rule needed.","event_ids":"1325","reference_url":"","nist_800_53_au":"AU-2, AU-12"},{"subcategory":"Netfilter Packet Log","config_path":"nft/iptables rule with the audit target","steps":"nft add rule inet filter input ... log group 0 (with the kernel's nf_log_type=nfnetlink and auditd's audisp plugin), or the simpler iptables -A INPUT ... -j AUDIT --type accept|drop. Plain -j LOG writes to the kernel ring buffer (dmesg) instead of the audit trail.","event_ids":"1324","reference_url":"https://man7.org/linux/man-pages/man8/iptables-extensions.8.html","nist_800_53_au":"AU-2, AU-12"},{"subcategory":"SSH Session Disconnect","config_path":"sshd (automatic)","steps":"No configuration needed — every SSH disconnect logs the numeric reason code from RFC 4253 to the sshd syslog line (facility auth, via /etc/ssh/sshd_config's SyslogFacility/LogLevel, default AUTH/INFO).","event_ids":"2, 10, 11, 14","reference_url":"https://man.openbsd.org/sshd_config","nist_800_53_au":"AU-2, AU-3"},{"subcategory":"Unit Lifecycle","config_path":"systemd (automatic)","steps":"Emitted automatically by systemd (PID 1) to the journal for every unit start/stop job; increase verbosity with systemctl log-level debug if a job's begun/finished pair isn't showing up.","event_ids":"7d4958e8-42da-4a75-8f6c-1cdc7b36dcc5, 39f53479-d3a0-45ac-8e11-786248231fbf, de5b426a-63be-47a7-b6ac-3eaac82e2f6f, 9d1aaa27-d601-40bd-9636-5438aad20286","reference_url":"https://www.freedesktop.org/software/systemd/man/latest/systemd.journal-fields.html","nist_800_53_au":"AU-2, AU-12"},{"subcategory":"Unit Failure","config_path":"systemd (automatic) + OnFailure= for alerting","steps":"Automatic on any failed start job; to get proactive alerts rather than just a log line, add OnFailure=failure-notify@%n.service to the unit and write a small notify service, or poll systemctl --failed.","event_ids":"be02cf68-55d2-428b-a40d-f7e9d022f03d, d9b373ed-55a6-4feb-8242-e02dbe79a49c","reference_url":"","nist_800_53_au":"AU-2, AU-12"},{"subcategory":"Resource Protection","config_path":"systemd-oomd / kernel OOM killer (automatic)","steps":"Automatic whenever a process is killed for memory pressure, whether by the classic in-kernel OOM killer or systemd-oomd (enable/tune via /etc/systemd/oomd.conf); systemd correlates the kill back to the owning unit.","event_ids":"fe6faa94-e777-4663-a0da-52717891d8ef","reference_url":"https://www.freedesktop.org/software/systemd/man/latest/systemd-oomd.service.html","nist_800_53_au":"AU-2"},{"subcategory":"Session Management","config_path":"systemd-logind (automatic)","steps":"Automatic for every login session once systemd-logind is running (default on all systemd distros); session class/type detail is visible with loginctl show-session.","event_ids":"8d45620c-1a43-48db-b174-10da57c60c66, 33549394-24b4-456d-9802-ca8333ed424a","reference_url":"","nist_800_53_au":"AU-2, AU-3, AU-12"},{"subcategory":"Time Change","config_path":"systemd-timesyncd / timedatectl (automatic)","steps":"Automatic whenever the wall clock steps, whether via `date`/`timedatectl set-time`, NTP step correction, or adjtimex(); no configuration needed to log it, but pair with an audit watch on /etc/adjtime and /etc/localtime for the config side.","event_ids":"c7a78707-9b35-4eaa-a9e7-7b371893cd27","reference_url":"","nist_800_53_au":"AU-2, AU-8"},{"subcategory":"Journal","config_path":"systemd-journald (automatic)","steps":"Journal start/stop is self-reported by systemd-journald; rate-limit suppression is controlled by RateLimitIntervalSec=/RateLimitBurst= in /etc/systemd/journald.conf — raise or disable it (set to 0) on hosts where every audit-relevant line must survive a burst.","event_ids":"f77379a8-490b-408b-be5f-6940505a777b, d93fb3c9-c24d-451a-97ce-a615ce59c00b, a596d6fe-7bfa-4994-828e-72309e95d61e","reference_url":"https://www.freedesktop.org/software/systemd/man/latest/journald.conf.html","nist_800_53_au":"AU-2, AU-4, AU-9"}],"audit_record_types":[{"code":"1000","name":"GET","description":"Get audit status (auditctl -s)","range":"Command/Control"},{"code":"1001","name":"SET","description":"Set audit status/rate limits","range":"Command/Control"},{"code":"1011","name":"ADD_RULE","description":"Audit rule added (kernel ack)","range":"Command/Control"},{"code":"1012","name":"DEL_RULE","description":"Audit rule deleted (kernel ack)","range":"Command/Control"},{"code":"1013","name":"LIST_RULES","description":"Audit rule list response","range":"Command/Control"},{"code":"1200","name":"DAEMON_START","description":"Auditd started","range":"Daemon"},{"code":"1201","name":"DAEMON_END","description":"Auditd stopped","range":"Daemon"},{"code":"1202","name":"DAEMON_ABORT","description":"Auditd aborted startup (config error)","range":"Daemon"},{"code":"1203","name":"DAEMON_CONFIG","description":"Auditd config was reloaded","range":"Daemon"},{"code":"1100","name":"USER_AUTH","description":"PAM authentication attempt","range":"User"},{"code":"1101","name":"USER_ACCT","description":"PAM account validation (expiry/lockout checks)","range":"User"},{"code":"1102","name":"USER_MGMT","description":"User management operation via a privileged helper","range":"User"},{"code":"1103","name":"CRED_ACQ","description":"PAM credentials acquired","range":"User"},{"code":"1104","name":"CRED_DISP","description":"PAM credentials disposed","range":"User"},{"code":"1105","name":"USER_START","description":"PAM session opened","range":"User"},{"code":"1106","name":"USER_END","description":"PAM session closed","range":"User"},{"code":"1107","name":"USER_AVC","description":"Userspace MAC (AVC-style) message from a non-kernel enforcer","range":"User"},{"code":"1108","name":"USER_CHAUTHTOK","description":"User changed an authentication token (password)","range":"User"},{"code":"1109","name":"USER_ERR","description":"PAM error (bad password, module failure, etc.)","range":"User"},{"code":"1110","name":"CRED_REFR","description":"PAM credentials refreshed","range":"User"},{"code":"1111","name":"USYS_CONFIG","description":"Userspace system configuration change","range":"User"},{"code":"1112","name":"USER_LOGIN","description":"User has logged in","range":"User"},{"code":"1113","name":"USER_LOGOUT","description":"User has logged out","range":"User"},{"code":"1114","name":"ADD_USER","description":"User account created","range":"User"},{"code":"1115","name":"DEL_USER","description":"User account deleted","range":"User"},{"code":"1116","name":"ADD_GROUP","description":"Group created","range":"User"},{"code":"1117","name":"DEL_GROUP","description":"Group deleted","range":"User"},{"code":"1118","name":"DAC_CHECK","description":"Discretionary access control check result","range":"User"},{"code":"1122","name":"USER_SELINUX_ERR","description":"SELinux-related userspace error","range":"User"},{"code":"1123","name":"USER_CMD","description":"Privileged command run (e.g. via sudo)","range":"User"},{"code":"1124","name":"USER_TTY","description":"TTY captured for a user's session","range":"User"},{"code":"1125","name":"CHUSER_ID","description":"A user's UID/GID was changed","range":"User"},{"code":"1126","name":"GRP_AUTH","description":"Group password authentication (newgrp/sg)","range":"User"},{"code":"1127","name":"SYSTEM_BOOT","description":"System boot","range":"User"},{"code":"1128","name":"SYSTEM_SHUTDOWN","description":"System shutdown","range":"User"},{"code":"1129","name":"SYSTEM_RUNLEVEL","description":"Runlevel/target change","range":"User"},{"code":"1130","name":"SERVICE_START","description":"System service started","range":"User"},{"code":"1131","name":"SERVICE_STOP","description":"System service stopped","range":"User"},{"code":"1132","name":"GRP_MGMT","description":"Group attribute or membership changed","range":"User"},{"code":"1133","name":"GRP_CHAUTHTOK","description":"Group password changed","range":"User"},{"code":"1134","name":"MAC_CHECK","description":"Mandatory access control check result","range":"User"},{"code":"1300","name":"SYSCALL","description":"System call audited","range":"Syscall"},{"code":"1302","name":"PATH","description":"Filesystem path touched by an audited syscall","range":"Syscall"},{"code":"1303","name":"IPC","description":"IPC object accessed","range":"Syscall"},{"code":"1305","name":"CONFIG_CHANGE","description":"Audit configuration/rule change","range":"Syscall"},{"code":"1307","name":"CWD","description":"Current working directory of an audited process","range":"Syscall"},{"code":"1309","name":"EXECVE","description":"execve() argument list","range":"Syscall"},{"code":"1316","name":"KERNEL_OTHER","description":"Miscellaneous kernel-generated audit message","range":"Syscall"},{"code":"1318","name":"OBJ_PID","description":"Target process info for a signal/ptrace-style operation","range":"Syscall"},{"code":"1319","name":"TTY","description":"TTY input audited (requires -a task,always with tty)","range":"Syscall"},{"code":"1320","name":"EOE","description":"End of a multi-record audit event","range":"Syscall"},{"code":"1321","name":"BPRM_FCAPS","description":"File capabilities evaluated during exec","range":"Syscall"},{"code":"1322","name":"CAPSET","description":"Process capability set applied","range":"Syscall"},{"code":"1323","name":"MMAP","description":"Memory-mapped file recorded for an audited syscall","range":"Syscall"},{"code":"1324","name":"NETFILTER_PKT","description":"Packet logged by a netfilter/nftables rule","range":"Syscall"},{"code":"1325","name":"NETFILTER_CFG","description":"Netfilter table registered/replaced","range":"Syscall"},{"code":"1326","name":"SECCOMP","description":"Seccomp filter action against a syscall","range":"Syscall"},{"code":"1327","name":"PROCTITLE","description":"Full command line of an audited process","range":"Syscall"},{"code":"1330","name":"KERN_MODULE","description":"Kernel module loaded","range":"Syscall"},{"code":"1400","name":"AVC","description":"Access Vector Cache denial/grant (SELinux and AppArmor both use this type)","range":"MAC"},{"code":"1401","name":"SELINUX_ERR","description":"Internal SELinux error","range":"MAC"},{"code":"1403","name":"MAC_POLICY_LOAD","description":"SELinux policy loaded","range":"MAC"},{"code":"1404","name":"MAC_STATUS","description":"SELinux enforcing/permissive mode changed","range":"MAC"},{"code":"1405","name":"MAC_CONFIG_CHANGE","description":"SELinux boolean or config changed","range":"MAC"}],"pam_result_codes":[{"code":"0","name":"PAM_SUCCESS","description":"Successful function return"},{"code":"6","name":"PAM_PERM_DENIED","description":"Permission denied"},{"code":"7","name":"PAM_AUTH_ERR","description":"Authentication failure (wrong password)"},{"code":"8","name":"PAM_CRED_INSUFFICIENT","description":"Caller does not have credentials to authenticate the user"},{"code":"9","name":"PAM_AUTHINFO_UNAVAIL","description":"Authentication service could not retrieve authentication information (e.g. LDAP/network down)"},{"code":"10","name":"PAM_USER_UNKNOWN","description":"User not known to the underlying authentication module"},{"code":"11","name":"PAM_MAXTRIES","description":"Retry limit reached (module-specific, e.g. faillock)"},{"code":"12","name":"PAM_NEW_AUTHTOK_REQD","description":"New authentication token (password) required — the old one has expired"},{"code":"13","name":"PAM_ACCT_EXPIRED","description":"User account has expired"},{"code":"14","name":"PAM_SESSION_ERR","description":"Cannot make/remove an entry for the specified session"},{"code":"15","name":"PAM_CRED_UNAVAIL","description":"Underlying authentication service cannot retrieve user credentials"},{"code":"16","name":"PAM_CRED_EXPIRED","description":"User credentials have expired"},{"code":"17","name":"PAM_CRED_ERR","description":"Failure setting user credentials"},{"code":"20","name":"PAM_AUTHTOK_ERR","description":"Authentication token manipulation error"},{"code":"21","name":"PAM_AUTHTOK_RECOVERY_ERR","description":"Old authentication token could not be recovered"},{"code":"22","name":"PAM_AUTHTOK_LOCK_BUSY","description":"Authentication token lock busy"},{"code":"23","name":"PAM_AUTHTOK_DISABLE_AGING","description":"Authentication token aging disabled"},{"code":"24","name":"PAM_TRY_AGAIN","description":"Preliminary check by password service failed"},{"code":"25","name":"PAM_IGNORE","description":"Ignore underlying account module regardless of whether it succeeded or failed"},{"code":"26","name":"PAM_ABORT","description":"Critical error, module fails, application should abort use of this service"},{"code":"27","name":"PAM_AUTHTOK_EXPIRED","description":"User's authentication token has expired"},{"code":"31","name":"PAM_INCOMPLETE","description":"Module needs the application to call it again to complete authentication"}],"linux_capabilities":[{"code":"0","name":"CAP_CHOWN","description":"Override file/group ownership restrictions"},{"code":"1","name":"CAP_DAC_OVERRIDE","description":"Bypass file read/write/execute permission checks"},{"code":"2","name":"CAP_DAC_READ_SEARCH","description":"Bypass file read and directory read/execute permission checks"},{"code":"3","name":"CAP_FOWNER","description":"Bypass permission checks that normally require matching file owner UID"},{"code":"4","name":"CAP_FSETID","description":"Don't clear set-user/group-ID bits when a file is modified"},{"code":"5","name":"CAP_KILL","description":"Bypass permission checks for sending signals"},{"code":"6","name":"CAP_SETGID","description":"Manipulate process GIDs and set forged GIDs on socket credentials"},{"code":"7","name":"CAP_SETUID","description":"Manipulate process UIDs and set forged UIDs on socket credentials"},{"code":"8","name":"CAP_SETPCAP","description":"Grant/remove capabilities to/from other processes"},{"code":"9","name":"CAP_LINUX_IMMUTABLE","description":"Set the FS_APPEND_FL and FS_IMMUTABLE_FL i-node flags"},{"code":"10","name":"CAP_NET_BIND_SERVICE","description":"Bind a socket to privileged ports (< 1024)"},{"code":"11","name":"CAP_NET_BROADCAST","description":"Make socket broadcasts and listen to multicast"},{"code":"12","name":"CAP_NET_ADMIN","description":"Perform network administration: interfaces, routing tables, firewall rules"},{"code":"13","name":"CAP_NET_RAW","description":"Use RAW and PACKET sockets"},{"code":"14","name":"CAP_IPC_LOCK","description":"Lock memory (mlock/mlockall/mmap/shmctl)"},{"code":"16","name":"CAP_SYS_MODULE","description":"Load and unload kernel modules"},{"code":"17","name":"CAP_SYS_RAWIO","description":"Perform I/O port operations; access /dev/mem, /dev/kmem, raw disk devices"},{"code":"18","name":"CAP_SYS_CHROOT","description":"Use chroot()"},{"code":"19","name":"CAP_SYS_PTRACE","description":"Trace arbitrary processes using ptrace()"},{"code":"21","name":"CAP_SYS_ADMIN","description":"Broad system administration operations (the most powerful, most abused capability)"},{"code":"22","name":"CAP_SYS_BOOT","description":"Reboot the system, or enable/disable reboot via ctrl-alt-del"},{"code":"25","name":"CAP_SYS_TIME","description":"Set the system clock and real-time (hardware) clock"},{"code":"29","name":"CAP_AUDIT_WRITE","description":"Write records to the kernel audit log"},{"code":"30","name":"CAP_AUDIT_CONTROL","description":"Enable/disable auditing, change audit filter rules"},{"code":"31","name":"CAP_SETFCAP","description":"Set file capabilities"},{"code":"34","name":"CAP_SYSLOG","description":"Perform privileged operations on the kernel syslog (dmesg)"},{"code":"37","name":"CAP_AUDIT_READ","description":"Read the audit log via a multicast netlink socket"}],"errno_codes":[{"code":"1","name":"EPERM","description":"Operation not permitted"},{"code":"2","name":"ENOENT","description":"No such file or directory"},{"code":"5","name":"EIO","description":"I/O error"},{"code":"9","name":"EBADF","description":"Bad file descriptor"},{"code":"11","name":"EAGAIN","description":"Resource temporarily unavailable"},{"code":"12","name":"ENOMEM","description":"Out of memory"},{"code":"13","name":"EACCES","description":"Permission denied"},{"code":"16","name":"EBUSY","description":"Device or resource busy"},{"code":"17","name":"EEXIST","description":"File exists"},{"code":"19","name":"ENODEV","description":"No such device"},{"code":"20","name":"ENOTDIR","description":"Not a directory"},{"code":"21","name":"EISDIR","description":"Is a directory"},{"code":"22","name":"EINVAL","description":"Invalid argument"},{"code":"24","name":"EMFILE","description":"Too many open files (per-process limit)"},{"code":"28","name":"ENOSPC","description":"No space left on device"},{"code":"30","name":"EROFS","description":"Read-only file system"},{"code":"32","name":"EPIPE","description":"Broken pipe"},{"code":"36","name":"ENAMETOOLONG","description":"File name too long"},{"code":"38","name":"ENOSYS","description":"Function not implemented (syscall blocked, e.g. by seccomp)"},{"code":"39","name":"ENOTEMPTY","description":"Directory not empty"},{"code":"40","name":"ELOOP","description":"Too many levels of symbolic links"},{"code":"95","name":"EOPNOTSUPP","description":"Operation not supported"},{"code":"98","name":"EADDRINUSE","description":"Address already in use"},{"code":"101","name":"ENETUNREACH","description":"Network is unreachable"},{"code":"104","name":"ECONNRESET","description":"Connection reset by peer"},{"code":"110","name":"ETIMEDOUT","description":"Connection timed out"},{"code":"111","name":"ECONNREFUSED","description":"Connection refused"},{"code":"113","name":"EHOSTUNREACH","description":"No route to host"},{"code":"122","name":"EDQUOT","description":"Disk quota exceeded"},{"code":"125","name":"ECANCELED","description":"Operation canceled"},{"code":"126","name":"ENOKEY","description":"Required key not available"},{"code":"127","name":"EKEYEXPIRED","description":"Key has expired"},{"code":"128","name":"EKEYREVOKED","description":"Key has been revoked"},{"code":"129","name":"EKEYREJECTED","description":"Key was rejected by service"},{"code":"132","name":"ERFKILL","description":"Operation not possible due to RF-kill"}],"ssh_disconnect_codes":[{"code":"1","name":"SSH_DISCONNECT_HOST_NOT_ALLOWED_TO_CONNECT","description":"The remote host is not permitted to connect (e.g. TCP wrappers / firewall at the application layer)"},{"code":"2","name":"SSH_DISCONNECT_PROTOCOL_ERROR","description":"A malformed or out-of-sequence SSH protocol packet was received"},{"code":"3","name":"SSH_DISCONNECT_KEY_EXCHANGE_FAILED","description":"Key exchange failed (no compatible algorithm, or the exchange itself failed)"},{"code":"4","name":"SSH_DISCONNECT_RESERVED","description":"Reserved (also historically used for host authentication failure)"},{"code":"5","name":"SSH_DISCONNECT_MAC_ERROR","description":"Message authentication code verification failed"},{"code":"6","name":"SSH_DISCONNECT_COMPRESSION_ERROR","description":"Compression or decompression failed"},{"code":"7","name":"SSH_DISCONNECT_SERVICE_NOT_AVAILABLE","description":"The requested service is not available"},{"code":"8","name":"SSH_DISCONNECT_PROTOCOL_VERSION_NOT_SUPPORTED","description":"The peer's protocol version is not supported"},{"code":"9","name":"SSH_DISCONNECT_HOST_KEY_NOT_VERIFIABLE","description":"The host key could not be verified"},{"code":"10","name":"SSH_DISCONNECT_CONNECTION_LOST","description":"The connection was lost (network-level failure, not a clean protocol close)"},{"code":"11","name":"SSH_DISCONNECT_BY_APPLICATION","description":"The application (client or server) initiated a normal disconnect"},{"code":"12","name":"SSH_DISCONNECT_TOO_MANY_CONNECTIONS","description":"Too many concurrent connections from this source"},{"code":"13","name":"SSH_DISCONNECT_AUTH_CANCELLED_BY_USER","description":"The user cancelled authentication"},{"code":"14","name":"SSH_DISCONNECT_NO_MORE_AUTH_METHODS_AVAILABLE","description":"All configured authentication methods were exhausted without success"},{"code":"15","name":"SSH_DISCONNECT_ILLEGAL_USER_NAME","description":"The requested username is not permitted by the server"}],"systemd_message_catalog":[{"uuid":"7d4958e8-42da-4a75-8f6c-1cdc7b36dcc5","subject":"Unit start job begun","description":"A start job for a unit has begun execution."},{"uuid":"39f53479-d3a0-45ac-8e11-786248231fbf","subject":"Unit start job succeeded","description":"A start job for a unit has finished successfully."},{"uuid":"be02cf68-55d2-428b-a40d-f7e9d022f03d","subject":"Unit start job failed","description":"A start job for a unit has failed."},{"uuid":"de5b426a-63be-47a7-b6ac-3eaac82e2f6f","subject":"Unit stop job begun","description":"A stop job for a unit has begun execution."},{"uuid":"9d1aaa27-d601-40bd-9636-5438aad20286","subject":"Unit stop job finished","description":"A stop job for a unit has finished."},{"uuid":"d9b373ed-55a6-4feb-8242-e02dbe79a49c","subject":"Unit failed","description":"A unit has entered the failed state."},{"uuid":"fe6faa94-e777-4663-a0da-52717891d8ef","subject":"Process killed by the OOM killer","description":"A process belonging to a unit was killed by the kernel's out-of-memory killer."},{"uuid":"b07a249c-d024-414a-82dd-00cd181378ff","subject":"Startup finished","description":"System start-up is now complete."},{"uuid":"98268866-d1d5-4a49-9c4e-98921d93bc40","subject":"Shutdown initiated","description":"System shutdown has been initiated."},{"uuid":"8d45620c-1a43-48db-b174-10da57c60c66","subject":"Session created","description":"A new login session has been created for a user."},{"uuid":"33549394-24b4-456d-9802-ca8333ed424a","subject":"Session terminated","description":"A login session has been terminated."},{"uuid":"c7a78707-9b35-4eaa-a9e7-7b371893cd27","subject":"Time change","description":"The system clock has been changed, either manually or via time sync."},{"uuid":"f77379a8-490b-408b-be5f-6940505a777b","subject":"Journal started","description":"The systemd-journald service has started and begun collecting log data."},{"uuid":"d93fb3c9-c24d-451a-97ce-a615ce59c00b","subject":"Journal stopped","description":"The systemd-journald service has been stopped."},{"uuid":"a596d6fe-7bfa-4994-828e-72309e95d61e","subject":"Journal messages suppressed","description":"Log messages from a service have been suppressed due to rate limiting."}],"mitre_attack_mapping":[{"technique_id":"T1078","technique":"Valid Accounts","tactics":"defense-evasion;persistence;privilege-escalation;initial-access","category":"Account Logon","subcategory":"Credential Validation","event_id":"1100"},{"technique_id":"T1078","technique":"Valid Accounts","tactics":"defense-evasion;persistence;privilege-escalation;initial-access","category":"Logon/Logoff","subcategory":"Logon","event_id":"1112"},{"technique_id":"T1078","technique":"Valid Accounts","tactics":"defense-evasion;persistence;privilege-escalation;initial-access","category":"Logon/Logoff","subcategory":"SSH Session Disconnect","event_id":"14"},{"technique_id":"T1110","technique":"Brute Force","tactics":"credential-access","category":"Account Logon","subcategory":"Credential Validation","event_id":"1109"},{"technique_id":"T1110","technique":"Brute Force","tactics":"credential-access","category":"Logon/Logoff","subcategory":"SSH Session Disconnect","event_id":"14"},{"technique_id":"T1021.004","technique":"Remote Services: SSH","tactics":"lateral-movement","category":"Logon/Logoff","subcategory":"Logon","event_id":"1105"},{"technique_id":"T1136.001","technique":"Create Account: Local Account","tactics":"persistence","category":"Account Management","subcategory":"User Account","event_id":"1114"},{"technique_id":"T1531","technique":"Account Access Removal","tactics":"impact","category":"Account Management","subcategory":"User Account","event_id":"1115"},{"technique_id":"T1098","technique":"Account Manipulation","tactics":"persistence;privilege-escalation","category":"Account Management","subcategory":"Group Management","event_id":"1132"},{"technique_id":"T1548.003","technique":"Abuse Elevation Control Mechanism: Sudo and Sudo Caching","tactics":"privilege-escalation;defense-evasion","category":"Privilege Use","subcategory":"Command Execution","event_id":"1123"},{"technique_id":"T1548.003","technique":"Abuse Elevation Control Mechanism: Sudo and Sudo Caching","tactics":"privilege-escalation;defense-evasion","category":"Account Management","subcategory":"Group Management","event_id":"1132"},{"technique_id":"T1548","technique":"Abuse Elevation Control Mechanism","tactics":"privilege-escalation;defense-evasion","category":"Privilege Use","subcategory":"Capability Use","event_id":"1322"},{"technique_id":"T1059","technique":"Command and Scripting Interpreter","tactics":"execution","category":"Detailed Tracking","subcategory":"Process Execution","event_id":"1300"},{"technique_id":"T1059","technique":"Command and Scripting Interpreter","tactics":"execution","category":"Detailed Tracking","subcategory":"Process Arguments","event_id":"1309"},{"technique_id":"T1552.001","technique":"Unsecured Credentials: Credentials In Files","tactics":"credential-access","category":"Object Access","subcategory":"File Access (Watch)","event_id":"1302"},{"technique_id":"T1562.001","technique":"Impair Defenses: Disable or Modify Tools","tactics":"defense-evasion","category":"Policy Change","subcategory":"Audit Configuration","event_id":"1305"},{"technique_id":"T1070.002","technique":"Indicator Removal: Clear Linux or Mac System Logs","tactics":"defense-evasion","category":"System","subcategory":"Audit Daemon","event_id":"1201"},{"technique_id":"T1547.006","technique":"Boot or Logon Autostart Execution: Kernel Modules and Extensions","tactics":"persistence;privilege-escalation","category":"Object Access","subcategory":"Kernel Module","event_id":"1330"},{"technique_id":"T1014","technique":"Rootkit","tactics":"defense-evasion","category":"Object Access","subcategory":"Kernel Module","event_id":"1330"},{"technique_id":"T1562.004","technique":"Impair Defenses: Disable or Modify System Firewall","tactics":"defense-evasion","category":"Network","subcategory":"Netfilter Configuration","event_id":"1325"},{"technique_id":"T1611","technique":"Escape to Host","tactics":"privilege-escalation","category":"Mandatory Access Control","subcategory":"SELinux AVC","event_id":"1400"},{"technique_id":"T1611","technique":"Escape to Host","tactics":"privilege-escalation","category":"Mandatory Access Control","subcategory":"AppArmor AVC","event_id":"1400"},{"technique_id":"T1562.001","technique":"Impair Defenses: Disable or Modify Tools","tactics":"defense-evasion","category":"Mandatory Access Control","subcategory":"MAC Policy","event_id":"1404"}]};
+
+const events = DATA.events;
+const configBySubcat = {};
+DATA.audit_configuration.forEach(c => { configBySubcat[c.subcategory] = c; });
+
+// Friendly short labels for known logs; unrecognised logs fall back to their
+// full name.
+const LOG_LABELS = {
+  'audit/USER': 'audit/USER',
+  'audit/DAEMON': 'audit/DAEMON',
+  'audit/SYSCALL': 'audit/SYSCALL',
+  'audit/MAC': 'audit/MAC',
+  'ssh/protocol': 'ssh/protocol',
+  'systemd/journal': 'systemd/journal',
+};
+function slugFor(log) {
+  return log.replace(/[^a-zA-Z0-9]+/g, '-').toLowerCase().replace(/^-+|-+$/g, '');
+}
+function logMeta(log) {
+  return { label: LOG_LABELS[log] || log, var: slugFor(log) };
+}
+
+// Assign each distinct log a hue via the golden angle (137.508deg), stepping
+// around the color wheel in alphabetical order of the log name. This spreads
+// colors evenly regardless of how many logs there are, unlike a plain string
+// hash which tends to cluster - so new logs added to the catalogue in future
+// sessions get a well-separated color automatically, no CSS edits needed.
+const GOLDEN_ANGLE = 137.508;
+function generateLogPalette(logs) {
+  const sorted = [...logs].sort();
+  const light = [], dark = [];
+  sorted.forEach((log, i) => {
+    const slug = slugFor(log);
+    const hue = Math.round((i * GOLDEN_ANGLE) % 360);
+    light.push(`--log-${slug}: hsl(${hue} 55% 32%); --log-${slug}-bg: hsl(${hue} 55% 32% / 0.12);`);
+    dark.push(`--log-${slug}: hsl(${hue} 65% 72%); --log-${slug}-bg: hsl(${hue} 65% 72% / 0.16);`);
+  });
+  const style = document.createElement('style');
+  style.textContent = `:root, :root[data-theme="light"] { ${light.join(' ')} }
+    @media (prefers-color-scheme: dark) { :root { ${dark.join(' ')} } }
+    :root[data-theme="dark"] { ${dark.join(' ')} }`;
+  document.head.appendChild(style);
+}
+
+// ---- priority-signal filter ----
+let priorityOnly = false;
+const priorityFilterBtn = document.getElementById('priority-filter');
+priorityFilterBtn.addEventListener('click', () => {
+  priorityOnly = !priorityOnly;
+  priorityFilterBtn.classList.toggle('on', priorityOnly);
+  syncFilterUI();
+});
+
+// ---- data indexes for the Log / Category comboboxes ----
+const allLogs = [...new Set(events.map(e => e.log))];
+generateLogPalette(allLogs);
+const cats = [...new Set(events.map(e => e.category).filter(Boolean))].sort();
+
+function familyOf(log) {
+  const slashIdx = log.indexOf('/');
+  return slashIdx > -1 ? log.slice(0, slashIdx) : log;
+}
+function shortLabel(log) {
+  const fam = familyOf(log);
+  return log.includes('/') ? log.slice(fam.length + 1) : log;
+}
+
+const logCounts = {};
+const catCounts = {};
+events.forEach(e => {
+  logCounts[e.log] = (logCounts[e.log] || 0) + 1;
+  if (e.category) catCounts[e.category] = (catCounts[e.category] || 0) + 1;
+});
+const familyMap = {};
+allLogs.forEach(log => {
+  const fam = familyOf(log);
+  (familyMap[fam] = familyMap[fam] || []).push({ log, count: logCounts[log] });
+});
+const families = Object.keys(familyMap).sort((a, b) => a.localeCompare(b));
+
+document.getElementById('header-stat').innerHTML = `<b>${events.length.toLocaleString()}</b> events &middot; <b>${allLogs.length}</b> logs &middot; <b>${cats.length}</b> categories`;
+
+// ---- filter state ----
+let selectedLogs = new Set();
+let selectedCats = new Set();
+
+// ---- Log combobox ----
+const logListEl = document.getElementById('log-list');
+function renderLogList(filterText) {
+  const q = (filterText || '').toLowerCase();
+  logListEl.innerHTML = '';
+  const frag = document.createDocumentFragment();
+  families.forEach(fam => {
+    const opts = familyMap[fam].filter(o => !q || o.log.toLowerCase().includes(q) || fam.toLowerCase().includes(q));
+    if (!opts.length) return;
+    opts.sort((a, b) => shortLabel(a.log).localeCompare(shortLabel(b.log)));
+    const famCount = opts.reduce((s, o) => s + o.count, 0);
+    const header = document.createElement('div');
+    header.className = 'combo-group-header';
+    header.innerHTML = `<span>${escapeHtml(fam)}</span><span>${famCount}</span>`;
+    frag.appendChild(header);
+    opts.forEach(o => {
+      const isSingle = familyMap[fam].length === 1;
+      const row = document.createElement('label');
+      row.className = 'combo-option';
+      row.innerHTML = `
+        <input type="checkbox" ${selectedLogs.has(o.log) ? 'checked' : ''}>
+        <span class="opt-label">${escapeHtml(isSingle ? fam : shortLabel(o.log))}</span>
+        <span class="opt-count">${o.count}</span>`;
+      row.querySelector('input').addEventListener('change', ev => {
+        if (ev.target.checked) selectedLogs.add(o.log); else selectedLogs.delete(o.log);
+        syncFilterUI();
+      });
+      frag.appendChild(row);
+    });
+  });
+  logListEl.appendChild(frag);
+  if (!logListEl.children.length) {
+    logListEl.innerHTML = '<div style="padding:16px;text-align:center;color:var(--muted);font-size:0.82rem">No logs match.</div>';
+  }
+}
+
+// ---- Category combobox ----
+const catListEl = document.getElementById('cat-list');
+function renderCatList(filterText) {
+  const q = (filterText || '').toLowerCase();
+  catListEl.innerHTML = '';
+  const frag = document.createDocumentFragment();
+  cats.filter(c => !q || c.toLowerCase().includes(q)).forEach(c => {
+    const row = document.createElement('label');
+    row.className = 'combo-option';
+    row.innerHTML = `
+      <input type="checkbox" ${selectedCats.has(c) ? 'checked' : ''}>
+      <span class="opt-label">${escapeHtml(c)}</span>
+      <span class="opt-count">${catCounts[c] || 0}</span>`;
+    row.querySelector('input').addEventListener('change', ev => {
+      if (ev.target.checked) selectedCats.add(c); else selectedCats.delete(c);
+      syncFilterUI();
+    });
+    frag.appendChild(row);
+  });
+  catListEl.appendChild(frag);
+  if (!catListEl.children.length) {
+    catListEl.innerHTML = '<div style="padding:16px;text-align:center;color:var(--muted);font-size:0.82rem">No categories match.</div>';
+  }
+}
+
+// ---- combobox panel open/close ----
+function togglePanel(panelId, otherPanelId) {
+  const panel = document.getElementById(panelId);
+  document.getElementById(otherPanelId).classList.remove('open');
+  panel.classList.toggle('open');
+}
+document.getElementById('btn-log').addEventListener('click', e => {
+  e.stopPropagation();
+  togglePanel('panel-log', 'panel-cat');
+  if (document.getElementById('panel-log').classList.contains('open')) document.getElementById('log-search').focus();
+});
+document.getElementById('btn-cat').addEventListener('click', e => {
+  e.stopPropagation();
+  togglePanel('panel-cat', 'panel-log');
+  if (document.getElementById('panel-cat').classList.contains('open')) document.getElementById('cat-search').focus();
+});
+document.addEventListener('click', e => {
+  if (!e.target.closest('.combo')) {
+    document.getElementById('panel-log').classList.remove('open');
+    document.getElementById('panel-cat').classList.remove('open');
+  }
+});
+document.getElementById('log-done').addEventListener('click', () => document.getElementById('panel-log').classList.remove('open'));
+document.getElementById('cat-done').addEventListener('click', () => document.getElementById('panel-cat').classList.remove('open'));
+document.getElementById('log-clear').addEventListener('click', () => { selectedLogs.clear(); renderLogList(document.getElementById('log-search').value); syncFilterUI(); });
+document.getElementById('cat-clear').addEventListener('click', () => { selectedCats.clear(); renderCatList(document.getElementById('cat-search').value); syncFilterUI(); });
+document.getElementById('log-search').addEventListener('input', e => renderLogList(e.target.value));
+document.getElementById('cat-search').addEventListener('input', e => renderCatList(e.target.value));
+
+// ---- active filter chips + combo button state ----
+function renderActiveFilters() {
+  const el = document.getElementById('active-filters');
+  const chips = [];
+  selectedLogs.forEach(log => {
+    chips.push(`<span class="af-chip"><span class="af-kind">Log:</span> ${escapeHtml(shortLabel(log))} <button data-kind="log" data-val="${escapeHtml(log)}" title="Remove">&#10005;</button></span>`);
+  });
+  selectedCats.forEach(cat => {
+    chips.push(`<span class="af-chip"><span class="af-kind">Category:</span> ${escapeHtml(cat)} <button data-kind="cat" data-val="${escapeHtml(cat)}" title="Remove">&#10005;</button></span>`);
+  });
+  if (priorityOnly) {
+    chips.push(`<span class="af-chip"><span class="af-kind">Filter:</span> Priority signals only <button data-kind="priority" data-val="1" title="Remove">&#10005;</button></span>`);
+  }
+  if (!chips.length) { el.innerHTML = ''; return; }
+  chips.push(`<button class="af-clear-all" id="clear-all">Clear all</button>`);
+  el.innerHTML = chips.join('');
+  el.querySelectorAll('button[data-kind]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const kind = btn.dataset.kind;
+      if (kind === 'log') selectedLogs.delete(btn.dataset.val);
+      if (kind === 'cat') selectedCats.delete(btn.dataset.val);
+      if (kind === 'priority') { priorityOnly = false; priorityFilterBtn.classList.remove('on'); }
+      syncFilterUI();
+    });
+  });
+  const clearAll = document.getElementById('clear-all');
+  if (clearAll) clearAll.addEventListener('click', () => {
+    selectedLogs.clear(); selectedCats.clear(); priorityOnly = false;
+    priorityFilterBtn.classList.remove('on');
+    syncFilterUI();
+  });
+}
+
+function updateComboButtons() {
+  const logBtn = document.getElementById('btn-log');
+  const logPill = document.getElementById('log-count-pill');
+  if (selectedLogs.size) { logBtn.classList.add('has-selection'); logPill.style.display = 'inline-flex'; logPill.textContent = selectedLogs.size; }
+  else { logBtn.classList.remove('has-selection'); logPill.style.display = 'none'; }
+
+  const catBtn = document.getElementById('btn-cat');
+  const catPill = document.getElementById('cat-count-pill');
+  if (selectedCats.size) { catBtn.classList.add('has-selection'); catPill.style.display = 'inline-flex'; catPill.textContent = selectedCats.size; }
+  else { catBtn.classList.remove('has-selection'); catPill.style.display = 'none'; }
+
+  document.getElementById('log-footer-note').textContent = selectedLogs.size ? `${selectedLogs.size} selected` : 'None selected';
+  document.getElementById('cat-footer-note').textContent = selectedCats.size ? `${selectedCats.size} selected` : 'None selected';
+}
+
+function syncFilterUI() {
+  updateComboButtons();
+  renderActiveFilters();
+  render();
+}
+
+renderLogList('');
+renderCatList('');
+updateComboButtons();
+
+// ---- tabs ----
+document.getElementById('tabs').addEventListener('click', e => {
+  const btn = e.target.closest('button[data-panel]');
+  if (!btn) return;
+  document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('active', b === btn));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + btn.dataset.panel).classList.add('active');
+});
+
+// ---- search + list ----
+const searchEl = document.getElementById('search');
+const listEl = document.getElementById('list');
+const listCountEl = document.getElementById('list-count');
+let selected = null;
+
+function matches(e, q) {
+  if (!q) return true;
+  return (
+    e.event_id.toLowerCase().includes(q) ||
+    (e.description || '').toLowerCase().includes(q) ||
+    (e.category || '').toLowerCase().includes(q) ||
+    (e.subcategory || '').toLowerCase().includes(q) ||
+    (e.source || '').toLowerCase().includes(q) ||
+    (e.log || '').toLowerCase().includes(q) ||
+    (e.mitre_techniques || '').toLowerCase().includes(q) ||
+    (e.nist_800_53_au || '').toLowerCase().includes(q)
+  );
+}
+
+function filtered() {
+  const q = searchEl.value.trim().toLowerCase();
+  return events.filter(e =>
+    (!selectedLogs.size || selectedLogs.has(e.log)) &&
+    (!selectedCats.size || selectedCats.has(e.category)) &&
+    (!priorityOnly || e.priority_signal === 'Yes') &&
+    matches(e, q)
+  );
+}
+
+function escapeHtml(s) {
+  return (s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function jumpToRefSearch(query) {
+  document.querySelector('#tabs button[data-panel="reference"]').click();
+  const input = document.getElementById('ref-global-search');
+  input.value = query;
+  input.dispatchEvent(new Event('input'));
+  setTimeout(() => input.scrollIntoView({ block: 'center' }), 50);
+  return false;
+}
+
+const MITRE_DISPLAY_LIMIT = 10;
+function jumpToMitreTable(query) {
+  return jumpToRefSearch(query);
+}
+function mitreDisplay(raw, eventId) {
+  const techs = raw.split(';').map(t => t.trim()).filter(Boolean);
+  if (techs.length <= MITRE_DISPLAY_LIMIT) return escapeHtml(techs.join('; '));
+  const shown = techs.slice(0, MITRE_DISPLAY_LIMIT).join('; ');
+  const remaining = techs.length - MITRE_DISPLAY_LIMIT;
+  return `${escapeHtml(shown)}; <span style="color:var(--muted)">and ${remaining} more &mdash; see the</span> `
+    + `<a href="#" onclick="return jumpToMitreTable('${escapeHtml(eventId)}')">MITRE ATT&amp;CK reference table</a>`;
+}
+
+function schemaGroupLabel(key) {
+  if (key === 'header') return 'Header';
+  return key.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+}
+function fieldSchemaHtml(schema) {
+  const groupsHtml = Object.keys(schema).filter(k => Object.keys(schema[k] || {}).length || typeof schema[k] !== 'object').map(key => {
+    const val = schema[key];
+    if (typeof val === 'object' && val !== null) {
+      const rows = Object.keys(val).map(fk => `
+        <div class="schema-row"><div class="f-name">${escapeHtml(fk)}</div><div class="f-type">${escapeHtml(val[fk])}</div></div>`).join('');
+      return `<div class="schema-group">
+        <div class="schema-group-header">${escapeHtml(schemaGroupLabel(key))}</div>
+        ${rows}
+      </div>`;
+    }
+    return `<div class="schema-group">
+      <div class="schema-scalar"><div class="f-name">${escapeHtml(key)}</div><div class="f-type">${escapeHtml(val)}</div></div>
+    </div>`;
+  }).join('');
+  return `<div class="schema-tree">${groupsHtml}</div>`;
+}
+
+const SAMPLE_TYPE_LABELS = {
+  illustrative: 'illustrative example',
+  template: 'raw message template (unfilled placeholders)',
+};
+function sampleTypeBadge(sampleType) {
+  const label = SAMPLE_TYPE_LABELS[sampleType];
+  if (!label) return '';
+  return ` <span class="badge" style="color:var(--muted);background:var(--surface-2);font-weight:500;text-transform:none;letter-spacing:0">${label}</span>`;
+}
+
+function render() {
+  const rows = filtered();
+  listCountEl.textContent = rows.length + (rows.length === 1 ? ' match' : ' matches');
+  listEl.innerHTML = '';
+  if (!rows.length) {
+    listEl.innerHTML = '<div class="empty-list">No events match. Try a different ID or keyword, or clear a log/category filter.</div>';
+    return;
+  }
+  const frag = document.createDocumentFragment();
+  rows.forEach(e => {
+    const meta = logMeta(e.log);
+    const row = document.createElement('button');
+    row.className = 'row' + (selected === e ? ' selected' : '');
+    row.innerHTML = `
+      <div class="rid" title="${escapeHtml(e.event_id)}">${escapeHtml(e.event_id)}</div>
+      <div class="rbody">
+        <div class="rdesc">${escapeHtml(e.description || e.subcategory || e.category || '—')}</div>
+        <div class="rmeta">
+          <span class="badge" style="color:var(--log-${meta.var});background:var(--log-${meta.var}-bg)">${escapeHtml(meta.label)}</span>
+          ${e.category ? `<span class="badge" style="color:var(--muted);background:var(--surface-2)">${escapeHtml(e.category)}</span>` : ''}
+          ${e.priority_signal === 'Yes' ? `<span class="badge" style="color:var(--accent);background:color-mix(in srgb, var(--accent) 14%, transparent)" title="Curated high-value security monitoring signal">PRIORITY</span>` : ''}
+        </div>
+      </div>`;
+    row.addEventListener('click', () => { selected = e; renderDetail(e); render(); });
+    frag.appendChild(row);
+  });
+  listEl.appendChild(frag);
+}
+
+function configCard(name) {
+  const c = configBySubcat[name];
+  if (!c) return '';
+  return `<div class="config-card">
+    <h4>${escapeHtml(c.subcategory)}</h4>
+    <div class="path">${escapeHtml(c.config_path)}</div>
+    <div class="steps">${escapeHtml(c.steps)}</div>
+    ${c.nist_800_53_au ? `<div class="ref">NIST 800-53: ${escapeHtml(c.nist_800_53_au)}</div>` : ''}
+    ${c.reference_url ? `<div class="ref"><a href="${escapeHtml(c.reference_url.split(';')[0].trim())}" target="_blank" rel="noopener">${escapeHtml(c.reference_url)}</a></div>` : ''}
+  </div>`;
+}
+
+function inlineRefTable(e) {
+  const parts = [];
+
+  if (e.category === 'Account Logon' && e.subcategory === 'Credential Validation') {
+    const rows = DATA.pam_result_codes.map(r => `<tr><td>${escapeHtml(r.code)}</td><td>${escapeHtml(r.name)}</td><td>${escapeHtml(r.description)}</td></tr>`).join('');
+    parts.push(`<section class="block"><h3>PAM result codes for this event</h3>
+      <div class="table-scroll"><table class="ref-table"><thead><tr><th>Code</th><th>Name</th><th>Description</th></tr></thead><tbody>${rows}</tbody></table></div>
+    </section>`);
+  }
+
+  if (e.event_id === '1322') {
+    const rows = DATA.linux_capabilities.map(r => `<tr><td>${escapeHtml(r.code)}</td><td>${escapeHtml(r.name)}</td><td>${escapeHtml(r.description)}</td></tr>`).join('');
+    parts.push(`<section class="block"><h3>Linux capabilities for this event</h3>
+      <div class="table-scroll"><table class="ref-table"><thead><tr><th>Bit</th><th>Name</th><th>Description</th></tr></thead><tbody>${rows}</tbody></table></div>
+      <p style="font-size:0.8rem;color:var(--muted);margin-top:8px">cap_pe/cap_pp/cap_pi are hex bitmasks &mdash; each capability above is one bit position.</p>
+    </section>`);
+  }
+
+  if (e.event_id === '1300') {
+    const rows = DATA.errno_codes.map(r => `<tr><td>${escapeHtml(r.code)}</td><td>${escapeHtml(r.name)}</td><td>${escapeHtml(r.description)}</td></tr>`).join('');
+    parts.push(`<section class="block"><h3>Common errno codes for a failed syscall</h3>
+      <div class="table-scroll"><table class="ref-table"><thead><tr><th>Code</th><th>Name</th><th>Description</th></tr></thead><tbody>${rows}</tbody></table></div>
+      <p style="font-size:0.8rem;color:var(--muted);margin-top:8px">exit= is negative on failure (e.g. exit=-13 is EACCES) &mdash; see the
+        <a href="#" onclick="return jumpToRefSearch('')">full errno reference table</a>.</p>
+    </section>`);
+  }
+
+  if (e.log === 'ssh/protocol') {
+    const rows = DATA.ssh_disconnect_codes.map(r => `<tr><td>${escapeHtml(r.code)}</td><td>${escapeHtml(r.name)}</td><td>${escapeHtml(r.description)}</td></tr>`).join('');
+    parts.push(`<section class="block"><h3>All SSH disconnect reason codes</h3>
+      <div class="table-scroll"><table class="ref-table"><thead><tr><th>Code</th><th>Name</th><th>Description</th></tr></thead><tbody>${rows}</tbody></table></div>
+    </section>`);
+  }
+
+  return parts.join('');
+}
+
+function renderDetail(e) {
+  const detail = document.getElementById('detail');
+  const subcats = (e.how_to_collect || '').split(';').map(s => s.trim()).filter(Boolean);
+  const configHtml = subcats.map(configCard).join('');
+
+  detail.innerHTML = `
+    <div class="detail-head">
+      <div>
+        <div class="detail-id-label">Event ID</div>
+        <div class="detail-id">${escapeHtml(e.event_id)}</div>
+      </div>
+      <div class="detail-desc">
+        ${escapeHtml(e.description || e.subcategory || '(no description recorded)')}
+        ${e.priority_signal === 'Yes' ? `<div style="margin-top:8px"><span class="badge" style="color:var(--accent);background:color-mix(in srgb, var(--accent) 14%, transparent)" title="Curated high-value security monitoring signal">Priority signal</span></div>` : ''}
+      </div>
+    </div>
+    <dl class="field-grid">
+      <div class="field"><dt>Log</dt><dd>${escapeHtml(e.log)}</dd></div>
+      <div class="field"><dt>Source</dt><dd>${escapeHtml(e.source || '—')}</dd></div>
+      <div class="field"><dt>Category</dt><dd>${escapeHtml(e.category || '—')}</dd></div>
+      <div class="field"><dt>Subcategory</dt><dd>${escapeHtml(e.subcategory || '—')}</dd></div>
+      ${e.mitre_techniques ? `<div class="field"><dt>MITRE ATT&amp;CK</dt><dd>${mitreDisplay(e.mitre_techniques, e.event_id)}</dd></div>` : ''}
+      ${e.nist_800_53_au ? `<div class="field"><dt>NIST 800-53</dt><dd>${escapeHtml(e.nist_800_53_au)}</dd></div>` : ''}
+    </dl>
+    ${e.sample ? `<section class="block"><h3>Sample${sampleTypeBadge(e.sample_type)}</h3><pre class="sample">${escapeHtml(e.sample.replace(/^```|```$/g, '').trim())}</pre></section>` : ''}
+    ${e.field_schema && Object.keys(e.field_schema).length ? `<section class="block"><h3>Field Schema</h3>${fieldSchemaHtml(e.field_schema)}</section>` : ''}
+    ${inlineRefTable(e)}
+    ${configHtml ? `<section class="block"><h3>How to configure auditing to collect this</h3>${configHtml}</section>` : ''}
+    ${e.reference ? `<section class="block"><h3>Related</h3><div style="font-size:0.85rem">${escapeHtml(e.reference)}</div></section>` : ''}
+  `;
+}
+
+searchEl.addEventListener('input', render);
+
+render();
+
+// ---- reference tables tab ----
+function buildTable(container, rows, columns) {
+  const thead = `<thead><tr>${columns.map(c => `<th>${escapeHtml(c.label)}</th>`).join('')}</tr></thead>`;
+  const tbody = `<tbody>${rows.map(r => `<tr>${columns.map(c => `<td>${escapeHtml(r[c.key])}</td>`).join('')}</tr>`).join('')}</tbody>`;
+  container.innerHTML = `<table class="ref-table">${thead}${tbody}</table>`;
+}
+
+// Every reference table: id, data key, nav label, columns (key+label; all keys are
+// also the search keys — every visible column is searchable).
+const REF_TABLES = [
+  { id: 'audit-record-types', nav: 'Audit record types', data: 'audit_record_types',
+    columns: [{ key: 'code', label: 'Code' }, { key: 'name', label: 'Name' }, { key: 'description', label: 'Description' }, { key: 'range', label: 'Range' }] },
+  { id: 'pam', nav: 'PAM result codes', data: 'pam_result_codes',
+    columns: [{ key: 'code', label: 'Code' }, { key: 'name', label: 'Name' }, { key: 'description', label: 'Description' }] },
+  { id: 'capabilities', nav: 'Linux capabilities', data: 'linux_capabilities',
+    columns: [{ key: 'code', label: 'Bit' }, { key: 'name', label: 'Name' }, { key: 'description', label: 'Description' }] },
+  { id: 'errno', nav: 'errno codes', data: 'errno_codes',
+    columns: [{ key: 'code', label: 'Code' }, { key: 'name', label: 'Name' }, { key: 'description', label: 'Description' }] },
+  { id: 'ssh-disconnect', nav: 'SSH disconnect codes', data: 'ssh_disconnect_codes',
+    columns: [{ key: 'code', label: 'Code' }, { key: 'name', label: 'Name' }, { key: 'description', label: 'Description' }] },
+  { id: 'systemd-catalog', nav: 'systemd message catalog', data: 'systemd_message_catalog',
+    columns: [{ key: 'uuid', label: 'UUID' }, { key: 'subject', label: 'Subject' }, { key: 'description', label: 'Description' }] },
+  { id: 'mitre', nav: 'MITRE ATT&CK mapping', data: 'mitre_attack_mapping',
+    columns: [
+      { key: 'event_id', label: 'Event ID' }, { key: 'technique_id', label: 'Technique ID' },
+      { key: 'technique', label: 'Technique' }, { key: 'tactics', label: 'Tactic(s)' },
+      { key: 'category', label: 'Category' }, { key: 'subcategory', label: 'Subcategory' },
+    ] },
+  { id: 'audit-configuration', nav: 'Audit configuration', data: 'audit_configuration',
+    columns: [
+      { key: 'subcategory', label: 'Subcategory' }, { key: 'config_path', label: 'Config Path' },
+      { key: 'steps', label: 'Steps' }, { key: 'event_ids', label: 'Event IDs' },
+      { key: 'nist_800_53_au', label: 'NIST 800-53' },
+    ] },
+];
+
+function expandRefSection(id) {
+  const sec = document.getElementById(`sec-${id}`);
+  if (!sec) return;
+  sec.classList.add('expanded');
+  sec.classList.remove('no-match');
+  const btn = sec.querySelector('.ref-toggle');
+  if (btn) btn.setAttribute('aria-expanded', 'true');
+}
+
+// ---- single search across every reference table ----
+const refGlobalSearchEl = document.getElementById('ref-global-search');
+const refEmptyStateEl = document.getElementById('ref-empty-state');
+
+function renderAllRefTables(q) {
+  q = (q || '').trim().toLowerCase();
+  let anyMatch = false;
+  REF_TABLES.forEach(def => {
+    const tableEl = document.getElementById(`ref-${def.id}`);
+    const sec = document.getElementById(`sec-${def.id}`);
+    const navLink = document.querySelector(`#ref-nav a[data-target="${def.id}"]`);
+    const keys = def.columns.map(c => c.key);
+    const all = DATA[def.data];
+    const rows = !q ? all : all.filter(r => keys.some(k => (r[k] || '').toLowerCase().includes(q)));
+    buildTable(tableEl, rows, def.columns);
+    document.getElementById(`badge-${def.id}`).textContent = rows.length;
+    if (navLink) navLink.querySelector('.count').textContent = rows.length;
+    if (q) {
+      const hasMatch = rows.length > 0;
+      sec.classList.toggle('no-match', !hasMatch);
+      sec.classList.toggle('expanded', hasMatch);
+      if (navLink) navLink.classList.toggle('no-match', !hasMatch);
+      if (hasMatch) anyMatch = true;
+    } else {
+      sec.classList.remove('no-match', 'expanded');
+      if (navLink) navLink.classList.remove('no-match');
+    }
+  });
+  refEmptyStateEl.hidden = !(q && !anyMatch);
+}
+
+document.getElementById('ref-nav').innerHTML = REF_TABLES.map(def =>
+  `<a href="#sec-${def.id}" data-target="${def.id}">${escapeHtml(def.nav)} <span class="count">${DATA[def.data].length}</span></a>`
+).join('');
+
+function browseToRefSection(id) {
+  // browse mode: clear any active global search, show every section again, expand just one
+  refGlobalSearchEl.value = '';
+  renderAllRefTables('');
+  expandRefSection(id);
+}
+
+document.getElementById('ref-nav').addEventListener('click', e => {
+  const a = e.target.closest('a[data-target]');
+  if (a) browseToRefSection(a.dataset.target);
+});
+
+document.querySelectorAll('.ref-toggle').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const sec = document.getElementById(`sec-${btn.dataset.target}`);
+    const expanded = sec.classList.toggle('expanded');
+    btn.setAttribute('aria-expanded', String(expanded));
+  });
+});
+
+refGlobalSearchEl.addEventListener('input', e => renderAllRefTables(e.target.value));
+renderAllRefTables('');
+
+function jumpToRefBrowse(id) {
+  document.querySelector('#tabs button[data-panel="reference"]').click();
+  browseToRefSection(id);
+  setTimeout(() => document.getElementById(`sec-${id}`).scrollIntoView({ block: 'start' }), 50);
+  return false;
+}
+
+// deep link support: #1123 or #be02cf68-55d2-428b-a40d-f7e9d022f03d
+if (location.hash) {
+  const id = decodeURIComponent(location.hash.replace('#', ''));
+  const match = events.find(e => e.event_id === id);
+  if (match) { searchEl.value = id; selected = match; render(); renderDetail(match); }
+}
+</script>
