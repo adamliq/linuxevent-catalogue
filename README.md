@@ -14,7 +14,11 @@ against the Australian Cyber Security Centre's Information Security
 Manual (ISM) via the `xccdf_org.ssgproject.content_profile_ism_o` SCAP
 profile (`acsc_ism_control`) and against CIS RHEL 9 Benchmark v2.0.0 /
 DISA RHEL 9 STIG via the repo owner's supplied master rule catalogue
-(`cis_control`/`disa_stig_id`) — see below.
+(`cis_control`/`disa_stig_id`) — see below. A separate Fapolicyd tab
+covers `fapolicyd`, the File Access Policy daemon — a distinct
+application allow/deny-listing subsystem from auditd — with its own
+shipped default rules, rule-syntax field reference, decision-keyword
+reference, and command reference.
 
 This is a curated **seed catalogue** (77 events), not an exhaustive one —
 Windows' Event ID space is large enough that the source repo's bulk ETW
@@ -391,11 +395,54 @@ flagged low-confidence entries instead of guessing.
   `/etc/audit/rules.d/`, `/var/log/audit/audit.log`, and
   `/etc/audit/plugins.d/` to their purpose. Together these power the
   Commands submenu under the Auditd Rules tab, described below.
+- **Fapolicyd** — `data/reference/fapolicyd_rules.csv` / `.json` — 16
+  entries: the default rule files shipped with fapolicyd (the File Access
+  Policy daemon, a separate application allow/deny-listing subsystem from
+  auditd) in `linux-application-whitelisting/fapolicyd`'s `rules.d/`
+  directory, transcribed verbatim from the upstream GitHub repo. Same
+  column shape as `auditd_rules.csv` minus the fields that don't apply
+  (no CIS RHEL 9 mapping was found for fapolicyd; there's no `form`
+  column since every row comes from the same source type). Columns:
+  `rule_id` (the source filename, e.g. `90-deny-execute`), `category_no`/
+  `category`, `title`, `fapolicyd_rule`, `description`, `disa_stig_ref`,
+  `acsc_ism_alignment`, `switches_explained` (attribute keywords broken
+  down the same way `auditd_rules.csv` explains `-F`/`-a` switches).
+  `disa_stig_ref`/`acsc_ism_alignment` are populated on only one row
+  (`90-deny-execute`, `RHEL-09-433016` / ACSC ISM `0843, 1490, 1656`)
+  where the shipped default ruleset's deny-all-execution backstop
+  genuinely corresponds to a real, verified compliance control — the
+  README section below explains a real distinction this catalogue
+  surfaces rather than glosses over, between that shipped default and
+  the STIG's own suggested hardened configuration. The DISA STIG ID
+  (and the two others cited in the Fapolicyd tab's Commands notes,
+  `RHEL-09-433010`/`RHEL-09-433015`) were read directly from the MITRE
+  RHEL 9 STIG InSpec baseline source
+  (`mitre/redhat-enterprise-linux-9-stig-baseline`); the ACSC ISM IDs
+  were corroborated via web search rather than fetched directly from the
+  ISM PDF (`cyber.gov.au` was unreachable from this build environment) —
+  treat them as less rigorously verified than the STIG IDs.
+  `data/reference/fapolicyd_fields.csv` / `.json` — 16 entries: every
+  subject/object attribute keyword usable in a rule
+  (`fapolicyd.rules(5)`), each tagged `used_in` (Subject, Object, or
+  Both). `data/reference/fapolicyd_decisions.csv` / `.json` — 11 entries:
+  the 8 decision keywords (`allow`, `deny`, `allow_audit`, `deny_audit`,
+  `allow_syslog`, `deny_syslog`, `allow_log`, `deny_log`) plus the 3
+  `perm=` values (`open`, `execute`, `any`).
+  `data/reference/fapolicyd_ftype_examples.csv` / `.json` — 7 rows: the
+  object file types (MIME types) actually referenced by the shipped
+  rules, and which rule file uses each one.
+  `data/reference/fapolicyd_commands.csv` / `.json` — 2 entries
+  (`fapolicyd`, `fapolicyd-cli`) in the same `{command, purpose,
+  sections, notes}` shape as `auditd_commands.csv`, from the
+  `fapolicyd(8)`/`fapolicyd-cli(8)` man pages, plus a cheat-sheet string
+  and `data/reference/fapolicyd_command_related_files.csv` / `.json` (7
+  rows) — together powering the Fapolicyd tab's Commands submenu the
+  same way the equivalent auditd files do.
 
 ## Web lookup
 
 `index.html` is a self-contained (no build step, no external requests)
-lookup page with three tabs.
+lookup page with four tabs.
 
 **Events** — the same design as `Winevent-catalogue`'s, scaled down to
 match this repo's smaller log/category space: search all 77 events by ID
@@ -483,6 +530,52 @@ day-to-day command sequences,
 table (`data/reference/auditd_command_related_files.csv` — 5 rows:
 `auditd.conf`, `audit.rules`, `rules.d/`, `audit.log`, `plugins.d/`).
 
+**Fapolicyd** — a separate top-level tab, next to Auditd Rules, for the
+File Access Policy daemon (`fapolicyd`): a distinct application
+allow/deny-listing subsystem from auditd, built with the same four-item
+**Rules / Fields / Decisions / Commands** submenu structure and UI
+conventions as the Auditd Rules tab, scaled to fapolicyd's own (much
+smaller) surface area.
+
+*Rules* is a list/detail view over all 16 rows of
+`data/reference/fapolicyd_rules.csv` — the shipped default rule files
+themselves, transcribed verbatim, in their real evaluation order (rules
+are matched top-to-bottom; first subject+object match wins, which is why
+the source files are numbered `10-languages` through `95-allow-open`).
+Free-text search covers the rule text, title, category, description, and
+attribute explanations. The detail view shows the full rule in a code
+block, an **Attributes Explained** section breaking down each `key=value`
+token (reusing the same card layout as the Auditd Rules tab's *Switches &
+Arguments Explained*), the description (including, on `90-deny-execute`,
+an explicit note about how the shipped default's execute-only
+deny-all-when-untrusted policy differs from the DISA STIG's own suggested
+hardened last-rule text — surfaced rather than smoothed over, the same
+way this repo's `sshd_config`/`ssh_config` and CIS/STIG-granularity notes
+elsewhere are), and a source note.
+
+*Fields* is a single searchable table over all 16 rows of
+`data/reference/fapolicyd_fields.csv` — the subject/object attribute
+keywords from `fapolicyd.rules(5)`, each with a `used_in` column
+(Subject/Object/Both), value format, and explanation.
+
+*Decisions* is a searchable table over the 11 rows of
+`data/reference/fapolicyd_decisions.csv` — the 8 decision keywords
+(`allow`, `deny_audit`, etc.) and 3 `perm=` values — plus two
+always-visible static blocks: the 7 object file types
+(`data/reference/fapolicyd_ftype_examples.csv`) the shipped rules
+actually reference, and which rule file uses each one, and a closing tip
+on rule evaluation order.
+
+*Commands* is a list/detail view over the 2 rows of
+`data/reference/fapolicyd_commands.csv` — `fapolicyd` (the daemon itself:
+command-line flags, service management, signals, and denial-investigation
+one-liners via `ausearch -m fanotify`/`journalctl -u fapolicyd`) and
+`fapolicyd-cli` (trust database management, rule/file-type inspection,
+and health diagnostics) — plus the same **Quick operational cheat-sheet**
+(the STIG's own permissive-mode-first-then-enforce workflow) and
+**Related files** table pattern as the Auditd Rules tab's Commands
+submenu.
+
 **Reference tables** — covers all 9 accordion-style reference tables
 (`auditd_rules` gets its own dedicated tab instead, given its size) with
 the same single-search-filters-everything, sticky-jump-nav,
@@ -532,6 +625,27 @@ used, not written from memory:
   been a good second, independent cross-check but was unreachable from
   this environment (blocked the fetch outright) — flagging that rather
   than skipping the caveat silently.
+- **Fapolicyd rules, fields, and commands** (the Fapolicyd tab) — the 16
+  default rule files were fetched verbatim from
+  `linux-application-whitelisting/fapolicyd`'s `rules.d/` directory on
+  GitHub (the actual upstream project); the rule syntax, decision
+  keywords, and subject/object attribute keywords were cross-checked
+  against the `fapolicyd.rules(5)` man page (both the upstream repo's own
+  copy and the Ubuntu/Debian manpages mirrors, which agreed); the
+  `fapolicyd`/`fapolicyd-cli` command reference was fetched from the
+  `fapolicyd(8)`/`fapolicyd-cli(8)` man pages the same way. The three
+  DISA RHEL 9 STIG IDs cited (`RHEL-09-433010`, `RHEL-09-433015`,
+  `RHEL-09-433016`) were read directly from their InSpec source in
+  `mitre/redhat-enterprise-linux-9-stig-baseline` (`SV-258089.rb`,
+  `SV-258090.rb`, `SV-270180.rb`), including their exact NIST/CCI/SRG
+  cross-references. No CIS RHEL 9 Benchmark v2.0.0 control was found for
+  fapolicyd (unlike auditd's §6.3.3) — that's an honest gap, not an
+  oversight. The ACSC ISM application-control IDs (`0843`, `1490`,
+  `1656`) are the least rigorously sourced fact in this tab: `cyber.gov.au`
+  (where the ISM PDF lives) was unreachable from this build environment,
+  so these were corroborated via two independent web searches rather than
+  read from the primary document directly, the same caution flagged for
+  the ACSC ISM guide cross-check above.
 
 The category/subcategory taxonomy, event selection, sample content, field
 schemas, MITRE/NIST mappings, ACSC ISM subcategory-level tagging, and
