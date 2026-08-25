@@ -6,7 +6,7 @@ this catalogue — the config file/command to use, the steps, and the event
 IDs it causes to be logged.
 
 For a much larger set of ready-to-deploy `auditctl`/`auditd.rules.d` rules
-beyond this catalogue's own 27 subcategories — including CIS RHEL 9
+beyond this catalogue's own 45 subcategories — including CIS RHEL 9
 Benchmark and DISA STIG identifiers alongside ACSC ISM outcome alignment —
 see `docs/auditd-rules-master-reference.md`.
 
@@ -254,3 +254,89 @@ what's covered here.
 - **Events:** the `f77379a8…`, `d93fb3c9…`, `a596d6fe…` systemd catalog
   UUIDs
 - **Reference:** https://www.freedesktop.org/software/systemd/man/latest/journald.conf.html
+
+---
+
+The following subcategories were added from
+`docs/auditd-rules-master-reference.md`; each event's `reference` field
+cites the exact source `auditd_rules.csv` row(s).
+
+## File Deletion
+- **Config:** `/etc/audit/rules.d/audit.rules`
+- **Steps:** `auditctl -a always,exit -F arch=b64 -S rmdir,unlink,unlinkat,rename,renameat,renameat2 -F auid>=1000 -F auid!=unset -k file_delete` (repeat with `arch=b32`).
+- **Events:** 1300
+
+## DAC Permission Change
+- **Config:** `/etc/audit/rules.d/audit.rules`
+- **Steps:** `auditctl -a always,exit -F arch=b64 -S chmod,fchmod,fchmodat -F auid>=1000 -F auid!=unset -k permissions && auditctl -a always,exit -F arch=b64 -S chown,fchown,lchown,fchownat -F auid>=1000 -F auid!=unset -k ownership` (repeat with `arch=b32`).
+- **Events:** 1300
+
+## Filesystem Mounts
+- **Config:** `/etc/audit/rules.d/audit.rules`
+- **Steps:** `auditctl -a always,exit -F arch=b64 -S mount,umount2 -F auid>=1000 -F auid!=unset -k mounts` (repeat with `arch=b32`, adding `umount`).
+- **Events:** 1300
+
+## Removable Media
+- **Config:** `/etc/audit/rules.d/audit.rules`
+- **Steps:** `auditctl -w /media/ -p wa -k removable_media && auditctl -w /run/media/ -p wa -k removable_media`. Use with care on workstations due to event volume.
+- **Events:** 1302
+
+## Extended Attributes
+- **Config:** `/etc/audit/rules.d/audit.rules`
+- **Steps:** `auditctl -a always,exit -F arch=b64 -S setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F auid>=1000 -F auid!=unset -k xattr` (repeat with `arch=b32`); optionally also `-w /usr/bin/chcon -p x -k permissions`.
+- **Events:** 1300
+
+## Scheduled Tasks
+- **Config:** `/etc/audit/rules.d/audit.rules`
+- **Steps:** `auditctl -w /etc/crontab -p wa -k scheduled_tasks && auditctl -w /etc/cron.d/ -p wa -k scheduled_tasks` (repeat for `cron.{hourly,daily,weekly,monthly}` and `/var/spool/cron/`).
+- **Events:** 1302
+
+## Dynamic Linker Manipulation
+- **Config:** `/etc/audit/rules.d/audit.rules`
+- **Steps:** `auditctl -w /etc/ld.so.preload -p wa -k library_injection && auditctl -w /etc/ld.so.conf -p wa -k library_config`.
+- **Events:** 1302
+
+## Package Management
+- **Config:** `/etc/audit/rules.d/audit.rules`
+- **Steps:** `auditctl -w /usr/bin/rpm -p x -k software_install && auditctl -w /usr/bin/dnf -p x -k software_install` (add `/usr/bin/yum` on older releases).
+- **Events:** 1302
+
+## DNS Configuration
+- **Config:** `/etc/audit/rules.d/audit.rules`
+- **Steps:** `auditctl -w /etc/resolv.conf -p wa -k dns_config && auditctl -w /etc/nsswitch.conf -p wa -k dns_config`.
+- **Events:** 1302
+
+## SSH Host Keys
+- **Config:** `/etc/audit/rules.d/audit.rules`
+- **Steps:** `auditctl -w /etc/ssh/ssh_host_rsa_key -p wa -k ssh_host_keys` (repeat for `ssh_host_ecdsa_key` and `ssh_host_ed25519_key`).
+- **Events:** 1302
+
+## PKI / Trusted Certificates
+- **Config:** `/etc/audit/rules.d/audit.rules`
+- **Steps:** `auditctl -w /etc/pki/ca-trust/ -p wa -k trusted_certificates && auditctl -w /etc/pki/ca-trust/source/anchors/ -p wa -k trusted_certificates`.
+- **Events:** 1302
+
+## Container Administration
+- **Config:** `/etc/audit/rules.d/audit.rules`
+- **Steps:** `auditctl -w /usr/bin/docker -p x -k container_admin && auditctl -w /etc/docker/ -p wa -k docker_config` (add `/usr/bin/podman` and `/etc/containers/` where Podman is used instead).
+- **Events:** 1302
+
+## Identity Provider Configuration
+- **Config:** `/etc/audit/rules.d/audit.rules`
+- **Steps:** `auditctl -w /etc/krb5.conf -p wa -k kerberos && auditctl -w /etc/sssd/sssd.conf -p wa -k identity_provider`.
+- **Events:** 1302
+
+## Process Injection
+- **Config:** `/etc/audit/rules.d/audit.rules`
+- **Steps:** `auditctl -a always,exit -F arch=b64 -S ptrace -k process_injection` (repeat with `arch=b32`). Expect high volume on developer workstations; scope with `-F auid>=1000` if needed.
+- **Events:** 1300
+
+## Namespace Manipulation
+- **Config:** `/etc/audit/rules.d/audit.rules`
+- **Steps:** `auditctl -a always,exit -F arch=b64 -S unshare,setns -F auid>=1000 -F auid!=unset -k namespace`.
+- **Events:** 1300
+
+## Anti-Forensics
+- **Config:** `/etc/audit/rules.d/audit.rules`
+- **Steps:** `auditctl -w /usr/bin/shred -p x -k anti_forensics && auditctl -w /usr/bin/truncate -p x -k anti_forensics`.
+- **Events:** 1302

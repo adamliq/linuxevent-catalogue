@@ -4,14 +4,19 @@ A structured catalogue of Linux security & system event IDs — the Linux
 counterpart to [`Winevent-catalogue`](https://github.com/adamliq/Winevent-catalogue).
 Covers the Linux Audit Framework (`auditd`/kernel audit — authentication,
 account management, privilege use, process execution, file access, kernel
-modules, SELinux/AppArmor, netfilter), SSH protocol-level session events,
-and systemd/journald (unit lifecycle, service failures, session management,
+modules, SELinux/AppArmor, netfilter, package management, removable
+media, cron persistence, dynamic-linker injection, container
+administration, PKI/trust-store and SSH-host-key tampering, Kerberos/SSSD
+identity-provider config), SSH protocol-level session events, and
+systemd/journald (unit lifecycle, service failures, session management,
 boot/shutdown, time changes, the journal itself). Also cross-referenced
 against the Australian Cyber Security Centre's Information Security
 Manual (ISM) via the `xccdf_org.ssgproject.content_profile_ism_o` SCAP
-profile — see `acsc_ism_control` below.
+profile (`acsc_ism_control`) and against CIS RHEL 9 Benchmark v2.0.0 /
+DISA RHEL 9 STIG via the repo owner's supplied master rule catalogue
+(`cis_control`/`disa_stig_id`) — see below.
 
-This is a curated **seed catalogue** (61 events), not an exhaustive one —
+This is a curated **seed catalogue** (77 events), not an exhaustive one —
 Windows' Event ID space is large enough that the source repo's bulk ETW
 manifest import alone added thousands of rows; Linux has no equivalent
 single exhaustive registry to import from, so this repo instead prioritizes
@@ -116,7 +121,7 @@ flagged low-confidence entries instead of guessing.
     [`ComplianceAsCode/content`](https://github.com/ComplianceAsCode/content) —
     the project that maintains the `xccdf_org.ssgproject.content_profile_ism_o`
     SCAP profile — fetched directly from the upstream repo rather than
-    guessed. 33 of this catalogue's 61 events are tagged, covering 4 of the
+    guessed. 33 of this catalogue's 77 events are tagged, covering 4 of the
     profile's 41 controls (the ones whose rule list actually corresponds to
     an auditing mechanism this catalogue documents; the other 37 controls
     are about password policy, MFA, SSH hardening, antivirus, and similar,
@@ -140,8 +145,8 @@ flagged low-confidence entries instead of guessing.
     subcategory) level, same as `acsc_ism_control`, plus one event-level
     override (the pam_faillock lockout event gets `RHEL-09-654250`
     specifically rather than its subcategory's blanket tag, since that's
-    exactly what that STIG ID is about). Populated on 22 events (`cis_control`)
-    and 19 events (`disa_stig_id`) of the 61 — only where a section of the
+    exactly what that STIG ID is about). Populated on 25 events (`cis_control`)
+    and 21 events (`disa_stig_id`) of the 77 — only where a section of the
     master reference gives an *exact* identifier and this catalogue's own
     event mechanism plausibly corresponds to that section's rule (e.g.
     SELinux/AppArmor AVC *denial* events are deliberately **not** tagged
@@ -225,14 +230,24 @@ flagged low-confidence entries instead of guessing.
   PAM, SELinux/AppArmor, and systemd to collect each event: the config
   path or command to run, step-by-step instructions, and the event IDs
   each setting produces.
-- `docs/auditd-rules-master-reference.md` — a much broader (~200-rule,
+- `docs/auditd-rules-master-reference.md` — a much broader (321-rule,
   88-section) `auditd` rule catalogue supplied by the repo owner, covering
   CIS RHEL 9 Benchmark v2.0.0 §6.3.3, DISA RHEL 9 STIG (`RHEL-09-654xxx`),
-  ACSC ISM outcome alignment, and SCAP/ComplianceAsCode integration —
-  including areas this catalogue's 61 curated events don't yet cover
-  (containers/Kubernetes, LDAP/Kerberos/IPA/SSSD, package management,
-  removable media, and more). This is the single source of truth for the
-  Auditd Rules tab and `data/reference/auditd_rules.csv`/`.json` below —
+  ACSC ISM outcome alignment, and SCAP/ComplianceAsCode integration. Its
+  ~88 sections were also used as a roadmap to add 16 new curated events
+  (file deletion, DAC permission/ownership changes, extended attributes,
+  filesystem mounts, removable media, cron persistence, dynamic-linker
+  injection, package management, DNS/SSH-host-key/PKI-trust-store
+  tampering, container administration, Kerberos/SSSD identity-provider
+  config, `ptrace`-based process injection, and namespace manipulation) —
+  each event's `reference` field cites the exact corresponding
+  `auditd_rules.csv` `rule_id`(s). Some sections remain uncovered by a
+  curated event (Kubernetes/OpenShift specifics, LDAP, IPA beyond what
+  the shared Kerberos/SSSD config watch covers, and the more exotic
+  system-administration sections) — this is still a seed, not a claim of
+  full coverage of the master reference. This document is the single
+  source of truth for the Auditd Rules tab and
+  `data/reference/auditd_rules.csv`/`.json` below —
   `build.py` parses it directly, so editing the markdown and re-running
   the build regenerates both. It is **not** wired into the main
   `events.csv`/`.json` catalogue — its CIS and DISA STIG identifiers are
@@ -286,7 +301,7 @@ flagged low-confidence entries instead of guessing.
 lookup page with three tabs.
 
 **Events** — the same design as `Winevent-catalogue`'s, scaled down to
-match this repo's smaller log/category space: search all 61 events by ID
+match this repo's smaller log/category space: search all 77 events by ID
 or keyword; filter by Log or Category via searchable multi-select
 comboboxes (3 log families — `audit`, `ssh`, `systemd` — each with a
 handful of sub-logs, so the plain grouped-combobox approach the Windows

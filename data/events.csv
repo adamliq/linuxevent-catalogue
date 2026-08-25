@@ -691,3 +691,221 @@ MESSAGE_ID=a596d6fe7bfa4994828e72309e95d61e
 UNIT=sshd.service
 NUMBER_OF_MESSAGES_SUPPRESSED=214
 _COMM=systemd-journald",,Journal,illustrative,,,1405,,,"AU-4, AU-9","{""header"":{""log_name"":""string"",""source"":""string"",""event_id"":""guid"",""level"":""enum"",""host"":""string"",""description"":""string""},""record"":{""unit"":""string"",""number_of_messages_suppressed"":""integer""}}"
+1300,audit/SYSCALL,kernel (unlink/rename),Object Access,File Deletion,A file was deleted or renamed by an interactive user,"Log Name:      audit/SYSCALL
+Source:        kernel (unlink/rename)
+Event ID:      1300 (SYSCALL)
+Level:         Notice
+Host:          db01.prod.example.org
+Description:
+A monitored deletion/rename syscall (unlink, unlinkat, rename, renameat,
+renameat2, or rmdir) completed — useful for spotting anti-forensic cleanup,
+ransomware, or configuration replacement, not just routine housekeeping.
+type=SYSCALL msg=audit(1732211000.100:51100): arch=c000003e syscall=87
+success=yes exit=0 items=1 ppid=1200 pid=25600 auid=1000 uid=1000 gid=1000
+euid=1000 suid=1000 fsuid=1000 egid=1000 sgid=1000 fsgid=1000 tty=pts3
+ses=12 comm=""rm"" exe=""/usr/bin/rm""
+subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=""file_delete""",See auditd_rules.csv rows 12-01..12-04 for the exact CIS/canonical and broader rule forms.,File Deletion,illustrative,T1070.004,,,6.3.3.13,,"AU-2, AU-3, AU-12","{""header"":{""log_name"":""string"",""source"":""string"",""event_id"":""integer"",""level"":""enum"",""host"":""string"",""description"":""string""},""process"":{""pid"":""integer"",""ppid"":""integer"",""comm"":""string"",""exe"":""path"",""tty"":""string""},""subject"":{""auid"":""integer"",""uid"":""integer"",""gid"":""integer"",""euid"":""integer"",""ses"":""integer"",""subj"":""string""},""syscall"":{""arch"":""hex"",""syscall"":""integer"",""success"":""enum"",""exit"":""integer"",""items"":""integer"",""key"":""string""}}"
+1300,audit/SYSCALL,kernel (chmod/chown),Policy Change,DAC Permission Change,A file's permission bits or ownership were changed,"Log Name:      audit/SYSCALL
+Source:        kernel (chmod/chown)
+Event ID:      1300 (SYSCALL)
+Level:         Notice
+Host:          web01.prod.example.org
+Description:
+A monitored discretionary-access-control syscall (chmod/fchmod/fchmodat or
+chown/fchown/lchown/fchownat) completed — e.g. someone widened a file's
+permissions or handed ownership to a different account.
+type=SYSCALL msg=audit(1732211100.200:51150): arch=c000003e syscall=90
+success=yes exit=0 items=1 ppid=1200 pid=25700 auid=1000 uid=0 gid=0
+euid=0 tty=pts3 ses=12 comm=""chmod"" exe=""/usr/bin/chmod""
+subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=""permissions""",See auditd_rules.csv rows 13-01..13-08 for the chmod vs. chown rule variants (keys permissions/ownership/perm_mod).,DAC Permission Change,illustrative,T1222.002,,,6.3.3.9,,"AU-2, AU-3, AU-12","{""header"":{""log_name"":""string"",""source"":""string"",""event_id"":""integer"",""level"":""enum"",""host"":""string"",""description"":""string""},""process"":{""pid"":""integer"",""ppid"":""integer"",""comm"":""string"",""exe"":""path""},""subject"":{""auid"":""integer"",""uid"":""integer"",""gid"":""integer"",""euid"":""integer"",""ses"":""integer"",""subj"":""string""},""syscall"":{""arch"":""hex"",""syscall"":""integer"",""success"":""enum"",""exit"":""integer"",""items"":""integer"",""key"":""string""}}"
+1300,audit/SYSCALL,kernel (mount),System,Filesystem Mounts,A filesystem was mounted or unmounted,"Log Name:      audit/SYSCALL
+Source:        kernel (mount)
+Event ID:      1300 (SYSCALL)
+Level:         Notice
+Host:          db01.prod.example.org
+Description:
+A mount(2) or umount2(2) syscall completed for an interactive user —
+routine for legitimate storage administration, but also how removable
+media gets attached and how a container escape can remount the host
+filesystem read-write.
+type=SYSCALL msg=audit(1732211200.300:51200): arch=c000003e syscall=165
+success=yes exit=0 items=2 ppid=1200 pid=25800 auid=1000 uid=0 gid=0
+euid=0 tty=pts3 ses=12 comm=""mount"" exe=""/usr/bin/mount""
+subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=""mounts""",See auditd_rules.csv rows 24-01..24-06.,Filesystem Mounts,illustrative,,,,6.3.3.10,RHEL-09-654180,"AU-2, AU-3, AU-12","{""header"":{""log_name"":""string"",""source"":""string"",""event_id"":""integer"",""level"":""enum"",""host"":""string"",""description"":""string""},""process"":{""pid"":""integer"",""ppid"":""integer"",""comm"":""string"",""exe"":""path""},""subject"":{""auid"":""integer"",""uid"":""integer"",""gid"":""integer"",""euid"":""integer"",""ses"":""integer"",""subj"":""string""},""syscall"":{""arch"":""hex"",""syscall"":""integer"",""success"":""enum"",""exit"":""integer"",""items"":""integer"",""key"":""string""}}"
+1302,audit/SYSCALL,kernel (fs watch),Object Access,Removable Media,A removable media mount point was accessed,"Log Name:      audit/SYSCALL
+Source:        kernel (fs watch)
+Event ID:      1302 (PATH)
+Level:         Notice
+Host:          web01.prod.example.org
+Description:
+A path under a removable-media mount point (/media or /run/media) was
+written to — relevant for both data-exfiltration and malware-introduction
+detection on workstations where USB storage is permitted.
+type=PATH msg=audit(1732211300.400:51250): item=0 name=""/media/usb0/export.csv""
+inode=88231 dev=sdb1 mode=0100644 ouid=1000 ogid=1000 rdev=00:00
+objtype=NORMAL key=""removable_media""","See auditd_rules.csv rows 25-01, 25-02.",Removable Media,illustrative,T1052.001,,,,,"AU-2, AU-3, AU-12","{""header"":{""log_name"":""string"",""source"":""string"",""event_id"":""integer"",""level"":""enum"",""host"":""string"",""description"":""string""},""record"":{""item"":""integer"",""name"":""path"",""inode"":""integer"",""dev"":""string"",""mode"":""hex"",""ouid"":""integer"",""ogid"":""integer"",""objtype"":""enum"",""key"":""string""}}"
+1300,audit/SYSCALL,kernel (xattr),Object Access,Extended Attributes,An extended attribute was set or removed on a file,"Log Name:      audit/SYSCALL
+Source:        kernel (xattr)
+Event ID:      1300 (SYSCALL)
+Level:         Notice
+Host:          web01.prod.example.org
+Description:
+A setxattr/removexattr-family syscall completed — the mechanism behind
+SELinux label changes, POSIX ACLs, and file capabilities, so also how an
+attacker can quietly relabel a file to escape confinement or grant a
+binary elevated capabilities without going through setcap's own logging.
+type=SYSCALL msg=audit(1732211400.500:51300): arch=c000003e syscall=188
+success=yes exit=0 items=1 ppid=1200 pid=25900 auid=1000 uid=0 gid=0
+euid=0 tty=pts3 ses=12 comm=""chcon"" exe=""/usr/bin/chcon""
+subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=""xattr""",See auditd_rules.csv rows 14-01..14-05.,Extended Attributes,illustrative,T1222.002,,,,,"AU-2, AU-3, AU-12","{""header"":{""log_name"":""string"",""source"":""string"",""event_id"":""integer"",""level"":""enum"",""host"":""string"",""description"":""string""},""process"":{""pid"":""integer"",""ppid"":""integer"",""comm"":""string"",""exe"":""path""},""subject"":{""auid"":""integer"",""uid"":""integer"",""gid"":""integer"",""euid"":""integer"",""ses"":""integer"",""subj"":""string""},""syscall"":{""arch"":""hex"",""syscall"":""integer"",""success"":""enum"",""exit"":""integer"",""items"":""integer"",""key"":""string""}}"
+1302,audit/SYSCALL,kernel (fs watch),System,Scheduled Tasks,A cron configuration file or directory was modified,"Log Name:      audit/SYSCALL
+Source:        kernel (fs watch)
+Event ID:      1302 (PATH)
+Level:         Warning
+Host:          db01.prod.example.org
+Description:
+A path under /etc/crontab, /etc/cron.d/, /etc/cron.{hourly,daily,weekly,
+monthly}/, or /var/spool/cron/ was written to — cron is one of the most
+common persistence mechanisms on Linux, so this is worth reviewing every
+time outside a known change window.
+type=PATH msg=audit(1732211500.600:51350): item=0 name=""/etc/cron.d/backup-sync""
+inode=141022 dev=fd:01 mode=0100644 ouid=0 ogid=0 rdev=00:00
+objtype=CREATE key=""scheduled_tasks""",See auditd_rules.csv rows 26-01..26-07.,Scheduled Tasks,illustrative,T1053.003,Yes,,,RHEL-09-654097,"AU-2, AU-3, AU-12","{""header"":{""log_name"":""string"",""source"":""string"",""event_id"":""integer"",""level"":""enum"",""host"":""string"",""description"":""string""},""record"":{""item"":""integer"",""name"":""path"",""inode"":""integer"",""dev"":""string"",""mode"":""hex"",""ouid"":""integer"",""ogid"":""integer"",""objtype"":""enum"",""key"":""string""}}"
+1302,audit/SYSCALL,kernel (fs watch),System,Dynamic Linker Manipulation,The dynamic linker preload/config file was modified,"Log Name:      audit/SYSCALL
+Source:        kernel (fs watch)
+Event ID:      1302 (PATH)
+Level:         Critical
+Host:          web01.prod.example.org
+Description:
+/etc/ld.so.preload, /etc/ld.so.conf, or /etc/ld.so.conf.d/ was written to.
+ld.so.preload in particular forces every dynamically-linked process on the
+system to load an attacker-chosen shared library first — a classic
+userland-rootkit and credential-interception technique. Outside a known
+package-manager transaction, treat this as an active incident.
+type=PATH msg=audit(1732211600.700:51400): item=0 name=""/etc/ld.so.preload""
+inode=52011 dev=fd:01 mode=0100644 ouid=0 ogid=0 rdev=00:00
+objtype=NORMAL key=""library_injection""",See auditd_rules.csv rows 30-01..30-03.,Dynamic Linker Manipulation,illustrative,T1574.006,Yes,,,,"AU-2, AU-3, AU-12","{""header"":{""log_name"":""string"",""source"":""string"",""event_id"":""integer"",""level"":""enum"",""host"":""string"",""description"":""string""},""record"":{""item"":""integer"",""name"":""path"",""inode"":""integer"",""dev"":""string"",""mode"":""hex"",""ouid"":""integer"",""ogid"":""integer"",""objtype"":""enum"",""key"":""string""}}"
+1302,audit/SYSCALL,kernel (fs watch),System,Package Management,A package manager binary was executed,"Log Name:      audit/SYSCALL
+Source:        kernel (fs watch)
+Event ID:      1302 (PATH)
+Level:         Information
+Host:          web01.prod.example.org
+Description:
+rpm, dnf, or yum was executed — the audit trail for what software was
+installed, updated, or removed and by whom, complementing (not
+replacing) the package manager's own transaction history in
+/var/log/dnf.log.
+type=PATH msg=audit(1732211700.800:51450): item=0 name=""/usr/bin/dnf""
+inode=98123 dev=fd:01 mode=0100755 ouid=0 ogid=0 rdev=00:00
+objtype=NORMAL key=""software_install""",See auditd_rules.csv rows 31-01..31-05.,Package Management,illustrative,,,,,,"AU-2, AU-3, AU-12","{""header"":{""log_name"":""string"",""source"":""string"",""event_id"":""integer"",""level"":""enum"",""host"":""string"",""description"":""string""},""record"":{""item"":""integer"",""name"":""path"",""inode"":""integer"",""dev"":""string"",""mode"":""hex"",""ouid"":""integer"",""ogid"":""integer"",""objtype"":""enum"",""key"":""string""}}"
+1302,audit/SYSCALL,kernel (fs watch),System,DNS Configuration,A DNS or name-resolution configuration file was modified,"Log Name:      audit/SYSCALL
+Source:        kernel (fs watch)
+Event ID:      1302 (PATH)
+Level:         Warning
+Host:          web01.prod.example.org
+Description:
+/etc/resolv.conf, /etc/hosts, or /etc/nsswitch.conf was written to —
+any of these can silently redirect where a hostname actually resolves
+to, which is how a compromised host is repointed at an
+attacker-controlled server without touching the application itself.
+type=PATH msg=audit(1732211800.900:51500): item=0 name=""/etc/resolv.conf""
+inode=52033 dev=fd:01 mode=0100644 ouid=0 ogid=0 rdev=00:00
+objtype=NORMAL key=""dns_config""",See auditd_rules.csv rows 48-01..48-03.,DNS Configuration,illustrative,,,,,,"AU-2, AU-3, AU-12","{""header"":{""log_name"":""string"",""source"":""string"",""event_id"":""integer"",""level"":""enum"",""host"":""string"",""description"":""string""},""record"":{""item"":""integer"",""name"":""path"",""inode"":""integer"",""dev"":""string"",""mode"":""hex"",""ouid"":""integer"",""ogid"":""integer"",""objtype"":""enum"",""key"":""string""}}"
+1302,audit/SYSCALL,kernel (fs watch),System,SSH Host Keys,An SSH host private key was modified,"Log Name:      audit/SYSCALL
+Source:        kernel (fs watch)
+Event ID:      1302 (PATH)
+Level:         Critical
+Host:          bastion01.prod.example.org
+Description:
+One of /etc/ssh/ssh_host_{rsa,ecdsa,ed25519}_key was written to. A host
+key is what every client's known_hosts entry is pinned against — a
+replaced host key is either routine key rotation or the setup step for
+an SSH man-in-the-middle, and the two look identical from this event
+alone, so correlate with a known maintenance window before assuming
+either.
+type=PATH msg=audit(1732211900.100:51550): item=0 name=""/etc/ssh/ssh_host_ed25519_key""
+inode=52055 dev=fd:01 mode=0100600 ouid=0 ogid=0 rdev=00:00
+objtype=NORMAL key=""ssh_host_keys""",See auditd_rules.csv rows 50-01..50-03.,SSH Host Keys,illustrative,T1557,Yes,,,,"AU-2, AU-3, AU-12","{""header"":{""log_name"":""string"",""source"":""string"",""event_id"":""integer"",""level"":""enum"",""host"":""string"",""description"":""string""},""record"":{""item"":""integer"",""name"":""path"",""inode"":""integer"",""dev"":""string"",""mode"":""hex"",""ouid"":""integer"",""ogid"":""integer"",""objtype"":""enum"",""key"":""string""}}"
+1302,audit/SYSCALL,kernel (fs watch),System,PKI / Trusted Certificates,The system trust store was modified,"Log Name:      audit/SYSCALL
+Source:        kernel (fs watch)
+Event ID:      1302 (PATH)
+Level:         Critical
+Host:          web01.prod.example.org
+Description:
+A path under /etc/pki/ca-trust/ (or its source/anchors/ subdirectory)
+was written to — this is exactly how a rogue CA certificate gets
+installed so a TLS-intercepting proxy can transparently decrypt traffic
+the host believes is trusted end-to-end.
+type=PATH msg=audit(1732212000.200:51600): item=0 name=""/etc/pki/ca-trust/source/anchors/corp-proxy-ca.pem""
+inode=52077 dev=fd:01 mode=0100644 ouid=0 ogid=0 rdev=00:00
+objtype=CREATE key=""trusted_certificates""",See auditd_rules.csv rows 49-01..49-03.,PKI / Trusted Certificates,illustrative,T1553.004,Yes,,,,"AU-2, AU-3, AU-12","{""header"":{""log_name"":""string"",""source"":""string"",""event_id"":""integer"",""level"":""enum"",""host"":""string"",""description"":""string""},""record"":{""item"":""integer"",""name"":""path"",""inode"":""integer"",""dev"":""string"",""mode"":""hex"",""ouid"":""integer"",""ogid"":""integer"",""objtype"":""enum"",""key"":""string""}}"
+1302,audit/SYSCALL,kernel (fs watch),System,Container Administration,A container engine binary was executed,"Log Name:      audit/SYSCALL
+Source:        kernel (fs watch)
+Event ID:      1302 (PATH)
+Level:         Information
+Host:          web01.prod.example.org
+Description:
+docker or podman was executed — the container equivalent of the
+""privileged command execution"" objective, since a `docker run
+--privileged` or a bind-mount of the Docker socket is one of the more
+direct routes from a compromised container to full host control.
+type=PATH msg=audit(1732212100.300:51650): item=0 name=""/usr/bin/docker""
+inode=98144 dev=fd:01 mode=0100755 ouid=0 ogid=0 rdev=00:00
+objtype=NORMAL key=""container_admin""","See auditd_rules.csv rows 52-01..52-03, 53-01, 53-02.",Container Administration,illustrative,T1609,,,,,"AU-2, AU-3, AU-12","{""header"":{""log_name"":""string"",""source"":""string"",""event_id"":""integer"",""level"":""enum"",""host"":""string"",""description"":""string""},""record"":{""item"":""integer"",""name"":""path"",""inode"":""integer"",""dev"":""string"",""mode"":""hex"",""ouid"":""integer"",""ogid"":""integer"",""objtype"":""enum"",""key"":""string""}}"
+1302,audit/SYSCALL,kernel (fs watch),System,Identity Provider Configuration,A Kerberos or SSSD identity-provider configuration file was modified,"Log Name:      audit/SYSCALL
+Source:        kernel (fs watch)
+Event ID:      1302 (PATH)
+Level:         Warning
+Host:          db01.prod.example.org
+Description:
+/etc/krb5.conf or /etc/sssd/sssd.conf was written to — either can
+repoint how this host authenticates users against Active Directory/IPA
+(e.g. to a rogue KDC or LDAP endpoint), so treat a change outside
+planned domain-join/reconfiguration work as high-signal.
+type=PATH msg=audit(1732212200.400:51700): item=0 name=""/etc/sssd/sssd.conf""
+inode=52099 dev=fd:01 mode=0100600 ouid=0 ogid=0 rdev=00:00
+objtype=NORMAL key=""identity_provider""","See auditd_rules.csv rows 79-01, 79-02, 80-01, 80-02.",Identity Provider Configuration,illustrative,T1556,,,,,"AU-2, AU-3, AU-12","{""header"":{""log_name"":""string"",""source"":""string"",""event_id"":""integer"",""level"":""enum"",""host"":""string"",""description"":""string""},""record"":{""item"":""integer"",""name"":""path"",""inode"":""integer"",""dev"":""string"",""mode"":""hex"",""ouid"":""integer"",""ogid"":""integer"",""objtype"":""enum"",""key"":""string""}}"
+1300,audit/SYSCALL,kernel (ptrace),Privilege Use,Process Injection,A process attached to and traced another process via ptrace(),"Log Name:      audit/SYSCALL
+Source:        kernel (ptrace)
+Event ID:      1300 (SYSCALL)
+Level:         Warning
+Host:          web01.prod.example.org
+Description:
+ptrace(2) is the underlying primitive for both legitimate debuggers
+(gdb, strace) and process-injection techniques (writing shellcode into
+another process's memory, dumping credentials from a running process).
+Expect frequent hits on a developer workstation; unusual on a
+production server.
+type=SYSCALL msg=audit(1732212300.500:51750): arch=c000003e syscall=101
+success=yes exit=0 items=0 ppid=1200 pid=26000 auid=1000 uid=1000 gid=1000
+euid=1000 tty=pts3 ses=12 comm=""gdb"" exe=""/usr/bin/gdb""
+subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=""process_injection""","See auditd_rules.csv rows 40-01, 40-02.",Process Injection,illustrative,T1055.008,Yes,,,,"AU-2, AU-3, AU-12","{""header"":{""log_name"":""string"",""source"":""string"",""event_id"":""integer"",""level"":""enum"",""host"":""string"",""description"":""string""},""process"":{""pid"":""integer"",""ppid"":""integer"",""comm"":""string"",""exe"":""path""},""subject"":{""auid"":""integer"",""uid"":""integer"",""gid"":""integer"",""euid"":""integer"",""ses"":""integer"",""subj"":""string""},""syscall"":{""arch"":""hex"",""syscall"":""integer"",""success"":""enum"",""exit"":""integer"",""items"":""integer"",""key"":""string""}}"
+1300,audit/SYSCALL,kernel (namespace),Privilege Use,Namespace Manipulation,A process created or joined a Linux namespace,"Log Name:      audit/SYSCALL
+Source:        kernel (namespace)
+Event ID:      1300 (SYSCALL)
+Level:         Warning
+Host:          web01.prod.example.org
+Description:
+unshare(2)/setns(2) create or join the PID/network/mount/user
+namespaces containers are built from — legitimate for container
+tooling, but also how a process on the host can step into (or a
+process in a container can step out of) a namespace boundary, which
+is a step in most container-escape techniques.
+type=SYSCALL msg=audit(1732212400.600:51800): arch=c000003e syscall=272
+success=yes exit=0 items=0 ppid=1 pid=26100 auid=4294967295 uid=0 gid=0
+euid=0 comm=""runc"" exe=""/usr/bin/runc""
+subj=system_u:system_r:container_runtime_t:s0 key=""namespace""",See auditd_rules.csv row 42-01.,Namespace Manipulation,illustrative,T1611,Yes,,,,"AU-2, AU-3, AU-12","{""header"":{""log_name"":""string"",""source"":""string"",""event_id"":""integer"",""level"":""enum"",""host"":""string"",""description"":""string""},""process"":{""pid"":""integer"",""ppid"":""integer"",""comm"":""string"",""exe"":""path""},""subject"":{""auid"":""integer"",""uid"":""integer"",""gid"":""integer"",""euid"":""integer"",""subj"":""string""},""syscall"":{""arch"":""hex"",""syscall"":""integer"",""success"":""enum"",""exit"":""integer"",""items"":""integer"",""key"":""string""}}"
+1302,audit/SYSCALL,kernel (fs watch),Object Access,Anti-Forensics,A secure-deletion utility was executed,"Log Name:      audit/SYSCALL
+Source:        kernel (fs watch)
+Event ID:      1302 (PATH)
+Level:         Warning
+Host:          db01.prod.example.org
+Description:
+shred or truncate was executed. Both have legitimate uses (securely
+wiping decommissioned disks, truncating log files as part of rotation)
+but are also exactly the tools used to destroy evidence after other
+malicious activity, so context (which file, which user, what else
+happened in the same session) matters more than the event alone.
+type=PATH msg=audit(1732212500.700:51850): item=0 name=""/usr/bin/shred""
+inode=98166 dev=fd:01 mode=0100755 ouid=0 ogid=0 rdev=00:00
+objtype=NORMAL key=""anti_forensics""","See auditd_rules.csv rows 36-01, 36-02.",Anti-Forensics,illustrative,T1070,Yes,,,,"AU-2, AU-3, AU-12","{""header"":{""log_name"":""string"",""source"":""string"",""event_id"":""integer"",""level"":""enum"",""host"":""string"",""description"":""string""},""record"":{""item"":""integer"",""name"":""path"",""inode"":""integer"",""dev"":""string"",""mode"":""hex"",""ouid"":""integer"",""ogid"":""integer"",""objtype"":""enum"",""key"":""string""}}"

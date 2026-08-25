@@ -2315,5 +2315,695 @@
         "number_of_messages_suppressed": "integer"
       }
     }
+  },
+  {
+    "event_id": "1300",
+    "log": "audit/SYSCALL",
+    "source": "kernel (unlink/rename)",
+    "category": "Object Access",
+    "subcategory": "File Deletion",
+    "description": "A file was deleted or renamed by an interactive user",
+    "sample": "Log Name:      audit/SYSCALL\nSource:        kernel (unlink/rename)\nEvent ID:      1300 (SYSCALL)\nLevel:         Notice\nHost:          db01.prod.example.org\nDescription:\nA monitored deletion/rename syscall (unlink, unlinkat, rename, renameat,\nrenameat2, or rmdir) completed — useful for spotting anti-forensic cleanup,\nransomware, or configuration replacement, not just routine housekeeping.\ntype=SYSCALL msg=audit(1732211000.100:51100): arch=c000003e syscall=87\nsuccess=yes exit=0 items=1 ppid=1200 pid=25600 auid=1000 uid=1000 gid=1000\neuid=1000 suid=1000 fsuid=1000 egid=1000 sgid=1000 fsgid=1000 tty=pts3\nses=12 comm=\"rm\" exe=\"/usr/bin/rm\"\nsubj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=\"file_delete\"",
+    "reference": "See auditd_rules.csv rows 12-01..12-04 for the exact CIS/canonical and broader rule forms.",
+    "how_to_collect": "File Deletion",
+    "sample_type": "illustrative",
+    "mitre_techniques": "T1070.004",
+    "priority_signal": "",
+    "nist_800_53_au": "AU-2, AU-3, AU-12",
+    "acsc_ism_control": "",
+    "cis_control": "6.3.3.13",
+    "disa_stig_id": "",
+    "field_schema": {
+      "header": {
+        "log_name": "string",
+        "source": "string",
+        "event_id": "integer",
+        "level": "enum",
+        "host": "string",
+        "description": "string"
+      },
+      "process": {
+        "pid": "integer",
+        "ppid": "integer",
+        "comm": "string",
+        "exe": "path",
+        "tty": "string"
+      },
+      "subject": {
+        "auid": "integer",
+        "uid": "integer",
+        "gid": "integer",
+        "euid": "integer",
+        "ses": "integer",
+        "subj": "string"
+      },
+      "syscall": {
+        "arch": "hex",
+        "syscall": "integer",
+        "success": "enum",
+        "exit": "integer",
+        "items": "integer",
+        "key": "string"
+      }
+    }
+  },
+  {
+    "event_id": "1300",
+    "log": "audit/SYSCALL",
+    "source": "kernel (chmod/chown)",
+    "category": "Policy Change",
+    "subcategory": "DAC Permission Change",
+    "description": "A file's permission bits or ownership were changed",
+    "sample": "Log Name:      audit/SYSCALL\nSource:        kernel (chmod/chown)\nEvent ID:      1300 (SYSCALL)\nLevel:         Notice\nHost:          web01.prod.example.org\nDescription:\nA monitored discretionary-access-control syscall (chmod/fchmod/fchmodat or\nchown/fchown/lchown/fchownat) completed — e.g. someone widened a file's\npermissions or handed ownership to a different account.\ntype=SYSCALL msg=audit(1732211100.200:51150): arch=c000003e syscall=90\nsuccess=yes exit=0 items=1 ppid=1200 pid=25700 auid=1000 uid=0 gid=0\neuid=0 tty=pts3 ses=12 comm=\"chmod\" exe=\"/usr/bin/chmod\"\nsubj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=\"permissions\"",
+    "reference": "See auditd_rules.csv rows 13-01..13-08 for the chmod vs. chown rule variants (keys permissions/ownership/perm_mod).",
+    "how_to_collect": "DAC Permission Change",
+    "sample_type": "illustrative",
+    "mitre_techniques": "T1222.002",
+    "priority_signal": "",
+    "nist_800_53_au": "AU-2, AU-3, AU-12",
+    "acsc_ism_control": "",
+    "cis_control": "6.3.3.9",
+    "disa_stig_id": "",
+    "field_schema": {
+      "header": {
+        "log_name": "string",
+        "source": "string",
+        "event_id": "integer",
+        "level": "enum",
+        "host": "string",
+        "description": "string"
+      },
+      "process": {
+        "pid": "integer",
+        "ppid": "integer",
+        "comm": "string",
+        "exe": "path"
+      },
+      "subject": {
+        "auid": "integer",
+        "uid": "integer",
+        "gid": "integer",
+        "euid": "integer",
+        "ses": "integer",
+        "subj": "string"
+      },
+      "syscall": {
+        "arch": "hex",
+        "syscall": "integer",
+        "success": "enum",
+        "exit": "integer",
+        "items": "integer",
+        "key": "string"
+      }
+    }
+  },
+  {
+    "event_id": "1300",
+    "log": "audit/SYSCALL",
+    "source": "kernel (mount)",
+    "category": "System",
+    "subcategory": "Filesystem Mounts",
+    "description": "A filesystem was mounted or unmounted",
+    "sample": "Log Name:      audit/SYSCALL\nSource:        kernel (mount)\nEvent ID:      1300 (SYSCALL)\nLevel:         Notice\nHost:          db01.prod.example.org\nDescription:\nA mount(2) or umount2(2) syscall completed for an interactive user —\nroutine for legitimate storage administration, but also how removable\nmedia gets attached and how a container escape can remount the host\nfilesystem read-write.\ntype=SYSCALL msg=audit(1732211200.300:51200): arch=c000003e syscall=165\nsuccess=yes exit=0 items=2 ppid=1200 pid=25800 auid=1000 uid=0 gid=0\neuid=0 tty=pts3 ses=12 comm=\"mount\" exe=\"/usr/bin/mount\"\nsubj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=\"mounts\"",
+    "reference": "See auditd_rules.csv rows 24-01..24-06.",
+    "how_to_collect": "Filesystem Mounts",
+    "sample_type": "illustrative",
+    "mitre_techniques": "",
+    "priority_signal": "",
+    "nist_800_53_au": "AU-2, AU-3, AU-12",
+    "acsc_ism_control": "",
+    "cis_control": "6.3.3.10",
+    "disa_stig_id": "RHEL-09-654180",
+    "field_schema": {
+      "header": {
+        "log_name": "string",
+        "source": "string",
+        "event_id": "integer",
+        "level": "enum",
+        "host": "string",
+        "description": "string"
+      },
+      "process": {
+        "pid": "integer",
+        "ppid": "integer",
+        "comm": "string",
+        "exe": "path"
+      },
+      "subject": {
+        "auid": "integer",
+        "uid": "integer",
+        "gid": "integer",
+        "euid": "integer",
+        "ses": "integer",
+        "subj": "string"
+      },
+      "syscall": {
+        "arch": "hex",
+        "syscall": "integer",
+        "success": "enum",
+        "exit": "integer",
+        "items": "integer",
+        "key": "string"
+      }
+    }
+  },
+  {
+    "event_id": "1302",
+    "log": "audit/SYSCALL",
+    "source": "kernel (fs watch)",
+    "category": "Object Access",
+    "subcategory": "Removable Media",
+    "description": "A removable media mount point was accessed",
+    "sample": "Log Name:      audit/SYSCALL\nSource:        kernel (fs watch)\nEvent ID:      1302 (PATH)\nLevel:         Notice\nHost:          web01.prod.example.org\nDescription:\nA path under a removable-media mount point (/media or /run/media) was\nwritten to — relevant for both data-exfiltration and malware-introduction\ndetection on workstations where USB storage is permitted.\ntype=PATH msg=audit(1732211300.400:51250): item=0 name=\"/media/usb0/export.csv\"\ninode=88231 dev=sdb1 mode=0100644 ouid=1000 ogid=1000 rdev=00:00\nobjtype=NORMAL key=\"removable_media\"",
+    "reference": "See auditd_rules.csv rows 25-01, 25-02.",
+    "how_to_collect": "Removable Media",
+    "sample_type": "illustrative",
+    "mitre_techniques": "T1052.001",
+    "priority_signal": "",
+    "nist_800_53_au": "AU-2, AU-3, AU-12",
+    "acsc_ism_control": "",
+    "cis_control": "",
+    "disa_stig_id": "",
+    "field_schema": {
+      "header": {
+        "log_name": "string",
+        "source": "string",
+        "event_id": "integer",
+        "level": "enum",
+        "host": "string",
+        "description": "string"
+      },
+      "record": {
+        "item": "integer",
+        "name": "path",
+        "inode": "integer",
+        "dev": "string",
+        "mode": "hex",
+        "ouid": "integer",
+        "ogid": "integer",
+        "objtype": "enum",
+        "key": "string"
+      }
+    }
+  },
+  {
+    "event_id": "1300",
+    "log": "audit/SYSCALL",
+    "source": "kernel (xattr)",
+    "category": "Object Access",
+    "subcategory": "Extended Attributes",
+    "description": "An extended attribute was set or removed on a file",
+    "sample": "Log Name:      audit/SYSCALL\nSource:        kernel (xattr)\nEvent ID:      1300 (SYSCALL)\nLevel:         Notice\nHost:          web01.prod.example.org\nDescription:\nA setxattr/removexattr-family syscall completed — the mechanism behind\nSELinux label changes, POSIX ACLs, and file capabilities, so also how an\nattacker can quietly relabel a file to escape confinement or grant a\nbinary elevated capabilities without going through setcap's own logging.\ntype=SYSCALL msg=audit(1732211400.500:51300): arch=c000003e syscall=188\nsuccess=yes exit=0 items=1 ppid=1200 pid=25900 auid=1000 uid=0 gid=0\neuid=0 tty=pts3 ses=12 comm=\"chcon\" exe=\"/usr/bin/chcon\"\nsubj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=\"xattr\"",
+    "reference": "See auditd_rules.csv rows 14-01..14-05.",
+    "how_to_collect": "Extended Attributes",
+    "sample_type": "illustrative",
+    "mitre_techniques": "T1222.002",
+    "priority_signal": "",
+    "nist_800_53_au": "AU-2, AU-3, AU-12",
+    "acsc_ism_control": "",
+    "cis_control": "",
+    "disa_stig_id": "",
+    "field_schema": {
+      "header": {
+        "log_name": "string",
+        "source": "string",
+        "event_id": "integer",
+        "level": "enum",
+        "host": "string",
+        "description": "string"
+      },
+      "process": {
+        "pid": "integer",
+        "ppid": "integer",
+        "comm": "string",
+        "exe": "path"
+      },
+      "subject": {
+        "auid": "integer",
+        "uid": "integer",
+        "gid": "integer",
+        "euid": "integer",
+        "ses": "integer",
+        "subj": "string"
+      },
+      "syscall": {
+        "arch": "hex",
+        "syscall": "integer",
+        "success": "enum",
+        "exit": "integer",
+        "items": "integer",
+        "key": "string"
+      }
+    }
+  },
+  {
+    "event_id": "1302",
+    "log": "audit/SYSCALL",
+    "source": "kernel (fs watch)",
+    "category": "System",
+    "subcategory": "Scheduled Tasks",
+    "description": "A cron configuration file or directory was modified",
+    "sample": "Log Name:      audit/SYSCALL\nSource:        kernel (fs watch)\nEvent ID:      1302 (PATH)\nLevel:         Warning\nHost:          db01.prod.example.org\nDescription:\nA path under /etc/crontab, /etc/cron.d/, /etc/cron.{hourly,daily,weekly,\nmonthly}/, or /var/spool/cron/ was written to — cron is one of the most\ncommon persistence mechanisms on Linux, so this is worth reviewing every\ntime outside a known change window.\ntype=PATH msg=audit(1732211500.600:51350): item=0 name=\"/etc/cron.d/backup-sync\"\ninode=141022 dev=fd:01 mode=0100644 ouid=0 ogid=0 rdev=00:00\nobjtype=CREATE key=\"scheduled_tasks\"",
+    "reference": "See auditd_rules.csv rows 26-01..26-07.",
+    "how_to_collect": "Scheduled Tasks",
+    "sample_type": "illustrative",
+    "mitre_techniques": "T1053.003",
+    "priority_signal": "Yes",
+    "nist_800_53_au": "AU-2, AU-3, AU-12",
+    "acsc_ism_control": "",
+    "cis_control": "",
+    "disa_stig_id": "RHEL-09-654097",
+    "field_schema": {
+      "header": {
+        "log_name": "string",
+        "source": "string",
+        "event_id": "integer",
+        "level": "enum",
+        "host": "string",
+        "description": "string"
+      },
+      "record": {
+        "item": "integer",
+        "name": "path",
+        "inode": "integer",
+        "dev": "string",
+        "mode": "hex",
+        "ouid": "integer",
+        "ogid": "integer",
+        "objtype": "enum",
+        "key": "string"
+      }
+    }
+  },
+  {
+    "event_id": "1302",
+    "log": "audit/SYSCALL",
+    "source": "kernel (fs watch)",
+    "category": "System",
+    "subcategory": "Dynamic Linker Manipulation",
+    "description": "The dynamic linker preload/config file was modified",
+    "sample": "Log Name:      audit/SYSCALL\nSource:        kernel (fs watch)\nEvent ID:      1302 (PATH)\nLevel:         Critical\nHost:          web01.prod.example.org\nDescription:\n/etc/ld.so.preload, /etc/ld.so.conf, or /etc/ld.so.conf.d/ was written to.\nld.so.preload in particular forces every dynamically-linked process on the\nsystem to load an attacker-chosen shared library first — a classic\nuserland-rootkit and credential-interception technique. Outside a known\npackage-manager transaction, treat this as an active incident.\ntype=PATH msg=audit(1732211600.700:51400): item=0 name=\"/etc/ld.so.preload\"\ninode=52011 dev=fd:01 mode=0100644 ouid=0 ogid=0 rdev=00:00\nobjtype=NORMAL key=\"library_injection\"",
+    "reference": "See auditd_rules.csv rows 30-01..30-03.",
+    "how_to_collect": "Dynamic Linker Manipulation",
+    "sample_type": "illustrative",
+    "mitre_techniques": "T1574.006",
+    "priority_signal": "Yes",
+    "nist_800_53_au": "AU-2, AU-3, AU-12",
+    "acsc_ism_control": "",
+    "cis_control": "",
+    "disa_stig_id": "",
+    "field_schema": {
+      "header": {
+        "log_name": "string",
+        "source": "string",
+        "event_id": "integer",
+        "level": "enum",
+        "host": "string",
+        "description": "string"
+      },
+      "record": {
+        "item": "integer",
+        "name": "path",
+        "inode": "integer",
+        "dev": "string",
+        "mode": "hex",
+        "ouid": "integer",
+        "ogid": "integer",
+        "objtype": "enum",
+        "key": "string"
+      }
+    }
+  },
+  {
+    "event_id": "1302",
+    "log": "audit/SYSCALL",
+    "source": "kernel (fs watch)",
+    "category": "System",
+    "subcategory": "Package Management",
+    "description": "A package manager binary was executed",
+    "sample": "Log Name:      audit/SYSCALL\nSource:        kernel (fs watch)\nEvent ID:      1302 (PATH)\nLevel:         Information\nHost:          web01.prod.example.org\nDescription:\nrpm, dnf, or yum was executed — the audit trail for what software was\ninstalled, updated, or removed and by whom, complementing (not\nreplacing) the package manager's own transaction history in\n/var/log/dnf.log.\ntype=PATH msg=audit(1732211700.800:51450): item=0 name=\"/usr/bin/dnf\"\ninode=98123 dev=fd:01 mode=0100755 ouid=0 ogid=0 rdev=00:00\nobjtype=NORMAL key=\"software_install\"",
+    "reference": "See auditd_rules.csv rows 31-01..31-05.",
+    "how_to_collect": "Package Management",
+    "sample_type": "illustrative",
+    "mitre_techniques": "",
+    "priority_signal": "",
+    "nist_800_53_au": "AU-2, AU-3, AU-12",
+    "acsc_ism_control": "",
+    "cis_control": "",
+    "disa_stig_id": "",
+    "field_schema": {
+      "header": {
+        "log_name": "string",
+        "source": "string",
+        "event_id": "integer",
+        "level": "enum",
+        "host": "string",
+        "description": "string"
+      },
+      "record": {
+        "item": "integer",
+        "name": "path",
+        "inode": "integer",
+        "dev": "string",
+        "mode": "hex",
+        "ouid": "integer",
+        "ogid": "integer",
+        "objtype": "enum",
+        "key": "string"
+      }
+    }
+  },
+  {
+    "event_id": "1302",
+    "log": "audit/SYSCALL",
+    "source": "kernel (fs watch)",
+    "category": "System",
+    "subcategory": "DNS Configuration",
+    "description": "A DNS or name-resolution configuration file was modified",
+    "sample": "Log Name:      audit/SYSCALL\nSource:        kernel (fs watch)\nEvent ID:      1302 (PATH)\nLevel:         Warning\nHost:          web01.prod.example.org\nDescription:\n/etc/resolv.conf, /etc/hosts, or /etc/nsswitch.conf was written to —\nany of these can silently redirect where a hostname actually resolves\nto, which is how a compromised host is repointed at an\nattacker-controlled server without touching the application itself.\ntype=PATH msg=audit(1732211800.900:51500): item=0 name=\"/etc/resolv.conf\"\ninode=52033 dev=fd:01 mode=0100644 ouid=0 ogid=0 rdev=00:00\nobjtype=NORMAL key=\"dns_config\"",
+    "reference": "See auditd_rules.csv rows 48-01..48-03.",
+    "how_to_collect": "DNS Configuration",
+    "sample_type": "illustrative",
+    "mitre_techniques": "",
+    "priority_signal": "",
+    "nist_800_53_au": "AU-2, AU-3, AU-12",
+    "acsc_ism_control": "",
+    "cis_control": "",
+    "disa_stig_id": "",
+    "field_schema": {
+      "header": {
+        "log_name": "string",
+        "source": "string",
+        "event_id": "integer",
+        "level": "enum",
+        "host": "string",
+        "description": "string"
+      },
+      "record": {
+        "item": "integer",
+        "name": "path",
+        "inode": "integer",
+        "dev": "string",
+        "mode": "hex",
+        "ouid": "integer",
+        "ogid": "integer",
+        "objtype": "enum",
+        "key": "string"
+      }
+    }
+  },
+  {
+    "event_id": "1302",
+    "log": "audit/SYSCALL",
+    "source": "kernel (fs watch)",
+    "category": "System",
+    "subcategory": "SSH Host Keys",
+    "description": "An SSH host private key was modified",
+    "sample": "Log Name:      audit/SYSCALL\nSource:        kernel (fs watch)\nEvent ID:      1302 (PATH)\nLevel:         Critical\nHost:          bastion01.prod.example.org\nDescription:\nOne of /etc/ssh/ssh_host_{rsa,ecdsa,ed25519}_key was written to. A host\nkey is what every client's known_hosts entry is pinned against — a\nreplaced host key is either routine key rotation or the setup step for\nan SSH man-in-the-middle, and the two look identical from this event\nalone, so correlate with a known maintenance window before assuming\neither.\ntype=PATH msg=audit(1732211900.100:51550): item=0 name=\"/etc/ssh/ssh_host_ed25519_key\"\ninode=52055 dev=fd:01 mode=0100600 ouid=0 ogid=0 rdev=00:00\nobjtype=NORMAL key=\"ssh_host_keys\"",
+    "reference": "See auditd_rules.csv rows 50-01..50-03.",
+    "how_to_collect": "SSH Host Keys",
+    "sample_type": "illustrative",
+    "mitre_techniques": "T1557",
+    "priority_signal": "Yes",
+    "nist_800_53_au": "AU-2, AU-3, AU-12",
+    "acsc_ism_control": "",
+    "cis_control": "",
+    "disa_stig_id": "",
+    "field_schema": {
+      "header": {
+        "log_name": "string",
+        "source": "string",
+        "event_id": "integer",
+        "level": "enum",
+        "host": "string",
+        "description": "string"
+      },
+      "record": {
+        "item": "integer",
+        "name": "path",
+        "inode": "integer",
+        "dev": "string",
+        "mode": "hex",
+        "ouid": "integer",
+        "ogid": "integer",
+        "objtype": "enum",
+        "key": "string"
+      }
+    }
+  },
+  {
+    "event_id": "1302",
+    "log": "audit/SYSCALL",
+    "source": "kernel (fs watch)",
+    "category": "System",
+    "subcategory": "PKI / Trusted Certificates",
+    "description": "The system trust store was modified",
+    "sample": "Log Name:      audit/SYSCALL\nSource:        kernel (fs watch)\nEvent ID:      1302 (PATH)\nLevel:         Critical\nHost:          web01.prod.example.org\nDescription:\nA path under /etc/pki/ca-trust/ (or its source/anchors/ subdirectory)\nwas written to — this is exactly how a rogue CA certificate gets\ninstalled so a TLS-intercepting proxy can transparently decrypt traffic\nthe host believes is trusted end-to-end.\ntype=PATH msg=audit(1732212000.200:51600): item=0 name=\"/etc/pki/ca-trust/source/anchors/corp-proxy-ca.pem\"\ninode=52077 dev=fd:01 mode=0100644 ouid=0 ogid=0 rdev=00:00\nobjtype=CREATE key=\"trusted_certificates\"",
+    "reference": "See auditd_rules.csv rows 49-01..49-03.",
+    "how_to_collect": "PKI / Trusted Certificates",
+    "sample_type": "illustrative",
+    "mitre_techniques": "T1553.004",
+    "priority_signal": "Yes",
+    "nist_800_53_au": "AU-2, AU-3, AU-12",
+    "acsc_ism_control": "",
+    "cis_control": "",
+    "disa_stig_id": "",
+    "field_schema": {
+      "header": {
+        "log_name": "string",
+        "source": "string",
+        "event_id": "integer",
+        "level": "enum",
+        "host": "string",
+        "description": "string"
+      },
+      "record": {
+        "item": "integer",
+        "name": "path",
+        "inode": "integer",
+        "dev": "string",
+        "mode": "hex",
+        "ouid": "integer",
+        "ogid": "integer",
+        "objtype": "enum",
+        "key": "string"
+      }
+    }
+  },
+  {
+    "event_id": "1302",
+    "log": "audit/SYSCALL",
+    "source": "kernel (fs watch)",
+    "category": "System",
+    "subcategory": "Container Administration",
+    "description": "A container engine binary was executed",
+    "sample": "Log Name:      audit/SYSCALL\nSource:        kernel (fs watch)\nEvent ID:      1302 (PATH)\nLevel:         Information\nHost:          web01.prod.example.org\nDescription:\ndocker or podman was executed — the container equivalent of the\n\"privileged command execution\" objective, since a `docker run\n--privileged` or a bind-mount of the Docker socket is one of the more\ndirect routes from a compromised container to full host control.\ntype=PATH msg=audit(1732212100.300:51650): item=0 name=\"/usr/bin/docker\"\ninode=98144 dev=fd:01 mode=0100755 ouid=0 ogid=0 rdev=00:00\nobjtype=NORMAL key=\"container_admin\"",
+    "reference": "See auditd_rules.csv rows 52-01..52-03, 53-01, 53-02.",
+    "how_to_collect": "Container Administration",
+    "sample_type": "illustrative",
+    "mitre_techniques": "T1609",
+    "priority_signal": "",
+    "nist_800_53_au": "AU-2, AU-3, AU-12",
+    "acsc_ism_control": "",
+    "cis_control": "",
+    "disa_stig_id": "",
+    "field_schema": {
+      "header": {
+        "log_name": "string",
+        "source": "string",
+        "event_id": "integer",
+        "level": "enum",
+        "host": "string",
+        "description": "string"
+      },
+      "record": {
+        "item": "integer",
+        "name": "path",
+        "inode": "integer",
+        "dev": "string",
+        "mode": "hex",
+        "ouid": "integer",
+        "ogid": "integer",
+        "objtype": "enum",
+        "key": "string"
+      }
+    }
+  },
+  {
+    "event_id": "1302",
+    "log": "audit/SYSCALL",
+    "source": "kernel (fs watch)",
+    "category": "System",
+    "subcategory": "Identity Provider Configuration",
+    "description": "A Kerberos or SSSD identity-provider configuration file was modified",
+    "sample": "Log Name:      audit/SYSCALL\nSource:        kernel (fs watch)\nEvent ID:      1302 (PATH)\nLevel:         Warning\nHost:          db01.prod.example.org\nDescription:\n/etc/krb5.conf or /etc/sssd/sssd.conf was written to — either can\nrepoint how this host authenticates users against Active Directory/IPA\n(e.g. to a rogue KDC or LDAP endpoint), so treat a change outside\nplanned domain-join/reconfiguration work as high-signal.\ntype=PATH msg=audit(1732212200.400:51700): item=0 name=\"/etc/sssd/sssd.conf\"\ninode=52099 dev=fd:01 mode=0100600 ouid=0 ogid=0 rdev=00:00\nobjtype=NORMAL key=\"identity_provider\"",
+    "reference": "See auditd_rules.csv rows 79-01, 79-02, 80-01, 80-02.",
+    "how_to_collect": "Identity Provider Configuration",
+    "sample_type": "illustrative",
+    "mitre_techniques": "T1556",
+    "priority_signal": "",
+    "nist_800_53_au": "AU-2, AU-3, AU-12",
+    "acsc_ism_control": "",
+    "cis_control": "",
+    "disa_stig_id": "",
+    "field_schema": {
+      "header": {
+        "log_name": "string",
+        "source": "string",
+        "event_id": "integer",
+        "level": "enum",
+        "host": "string",
+        "description": "string"
+      },
+      "record": {
+        "item": "integer",
+        "name": "path",
+        "inode": "integer",
+        "dev": "string",
+        "mode": "hex",
+        "ouid": "integer",
+        "ogid": "integer",
+        "objtype": "enum",
+        "key": "string"
+      }
+    }
+  },
+  {
+    "event_id": "1300",
+    "log": "audit/SYSCALL",
+    "source": "kernel (ptrace)",
+    "category": "Privilege Use",
+    "subcategory": "Process Injection",
+    "description": "A process attached to and traced another process via ptrace()",
+    "sample": "Log Name:      audit/SYSCALL\nSource:        kernel (ptrace)\nEvent ID:      1300 (SYSCALL)\nLevel:         Warning\nHost:          web01.prod.example.org\nDescription:\nptrace(2) is the underlying primitive for both legitimate debuggers\n(gdb, strace) and process-injection techniques (writing shellcode into\nanother process's memory, dumping credentials from a running process).\nExpect frequent hits on a developer workstation; unusual on a\nproduction server.\ntype=SYSCALL msg=audit(1732212300.500:51750): arch=c000003e syscall=101\nsuccess=yes exit=0 items=0 ppid=1200 pid=26000 auid=1000 uid=1000 gid=1000\neuid=1000 tty=pts3 ses=12 comm=\"gdb\" exe=\"/usr/bin/gdb\"\nsubj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=\"process_injection\"",
+    "reference": "See auditd_rules.csv rows 40-01, 40-02.",
+    "how_to_collect": "Process Injection",
+    "sample_type": "illustrative",
+    "mitre_techniques": "T1055.008",
+    "priority_signal": "Yes",
+    "nist_800_53_au": "AU-2, AU-3, AU-12",
+    "acsc_ism_control": "",
+    "cis_control": "",
+    "disa_stig_id": "",
+    "field_schema": {
+      "header": {
+        "log_name": "string",
+        "source": "string",
+        "event_id": "integer",
+        "level": "enum",
+        "host": "string",
+        "description": "string"
+      },
+      "process": {
+        "pid": "integer",
+        "ppid": "integer",
+        "comm": "string",
+        "exe": "path"
+      },
+      "subject": {
+        "auid": "integer",
+        "uid": "integer",
+        "gid": "integer",
+        "euid": "integer",
+        "ses": "integer",
+        "subj": "string"
+      },
+      "syscall": {
+        "arch": "hex",
+        "syscall": "integer",
+        "success": "enum",
+        "exit": "integer",
+        "items": "integer",
+        "key": "string"
+      }
+    }
+  },
+  {
+    "event_id": "1300",
+    "log": "audit/SYSCALL",
+    "source": "kernel (namespace)",
+    "category": "Privilege Use",
+    "subcategory": "Namespace Manipulation",
+    "description": "A process created or joined a Linux namespace",
+    "sample": "Log Name:      audit/SYSCALL\nSource:        kernel (namespace)\nEvent ID:      1300 (SYSCALL)\nLevel:         Warning\nHost:          web01.prod.example.org\nDescription:\nunshare(2)/setns(2) create or join the PID/network/mount/user\nnamespaces containers are built from — legitimate for container\ntooling, but also how a process on the host can step into (or a\nprocess in a container can step out of) a namespace boundary, which\nis a step in most container-escape techniques.\ntype=SYSCALL msg=audit(1732212400.600:51800): arch=c000003e syscall=272\nsuccess=yes exit=0 items=0 ppid=1 pid=26100 auid=4294967295 uid=0 gid=0\neuid=0 comm=\"runc\" exe=\"/usr/bin/runc\"\nsubj=system_u:system_r:container_runtime_t:s0 key=\"namespace\"",
+    "reference": "See auditd_rules.csv row 42-01.",
+    "how_to_collect": "Namespace Manipulation",
+    "sample_type": "illustrative",
+    "mitre_techniques": "T1611",
+    "priority_signal": "Yes",
+    "nist_800_53_au": "AU-2, AU-3, AU-12",
+    "acsc_ism_control": "",
+    "cis_control": "",
+    "disa_stig_id": "",
+    "field_schema": {
+      "header": {
+        "log_name": "string",
+        "source": "string",
+        "event_id": "integer",
+        "level": "enum",
+        "host": "string",
+        "description": "string"
+      },
+      "process": {
+        "pid": "integer",
+        "ppid": "integer",
+        "comm": "string",
+        "exe": "path"
+      },
+      "subject": {
+        "auid": "integer",
+        "uid": "integer",
+        "gid": "integer",
+        "euid": "integer",
+        "subj": "string"
+      },
+      "syscall": {
+        "arch": "hex",
+        "syscall": "integer",
+        "success": "enum",
+        "exit": "integer",
+        "items": "integer",
+        "key": "string"
+      }
+    }
+  },
+  {
+    "event_id": "1302",
+    "log": "audit/SYSCALL",
+    "source": "kernel (fs watch)",
+    "category": "Object Access",
+    "subcategory": "Anti-Forensics",
+    "description": "A secure-deletion utility was executed",
+    "sample": "Log Name:      audit/SYSCALL\nSource:        kernel (fs watch)\nEvent ID:      1302 (PATH)\nLevel:         Warning\nHost:          db01.prod.example.org\nDescription:\nshred or truncate was executed. Both have legitimate uses (securely\nwiping decommissioned disks, truncating log files as part of rotation)\nbut are also exactly the tools used to destroy evidence after other\nmalicious activity, so context (which file, which user, what else\nhappened in the same session) matters more than the event alone.\ntype=PATH msg=audit(1732212500.700:51850): item=0 name=\"/usr/bin/shred\"\ninode=98166 dev=fd:01 mode=0100755 ouid=0 ogid=0 rdev=00:00\nobjtype=NORMAL key=\"anti_forensics\"",
+    "reference": "See auditd_rules.csv rows 36-01, 36-02.",
+    "how_to_collect": "Anti-Forensics",
+    "sample_type": "illustrative",
+    "mitre_techniques": "T1070",
+    "priority_signal": "Yes",
+    "nist_800_53_au": "AU-2, AU-3, AU-12",
+    "acsc_ism_control": "",
+    "cis_control": "",
+    "disa_stig_id": "",
+    "field_schema": {
+      "header": {
+        "log_name": "string",
+        "source": "string",
+        "event_id": "integer",
+        "level": "enum",
+        "host": "string",
+        "description": "string"
+      },
+      "record": {
+        "item": "integer",
+        "name": "path",
+        "inode": "integer",
+        "dev": "string",
+        "mode": "hex",
+        "ouid": "integer",
+        "ogid": "integer",
+        "objtype": "enum",
+        "key": "string"
+      }
+    }
   }
 ]
