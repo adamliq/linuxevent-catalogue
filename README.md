@@ -253,6 +253,24 @@ flagged low-confidence entries instead of guessing.
   `events.csv`/`.json` catalogue — its CIS and DISA STIG identifiers are
   not reflected in `acsc_ism_control` or any other event field; it's a
   separate, much larger rule-level catalogue that stands on its own.
+- `docs/auditd-rules-log-examples.md` — 36 real
+  `/var/log/audit/audit.log` example blocks supplied by the repo owner
+  (one or more per major rule category), each showing the actual
+  multi-record output — `SYSCALL`/`PATH`/`CWD`/`EXECVE`/`PROCTITLE`/
+  `OBJ_PID` sharing one timestamp:serial — a matching rule produces.
+  `build.py` parses this file too and attaches each example to every
+  `auditd_rules.csv` row whose `audit_key` matches the example's own
+  `key="..."` value (not by section number, since a few keys — e.g.
+  `network_config` — are genuinely defined identically in two different
+  sections of the master reference, and key-matching correctly surfaces
+  the example on all of them). One exact mismatch surfaced by this: the
+  SSH Security log example was captured with `key="sshd_config"`, but
+  every §7 rule in the master reference uses `key="ssh_config"` (no
+  "d") — mapped explicitly via a small alias table rather than silently
+  merged, and the discrepancy is shown directly on the rendered example
+  rather than hidden. 136 of 321 rules end up with at least one attached
+  example; the rest (control flags with no `-k`, and categories the log
+  examples file doesn't cover) have none — see `log_samples` below.
 - `data/reference/auditd_rules.csv` / `.json` — 321 individual `auditctl`
   rules mechanically extracted from `docs/auditd-rules-master-reference.md`
   (every `-w`/`-a always,exit` line in the source, plus each row of its
@@ -294,6 +312,17 @@ flagged low-confidence entries instead of guessing.
   the JSON file and the same structure JSON-serialized into the CSV
   cell. All 321 rows resolve to a full explanation for every token — see
   the Auditd Rules tab's detail view for the rendered form.
+
+  Each row also carries a `log_samples` field: real
+  `/var/log/audit/audit.log` example(s) from
+  `docs/auditd-rules-log-examples.md`, attached by exact `audit_key`
+  match (136 of 321 rows have at least one). A nested array of `{title,
+  log, annotation, key_note}` objects — `annotation` carries the source
+  document's own decoded-value notes (e.g. "exit=-13 → EACCES /
+  Permission denied") where present; `key_note` flags the one known
+  key-spelling mismatch (§7 SSH Security, `sshd_config` in the captured
+  log vs. `ssh_config` in the rule) rather than silently smoothing it
+  over.
 - `data/reference/auditd_fields.csv` / `.json` — 234 entries: every field
   name that can appear in a kernel audit record (`SYSCALL`, `PATH`,
   `EXECVE`, `AVC`, `USER_*`, and the rest — `auid`, `arch`, `exe`, `cmd`,
@@ -332,18 +361,24 @@ disconnect table on any `ssh/protocol` event).
 *Rules* is the same search/filter/detail layout applied to all
 321 rows of `data/reference/auditd_rules.csv`: a free-text search across
 the rule text, title, category, audit key, description, every
-CIS/DISA-STIG/ACSC-ISM reference field, and every switch's explanation
-text (so searching `6.3.3.8`, `RHEL-09-654150`, `sudo_config`, or even a
-concept like "kernel module" or "root privileges" that only appears in
-an explanation, all work), plus a searchable multi-select Category
-combobox ordered by the source document's own section numbering (1–88)
-rather than alphabetically. The detail view shows the full `auditd_rule`
-in a code block, then a **Switches & Arguments Explained** section
-breaking the rule into one card per flag with its plain-English meaning
-(e.g. `-F auid>=1000` → why `auid` rather than `uid` matters for
-attributing an action through `su`/`sudo`, and why 1000 specifically),
-alongside its CIS/STIG/ACSC fields and a source note pointing back to
-the originating section of `docs/auditd-rules-master-reference.md`.
+CIS/DISA-STIG/ACSC-ISM reference field, every switch's explanation text,
+and every attached log example's own text (so searching `6.3.3.8`,
+`RHEL-09-654150`, `sudo_config`, "kernel module"/"root privileges" from
+an explanation, or `EACCES`/`modprobe` from a real captured log line,
+all work), plus a searchable multi-select Category combobox ordered by
+the source document's own section numbering (1–88) rather than
+alphabetically. Rows with a real log example carry a **LOG** badge. The
+detail view shows the full `auditd_rule` in a code block, then — where
+one is attached — a **Log Example** section with the real
+`/var/log/audit/audit.log` output (plus any decoded-value annotation and
+the one known key-spelling discrepancy, where it applies), then a
+**Switches & Arguments Explained** section breaking the rule into one
+card per flag with its plain-English meaning (e.g. `-F auid>=1000` → why
+`auid` rather than `uid` matters for attributing an action through
+`su`/`sudo`, and why 1000 specifically), alongside its CIS/STIG/ACSC
+fields and a source note pointing back to the originating section of
+`docs/auditd-rules-master-reference.md` (and, when present, the log
+example's source in `docs/auditd-rules-log-examples.md`).
 
 *Fields* is a single searchable table over all 234 rows of
 `data/reference/auditd_fields.csv` — field name, value format, and
