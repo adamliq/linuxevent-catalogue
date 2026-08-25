@@ -333,6 +333,22 @@ flagged low-confidence entries instead of guessing.
   owner as a merge of the fields already implicit in this catalogue's own
   samples plus the official Linux Audit field dictionary. Powers the
   Fields submenu under the Auditd Rules tab, described below.
+- `data/reference/auditd_record_type_names.csv` / `.json` — 159 entries:
+  every value the `type=` field can take at the start of a record in
+  `/var/log/audit/audit.log` (`SYSCALL`, `PATH`, `AVC`, `USER_*`,
+  `DAEMON_*`, `APPARMOR_*`, `MAC_*`, `CRYPTO_*`, `INTEGRITY_*`, `VIRT_*`,
+  and the rest), each with a plain-English explanation, supplied by the
+  repo owner. `data/reference/auditd_record_type_ranges.csv` / `.json` —
+  the 15 numeric ranges these type names fall into per the kernel audit
+  header (`include/uapi/linux/audit.h`) and the audit userspace
+  message-type ranges (e.g. `1400–1499` = SELinux, `1500–1599` =
+  AppArmor, `2500–2599` = user-space virtualization events).
+  `data/reference/auditd_record_type_common.csv` / `.json` — the 10 record
+  types most frequently seen in day-to-day `audit.log` analysis, with
+  their typical origin (e.g. `SYSCALL`/`PATH`/`CWD`/`EXECVE`/`PROCTITLE`
+  from almost every syscall rule, `AVC` from SELinux denials/grants).
+  Together these power the Record Types submenu under the Auditd Rules
+  tab, described below.
 
 ## Web lookup
 
@@ -356,7 +372,8 @@ codes on credential-validation events, the capabilities table on the
 CAPSET event, common errno codes on the SYSCALL event, the full SSH
 disconnect table on any `ssh/protocol` event).
 
-**Auditd Rules** — a two-item submenu, **Rules** and **Fields**.
+**Auditd Rules** — a three-item submenu, **Rules**, **Fields**, and
+**Record Types**.
 
 *Rules* is the same search/filter/detail layout applied to all
 321 rows of `data/reference/auditd_rules.csv`: a free-text search across
@@ -385,6 +402,18 @@ example's source in `docs/auditd-rules-log-examples.md`).
 explanation, filtered live as you type (matches the field name, the
 format, or the explanation text, so searching "SELinux" surfaces every
 `subj_*`/`obj_*`/`*context*` field at once).
+
+*Record Types* is a searchable table over all 159 rows of
+`data/reference/auditd_record_type_names.csv` — the value the `type=`
+field takes at the start of every audit record, and what it means —
+filtered live by name or explanation, plus two static reference tables
+shown alongside it: the 15 numeric ranges these type names fall into per
+the kernel audit header (`data/reference/auditd_record_type_ranges.csv`)
+and the 10 record types most frequently seen in day-to-day log analysis
+with their typical origin
+(`data/reference/auditd_record_type_common.csv`), and a closing tip on
+using `ausearch -m` to see the exact list recognised by the installed
+audit package.
 
 **Reference tables** — covers all 9 accordion-style reference tables
 (`auditd_rules` gets its own dedicated tab instead, given its size) with
