@@ -333,6 +333,28 @@ flagged low-confidence entries instead of guessing.
   owner as a merge of the fields already implicit in this catalogue's own
   samples plus the official Linux Audit field dictionary. Powers the
   Fields submenu under the Auditd Rules tab, described below.
+
+  Each row also carries a Splunk CIM (Common Information Model) enrichment,
+  supplied by the repo owner: `cim_potential_name` (the nearest CIM field
+  name or names), `supported_cim_field` (which of those, if any, Splunk's
+  CIM actually recognises — some potential names have no directly
+  supported CIM field), `cim_data_model_category` (which CIM data
+  model(s) the field falls under — Authentication, Change, Endpoint,
+  Network_Traffic, Intrusion_Detection, Inventory), and `splunk_app`
+  (which Splunk app/TA maps the field out of the box —
+  `Splunk Add-on for Linux`, the community `TA-linux_auditd`, `custom`
+  for a local `FIELDALIAS`/`EVAL`, or a slash-separated combination). The
+  source table itself grouped several related fields under one row (e.g.
+  `cap_*`, `obj`/`obj_*`, `subj`/`subj_*`, `new-*`/`old-*`) — `build.py`
+  expands each group against the actual field names already in
+  `AUDITD_FIELDS` rather than guessing new ones, and a later specific
+  entry always wins over an earlier wildcard one on overlap (e.g.
+  `old_prom`, which the `old-*`/`old_*` wildcard would otherwise put
+  under "Change", is pinned to its own "Network_Traffic" entry instead).
+  118 of the 234 fields have a CIM enrichment; the rest were not covered
+  by the source table and are left blank in all four columns — distinct
+  from the source table's own explicit `"—"` ("no known mapping" for a
+  field it did consider, e.g. `arch`, `data`, `items`, `list`, `msg`).
 - `data/reference/auditd_record_type_names.csv` / `.json` — 159 entries:
   every value the `type=` field can take at the start of a record in
   `/var/log/audit/audit.log` (`SYSCALL`, `PATH`, `AVC`, `USER_*`,
@@ -398,10 +420,15 @@ fields and a source note pointing back to the originating section of
 example's source in `docs/auditd-rules-log-examples.md`).
 
 *Fields* is a single searchable table over all 234 rows of
-`data/reference/auditd_fields.csv` — field name, value format, and
-explanation, filtered live as you type (matches the field name, the
-format, or the explanation text, so searching "SELinux" surfaces every
-`subj_*`/`obj_*`/`*context*` field at once).
+`data/reference/auditd_fields.csv` — field name, value format,
+explanation, and its Splunk CIM enrichment (potential CIM name,
+supported CIM field, CIM data model, and mapping Splunk app/TA) —
+filtered live as you type across all seven columns (so searching
+"SELinux" surfaces every `subj_*`/`obj_*`/`*context*` field at once, and
+searching "Intrusion_Detection" or "TA-linux_auditd" filters by the CIM
+columns alone). Blank CIM cells mean the field wasn't covered by the
+enrichment; an explicit "—" means it was considered and has no known
+mapping.
 
 *Record Types* is a searchable table over all 159 rows of
 `data/reference/auditd_record_type_names.csv` — the value the `type=`
