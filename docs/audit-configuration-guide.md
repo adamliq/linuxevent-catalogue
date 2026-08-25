@@ -5,6 +5,11 @@ This is a human-readable version of `data/reference/audit_configuration.csv` /
 this catalogue — the config file/command to use, the steps, and the event
 IDs it causes to be logged.
 
+For a much larger set of ready-to-deploy `auditctl`/`auditd.rules.d` rules
+beyond this catalogue's own 27 subcategories — including CIS RHEL 9
+Benchmark and DISA STIG identifiers alongside ACSC ISM outcome alignment —
+see `docs/auditd-rules-master-reference.md`.
+
 Most `audit/*` events need nothing beyond the audit subsystem being active
 (`systemctl enable --now auditd`, or the kernel's built-in audit support if
 you're not running the userspace daemon at all — check with

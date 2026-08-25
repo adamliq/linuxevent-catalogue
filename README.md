@@ -207,6 +207,17 @@ flagged low-confidence entries instead of guessing.
   PAM, SELinux/AppArmor, and systemd to collect each event: the config
   path or command to run, step-by-step instructions, and the event IDs
   each setting produces.
+- `docs/auditd-rules-master-reference.md` — a much broader (~200-rule,
+  88-section) `auditd` rule catalogue supplied by the repo owner, covering
+  CIS RHEL 9 Benchmark v2.0.0 §6.3.3, DISA RHEL 9 STIG (`RHEL-09-654xxx`),
+  ACSC ISM outcome alignment, and SCAP/ComplianceAsCode integration —
+  including areas this catalogue's 61 curated events don't yet cover
+  (containers/Kubernetes, LDAP/Kerberos/IPA/SSSD, package management,
+  removable media, and more). It's a reference document, not (yet) wired
+  into `events.csv`/`.json` — its CIS and DISA STIG identifiers are not
+  currently reflected in `acsc_ism_control` or any other catalogue field.
+  See its own header for how it distinguishes exact framework references
+  from outcome-level/implementation-aid mappings.
 
 ## Web lookup
 
