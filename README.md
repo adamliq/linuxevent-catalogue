@@ -395,6 +395,27 @@ flagged low-confidence entries instead of guessing.
   `/etc/audit/rules.d/`, `/var/log/audit/audit.log`, and
   `/etc/audit/plugins.d/` to their purpose. Together these power the
   Commands submenu under the Auditd Rules tab, described below.
+- `data/reference/auditd_man_pages.csv` / `.json` — 7 entries: the full
+  manual pages for the `auditd` command family (`auditctl(8)`,
+  `ausearch(8)`, `aureport(8)`, `auditd(8)`, `augenrules(8)`,
+  `autrace(8)`, and `audispd`), transcribed from the upstream man pages
+  via the Ubuntu/Debian manpages mirror of the same content. Deliberately
+  reuses the exact same `{command, purpose, sections, notes}` shape as
+  `auditd_commands.csv` — each row's `sections` is a nested array of
+  `{title, code}` blocks, one per man-page section (SYNOPSIS,
+  DESCRIPTION, OPTIONS, EXAMPLES, FILES, SEE ALSO, and command-specific
+  sections like `auditctl`'s PERFORMANCE TIPS or `auditd`'s SIGNALS/EXIT
+  CODES) — so the "Man" submenu's rendering code is the Commands
+  submenu's rendering code, just pointed at fuller text. `notes` carries
+  the AUTHOR line where the man page has one. `audispd`'s entry is
+  honest about a real gap rather than a fabricated legacy page: as of
+  audit 3.0 (what RHEL 9 and Ubuntu 22.04+ ship), `audispd`'s code was
+  merged directly into `auditd` and its dispatcher config moved into
+  `auditd.conf`/`/etc/audit/plugins.d/` — there is no live `audispd(8)`
+  page any more (confirmed by both the noble and jammy manpages mirrors
+  404ing on it), so that row explains the merge and includes the current
+  `auditd-plugins(5)` page — the actual modern replacement — in full
+  instead.
 - **Fapolicyd** — `data/reference/fapolicyd_rules.csv` / `.json` — 16
   entries: the default rule files shipped with fapolicyd (the File Access
   Policy daemon, a separate application allow/deny-listing subsystem from
@@ -461,8 +482,8 @@ codes on credential-validation events, the capabilities table on the
 CAPSET event, common errno codes on the SYSCALL event, the full SSH
 disconnect table on any `ssh/protocol` event).
 
-**Auditd Rules** — a four-item submenu, **Rules**, **Fields**,
-**Record Types**, and **Commands**.
+**Auditd Rules** — a five-item submenu, **Rules**, **Fields**,
+**Record Types**, **Commands**, and **Man**.
 
 *Rules* is the same search/filter/detail layout applied to all
 321 rows of `data/reference/auditd_rules.csv`: a free-text search across
@@ -529,6 +550,24 @@ day-to-day command sequences,
 `DATA.auditd_command_cheatsheet` client-side) and a **Related files**
 table (`data/reference/auditd_command_related_files.csv` — 5 rows:
 `auditd.conf`, `audit.rules`, `rules.d/`, `audit.log`, `plugins.d/`).
+
+*Man* is a list/detail view over the 7 rows of
+`data/reference/auditd_man_pages.csv` — the full upstream manual page for
+each `auditd` command, laid out with the identical rendering code the
+Commands submenu uses (both share the same `{command, purpose, sections,
+notes}` row shape), just pointed at fuller content: every man-page
+section — SYNOPSIS, DESCRIPTION, every OPTIONS group, EXAMPLES, FILES,
+SEE ALSO, and command-specific sections like `auditctl`'s PERFORMANCE
+TIPS/DISABLED BY DEFAULT or `auditd`'s SIGNALS/EXIT CODES — gets its own
+card, and the AUTHOR line (where the page has one) appears in a Notes
+section. Search matches a command name, a section heading, or any text
+inside a section (so searching `SIGHUP`, `--format csv`, or `EXIT
+STATUS` all find the right page). The `audispd` row is transparent about
+a real gap rather than inventing content: `audispd` was merged into
+`auditd` itself as of audit 3.0 (what RHEL 9 and Ubuntu 22.04+ actually
+ship), so there's no live `audispd(8)` page to transcribe any more — its
+row explains the merge and includes the current `auditd-plugins(5)` page
+in full, since that's what replaced it.
 
 **Fapolicyd** — a separate top-level tab, next to Auditd Rules, for the
 File Access Policy daemon (`fapolicyd`): a distinct application
@@ -625,6 +664,18 @@ used, not written from memory:
   been a good second, independent cross-check but was unreachable from
   this environment (blocked the fetch outright) — flagging that rather
   than skipping the caveat silently.
+- **Auditd manual pages** (the Man submenu) — `auditctl(8)`, `ausearch(8)`,
+  `aureport(8)`, `auditd(8)`, `augenrules(8)`, and `autrace(8)` were
+  fetched from the Ubuntu manpages mirror (`manpages.ubuntu.com`,
+  `noble` release), which republishes the same upstream
+  `linux-audit/audit-userspace` man-page content Red Hat/Debian ship.
+  `audispd(8)` returned HTTP 404 on both `noble` and `jammy` — confirming
+  (rather than merely asserting) that it no longer exists as a
+  standalone page since audit 3.0 merged its code into `auditd` itself;
+  `auditd-plugins(5)`, the current replacement documenting the same
+  `/etc/audit/plugins.d/` mechanism, was fetched in its place and used
+  for that row instead of leaving it empty or fabricating a legacy page
+  this environment couldn't independently verify.
 - **Fapolicyd rules, fields, and commands** (the Fapolicyd tab) — the 16
   default rule files were fetched verbatim from
   `linux-application-whitelisting/fapolicyd`'s `rules.d/` directory on
