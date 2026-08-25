@@ -371,6 +371,26 @@ flagged low-confidence entries instead of guessing.
   from almost every syscall rule, `AVC` from SELinux denials/grants).
   Together these power the Record Types submenu under the Auditd Rules
   tab, described below.
+- `data/reference/auditd_commands.csv` / `.json` — 7 entries: the core
+  `auditd` tools (`auditctl`, `ausearch`, `aureport`, `auditd`,
+  `augenrules`, `autrace`, `audispd`) and their most useful options,
+  supplied by the repo owner. Columns: `command`, `purpose`, `sections`
+  (a nested array of `{title, code}` command-block groups — e.g.
+  `auditctl`'s "File watches"/"Syscall rules"/"Useful filters",
+  `ausearch`'s "By key"/"By time"/"By user / process"/etc. — JSON-
+  serialized into the CSV cell like `auditd_rules.csv`'s
+  `switches_explained`/`log_samples`), and `notes` (free-standing text
+  that isn't itself a command, e.g. the `-p` permission-flag legend).
+  `audispd` has no dedicated section content in the source. Also powers
+  two supplementary static blocks: a 6-step "quick operational
+  cheat-sheet" (one block of text rather than rows, so it's kept as a
+  single string injected straight into `index.html`'s data blob instead
+  of its own reference CSV) and
+  `data/reference/auditd_command_related_files.csv` / `.json` — 5 rows
+  mapping `/etc/audit/auditd.conf`, `/etc/audit/audit.rules`,
+  `/etc/audit/rules.d/`, `/var/log/audit/audit.log`, and
+  `/etc/audit/plugins.d/` to their purpose. Together these power the
+  Commands submenu under the Auditd Rules tab, described below.
 
 ## Web lookup
 
@@ -394,8 +414,8 @@ codes on credential-validation events, the capabilities table on the
 CAPSET event, common errno codes on the SYSCALL event, the full SSH
 disconnect table on any `ssh/protocol` event).
 
-**Auditd Rules** — a three-item submenu, **Rules**, **Fields**, and
-**Record Types**.
+**Auditd Rules** — a four-item submenu, **Rules**, **Fields**,
+**Record Types**, and **Commands**.
 
 *Rules* is the same search/filter/detail layout applied to all
 321 rows of `data/reference/auditd_rules.csv`: a free-text search across
@@ -441,6 +461,27 @@ with their typical origin
 (`data/reference/auditd_record_type_common.csv`), and a closing tip on
 using `ausearch -m` to see the exact list recognised by the installed
 audit package.
+
+*Commands* is a list/detail view (the same layout as *Rules*, scaled to 7
+rows) over `data/reference/auditd_commands.csv`/`.json` — the core
+`auditd` tools (`auditctl`, `ausearch`, `aureport`, `auditd`,
+`augenrules`, `autrace`, `audispd`) and their most useful options,
+supplied by the repo owner. Each row's `sections` field is a nested array
+of `{title, code}` command-block groups (e.g. `auditctl`'s "Status",
+"File watches", "Syscall rules", "Useful filters"; `ausearch`'s "By
+key", "By time", "By user / process", "By syscall / success", and more)
+— JSON-serialized into the CSV cell the same way `auditd_rules.csv`'s
+`switches_explained`/`log_samples` are. Search matches a command name, a
+section title, an option string inside a code block (e.g. `-ts today`,
+`--format csv`), or the row's free-standing `notes` (e.g. auditctl's
+`-p` permission-flag legend). `audispd` has no dedicated section content
+in the source — its detail view says so explicitly rather than
+rendering an empty block. Below the list/detail split, two always-visible
+reference blocks: a **Quick operational cheat-sheet** (six common
+day-to-day command sequences,
+`DATA.auditd_command_cheatsheet` client-side) and a **Related files**
+table (`data/reference/auditd_command_related_files.csv` — 5 rows:
+`auditd.conf`, `audit.rules`, `rules.d/`, `audit.log`, `plugins.d/`).
 
 **Reference tables** — covers all 9 accordion-style reference tables
 (`auditd_rules` gets its own dedicated tab instead, given its size) with
