@@ -213,16 +213,47 @@ flagged low-confidence entries instead of guessing.
   ACSC ISM outcome alignment, and SCAP/ComplianceAsCode integration —
   including areas this catalogue's 61 curated events don't yet cover
   (containers/Kubernetes, LDAP/Kerberos/IPA/SSSD, package management,
-  removable media, and more). It's a reference document, not (yet) wired
-  into `events.csv`/`.json` — its CIS and DISA STIG identifiers are not
-  currently reflected in `acsc_ism_control` or any other catalogue field.
-  See its own header for how it distinguishes exact framework references
-  from outcome-level/implementation-aid mappings.
+  removable media, and more). This is the single source of truth for the
+  Auditd Rules tab and `data/reference/auditd_rules.csv`/`.json` below —
+  `build.py` parses it directly, so editing the markdown and re-running
+  the build regenerates both. It is **not** wired into the main
+  `events.csv`/`.json` catalogue — its CIS and DISA STIG identifiers are
+  not reflected in `acsc_ism_control` or any other event field; it's a
+  separate, much larger rule-level catalogue that stands on its own.
+- `data/reference/auditd_rules.csv` / `.json` — 321 individual `auditctl`
+  rules mechanically extracted from `docs/auditd-rules-master-reference.md`
+  (every `-w`/`-a always,exit` line in the source, plus each row of its
+  five hand-authored per-rule tables), across 83 of the source's 88
+  sections (the other 5 are prose-only, with no copy-pasteable rule
+  syntax to extract). Columns: `rule_id` (`section-sequence`, e.g.
+  `08-03`), `category_no`/`category` (the source's own section numbering),
+  `title`, `auditd_rule`, `audit_key`, `description`, `cis_ref`,
+  `disa_stig_ref`, `acsc_ism_alignment`, and `form` (`table` — from one of
+  the source's 5 per-rule tables, highest fidelity; `code_block` — a rule
+  line from a fenced code block; `stig_canonical` — from a "DISA STIG
+  canonical form" subsection, the stricter `-a always,exit -F path=...`
+  syntax offered as an alternative to the shorthand `-w` form). **`cis_ref`,
+  `disa_stig_ref`, and `acsc_ism_alignment` are applied at the section
+  level**, matching the granularity the source document itself uses
+  (framework references are stated once per section intro, not
+  per-rule, except in the 5 tabular sections) — where a section mixes
+  several distinct rule groups under one reference (e.g. §8 "sudo and
+  Privilege Escalation" states `RHEL-09-654150` once for the whole
+  section, covering both the `/etc/sudoers` watch and the unrelated
+  `/usr/bin/mount`/`/usr/sbin/reboot` privileged-command rules also filed
+  under that section), every rule in that section carries the same
+  reference text. Treat these fields as "this rule lives in a
+  framework-relevant section," not as a verified per-rule compliance
+  citation — the source document's own header says the same about
+  itself, and this table inherits that limitation mechanically rather
+  than resolving it.
 
 ## Web lookup
 
 `index.html` is a self-contained (no build step, no external requests)
-lookup page — the same design as `Winevent-catalogue`'s, scaled down to
+lookup page with three tabs.
+
+**Events** — the same design as `Winevent-catalogue`'s, scaled down to
 match this repo's smaller log/category space: search all 61 events by ID
 or keyword; filter by Log or Category via searchable multi-select
 comboboxes (3 log families — `audit`, `ssh`, `systemd` — each with a
@@ -236,11 +267,26 @@ link, and how-to-collect configuration steps — plus inline reference
 tables where they're directly relevant to the selected event (PAM result
 codes on credential-validation events, the capabilities table on the
 CAPSET event, common errno codes on the SYSCALL event, the full SSH
-disconnect table on any `ssh/protocol` event). A Reference tables tab
-covers all 9 reference tables with the same single-search-filters-
-everything, sticky-jump-nav, height-capped-scrolling, collapsed-by-
-default-accordion behavior as the Windows repo's Reference tab. Open it
-directly in a browser.
+disconnect table on any `ssh/protocol` event).
+
+**Auditd Rules** — the same search/filter/detail layout applied to all
+321 rows of `data/reference/auditd_rules.csv`: a free-text search across
+the rule text, title, category, audit key, description, and every
+CIS/DISA-STIG/ACSC-ISM reference field (so searching `6.3.3.8`,
+`RHEL-09-654150`, or `sudo_config` all work), plus a searchable
+multi-select Category combobox ordered by the source document's own
+section numbering (1–88) rather than alphabetically. The detail view
+shows the full `auditd_rule` in a code block alongside its CIS/STIG/ACSC
+fields and a source note pointing back to the originating section of
+`docs/auditd-rules-master-reference.md`.
+
+**Reference tables** — covers all 9 accordion-style reference tables
+(`auditd_rules` gets its own dedicated tab instead, given its size) with
+the same single-search-filters-everything, sticky-jump-nav,
+height-capped-scrolling, collapsed-by-default-accordion behavior as the
+Windows repo's Reference tab.
+
+Open `index.html` directly in a browser.
 
 ## Source & verification
 
