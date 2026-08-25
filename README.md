@@ -294,6 +294,16 @@ flagged low-confidence entries instead of guessing.
   the JSON file and the same structure JSON-serialized into the CSV
   cell. All 321 rows resolve to a full explanation for every token — see
   the Auditd Rules tab's detail view for the rendered form.
+- `data/reference/auditd_fields.csv` / `.json` — 234 entries: every field
+  name that can appear in a kernel audit record (`SYSCALL`, `PATH`,
+  `EXECVE`, `AVC`, `USER_*`, and the rest — `auid`, `arch`, `exe`, `cmd`,
+  `cap_pe`, `subj`/`obj` SELinux contexts, VM/container resource fields,
+  crypto fields, printer fields, and more), each with its value `format`
+  (numeric, numeric (hex), encoded, alphanumeric, alphabet, or a
+  combination) and a plain-English `explanation`. Supplied by the repo
+  owner as a merge of the fields already implicit in this catalogue's own
+  samples plus the official Linux Audit field dictionary. Powers the
+  Fields submenu under the Auditd Rules tab, described below.
 
 ## Web lookup
 
@@ -317,7 +327,9 @@ codes on credential-validation events, the capabilities table on the
 CAPSET event, common errno codes on the SYSCALL event, the full SSH
 disconnect table on any `ssh/protocol` event).
 
-**Auditd Rules** — the same search/filter/detail layout applied to all
+**Auditd Rules** — a two-item submenu, **Rules** and **Fields**.
+
+*Rules* is the same search/filter/detail layout applied to all
 321 rows of `data/reference/auditd_rules.csv`: a free-text search across
 the rule text, title, category, audit key, description, every
 CIS/DISA-STIG/ACSC-ISM reference field, and every switch's explanation
@@ -332,6 +344,12 @@ breaking the rule into one card per flag with its plain-English meaning
 attributing an action through `su`/`sudo`, and why 1000 specifically),
 alongside its CIS/STIG/ACSC fields and a source note pointing back to
 the originating section of `docs/auditd-rules-master-reference.md`.
+
+*Fields* is a single searchable table over all 234 rows of
+`data/reference/auditd_fields.csv` — field name, value format, and
+explanation, filtered live as you type (matches the field name, the
+format, or the explanation text, so searching "SELinux" surfaces every
+`subj_*`/`obj_*`/`*context*` field at once).
 
 **Reference tables** — covers all 9 accordion-style reference tables
 (`auditd_rules` gets its own dedicated tab instead, given its size) with

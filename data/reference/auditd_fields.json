@@ -1,0 +1,1172 @@
+[
+  {
+    "field": "a0, a1, a2, a3",
+    "format": "numeric (hex)",
+    "explanation": "First four arguments of the system call, stored in hexadecimal. Useful for reconstructing what a process was trying to do."
+  },
+  {
+    "field": "a[[:digit:]+][.*]",
+    "format": "encoded",
+    "explanation": "Arguments to an execve syscall (can be more than four)."
+  },
+  {
+    "field": "acct",
+    "format": "encoded",
+    "explanation": "User’s account name under which the process ran."
+  },
+  {
+    "field": "acl",
+    "format": "alphabet",
+    "explanation": "Access mode of a resource assigned to a VM."
+  },
+  {
+    "field": "action",
+    "format": "numeric",
+    "explanation": "Netfilter packet disposition (or integrity policy action)."
+  },
+  {
+    "field": "added",
+    "format": "numeric",
+    "explanation": "Number of new files detected."
+  },
+  {
+    "field": "addr",
+    "format": "encoded",
+    "explanation": "IPv4 or IPv6 address (often follows a hostname field)."
+  },
+  {
+    "field": "apparmor",
+    "format": "encoded",
+    "explanation": "AppArmor event information."
+  },
+  {
+    "field": "arch",
+    "format": "numeric (hex)",
+    "explanation": "CPU architecture of the system (e.g. c000003e = x86_64)."
+  },
+  {
+    "field": "argc",
+    "format": "numeric",
+    "explanation": "Number of arguments to an execve syscall."
+  },
+  {
+    "field": "audit_backlog_limit",
+    "format": "numeric",
+    "explanation": "Audit system’s backlog queue size."
+  },
+  {
+    "field": "audit_backlog_wait_time",
+    "format": "numeric",
+    "explanation": "Audit system’s backlog wait time."
+  },
+  {
+    "field": "audit_enabled",
+    "format": "numeric",
+    "explanation": "Audit system enable/disable status."
+  },
+  {
+    "field": "audit_failure",
+    "format": "numeric",
+    "explanation": "Audit system failure mode."
+  },
+  {
+    "field": "auid",
+    "format": "numeric",
+    "explanation": "Audit User ID (loginuid). Assigned at login and never changes, even after su/sudo. Most reliable identity field."
+  },
+  {
+    "field": "banners",
+    "format": "alphanumeric",
+    "explanation": "Banners used on a printed page."
+  },
+  {
+    "field": "bool",
+    "format": "alphanumeric",
+    "explanation": "Name of an SELinux boolean."
+  },
+  {
+    "field": "bus",
+    "format": "alphanumeric",
+    "explanation": "Name of the subsystem bus a VM resource belongs to."
+  },
+  {
+    "field": "capability",
+    "format": "numeric",
+    "explanation": "Number of bits used when setting a Linux capability."
+  },
+  {
+    "field": "cap_fe",
+    "format": "numeric",
+    "explanation": "File assigned effective capability map."
+  },
+  {
+    "field": "cap_fi",
+    "format": "numeric (hex)",
+    "explanation": "File inherited capability map."
+  },
+  {
+    "field": "cap_fp",
+    "format": "numeric (hex)",
+    "explanation": "File permitted capability map."
+  },
+  {
+    "field": "cap_fver",
+    "format": "numeric (hex)",
+    "explanation": "File-system capabilities version number."
+  },
+  {
+    "field": "cap_pa",
+    "format": "numeric (hex)",
+    "explanation": "Process ambient capability map."
+  },
+  {
+    "field": "cap_pe",
+    "format": "numeric (hex)",
+    "explanation": "Process effective capability map."
+  },
+  {
+    "field": "cap_pi",
+    "format": "numeric (hex)",
+    "explanation": "Process inherited capability map."
+  },
+  {
+    "field": "cap_pp",
+    "format": "numeric (hex)",
+    "explanation": "Process permitted capability map."
+  },
+  {
+    "field": "category",
+    "format": "alphabet",
+    "explanation": "Resource category assigned to a VM."
+  },
+  {
+    "field": "cgroup",
+    "format": "encoded",
+    "explanation": "Path to the cgroup that contained the process when the event was generated."
+  },
+  {
+    "field": "changed",
+    "format": "numeric",
+    "explanation": "Number of changed files."
+  },
+  {
+    "field": "cipher",
+    "format": "alphanumeric",
+    "explanation": "Name of the crypto cipher selected."
+  },
+  {
+    "field": "class",
+    "format": "alphabet",
+    "explanation": "Resource class assigned to a VM."
+  },
+  {
+    "field": "cmd",
+    "format": "encoded",
+    "explanation": "Full command line executed. Especially useful with interpreters (exe may show /bin/bash while cmd shows the real script + args)."
+  },
+  {
+    "field": "code",
+    "format": "numeric (hex)",
+    "explanation": "Seccomp action code."
+  },
+  {
+    "field": "comm",
+    "format": "encoded",
+    "explanation": "Short command name (basename of the executable or script)."
+  },
+  {
+    "field": "compat",
+    "format": "numeric",
+    "explanation": "Result of is_compat_task."
+  },
+  {
+    "field": "cwd",
+    "format": "encoded",
+    "explanation": "Current working directory of the process when the system call was invoked."
+  },
+  {
+    "field": "daddr",
+    "format": "alphanumeric",
+    "explanation": "Remote IP address."
+  },
+  {
+    "field": "data",
+    "format": "encoded",
+    "explanation": "Data associated with TTY records (often hex-encoded keystrokes)."
+  },
+  {
+    "field": "default-context",
+    "format": "alphanumeric",
+    "explanation": "Default MAC context."
+  },
+  {
+    "field": "dev",
+    "format": "numeric (hex-tuple) / alphanumeric",
+    "explanation": "Major:minor device numbers (path records) or device name as found in /dev (AVC)."
+  },
+  {
+    "field": "devmajor",
+    "format": "numeric",
+    "explanation": "Major device number."
+  },
+  {
+    "field": "devminor",
+    "format": "numeric",
+    "explanation": "Minor device number."
+  },
+  {
+    "field": "device",
+    "format": "encoded",
+    "explanation": "Device name."
+  },
+  {
+    "field": "dir",
+    "format": "encoded",
+    "explanation": "Directory name."
+  },
+  {
+    "field": "direction",
+    "format": "alphanumeric",
+    "explanation": "Direction of a crypto operation."
+  },
+  {
+    "field": "dmac",
+    "format": "numeric",
+    "explanation": "Remote MAC address."
+  },
+  {
+    "field": "dport",
+    "format": "numeric",
+    "explanation": "Remote port number."
+  },
+  {
+    "field": "egid",
+    "format": "numeric",
+    "explanation": "Effective Group ID of the process."
+  },
+  {
+    "field": "enforcing",
+    "format": "numeric",
+    "explanation": "New MAC enforcement status."
+  },
+  {
+    "field": "entries",
+    "format": "numeric",
+    "explanation": "Number of entries in a netfilter table."
+  },
+  {
+    "field": "errno",
+    "format": "numeric",
+    "explanation": "Error code of the audited operation."
+  },
+  {
+    "field": "euid",
+    "format": "numeric",
+    "explanation": "Effective User ID of the process."
+  },
+  {
+    "field": "exe",
+    "format": "encoded",
+    "explanation": "Full path to the executable that was invoked."
+  },
+  {
+    "field": "exit",
+    "format": "numeric",
+    "explanation": "Exit / return code of the system call. Use ausearch -i --exit to decode."
+  },
+  {
+    "field": "fam",
+    "format": "alphanumeric",
+    "explanation": "Socket address family."
+  },
+  {
+    "field": "family",
+    "format": "numeric",
+    "explanation": "Netfilter protocol / address family (IPv4 or IPv6)."
+  },
+  {
+    "field": "fd",
+    "format": "numeric",
+    "explanation": "File descriptor number."
+  },
+  {
+    "field": "file",
+    "format": "encoded",
+    "explanation": "File name (often integrity-related)."
+  },
+  {
+    "field": "filetype",
+    "format": "alphanumeric",
+    "explanation": "Type of the file."
+  },
+  {
+    "field": "flags",
+    "format": "numeric (hex)",
+    "explanation": "File-system name flags or mmap flags."
+  },
+  {
+    "field": "fe",
+    "format": "numeric",
+    "explanation": "File assigned effective capability map (short form)."
+  },
+  {
+    "field": "feature",
+    "format": "alphanumeric",
+    "explanation": "Kernel feature being changed."
+  },
+  {
+    "field": "fi",
+    "format": "numeric (hex)",
+    "explanation": "File assigned inherited capability map (short form)."
+  },
+  {
+    "field": "fp",
+    "format": "numeric (hex) / alphanumeric",
+    "explanation": "File permitted capability map or crypto key fingerprint."
+  },
+  {
+    "field": "format",
+    "format": "alphanumeric",
+    "explanation": "Audit log’s format."
+  },
+  {
+    "field": "fsgid",
+    "format": "numeric",
+    "explanation": "File-system Group ID of the process."
+  },
+  {
+    "field": "fsuid",
+    "format": "numeric",
+    "explanation": "File-system User ID of the process."
+  },
+  {
+    "field": "fver",
+    "format": "numeric (hex)",
+    "explanation": "File-system capabilities version number (short form)."
+  },
+  {
+    "field": "gid",
+    "format": "numeric",
+    "explanation": "Real Group ID of the process."
+  },
+  {
+    "field": "grantors",
+    "format": "alphanumeric",
+    "explanation": "PAM modules that approved the action."
+  },
+  {
+    "field": "grp",
+    "format": "encoded",
+    "explanation": "Group name."
+  },
+  {
+    "field": "hook",
+    "format": "numeric",
+    "explanation": "Netfilter hook the packet came from."
+  },
+  {
+    "field": "hostname",
+    "format": "alphanumeric",
+    "explanation": "Hostname associated with the event (often the remote host)."
+  },
+  {
+    "field": "icmp_type / icmptype",
+    "format": "numeric",
+    "explanation": "ICMP message type (usually from iptables)."
+  },
+  {
+    "field": "id",
+    "format": "numeric",
+    "explanation": "User ID of an account that was changed."
+  },
+  {
+    "field": "igid",
+    "format": "numeric",
+    "explanation": "IPC object’s group ID."
+  },
+  {
+    "field": "img-ctx",
+    "format": "alphanumeric",
+    "explanation": "VM’s disk image context string."
+  },
+  {
+    "field": "inif",
+    "format": "numeric",
+    "explanation": "Incoming interface number."
+  },
+  {
+    "field": "ip",
+    "format": "alphanumeric",
+    "explanation": "Network address of a printer (or instruction pointer in seccomp)."
+  },
+  {
+    "field": "ipid",
+    "format": "numeric",
+    "explanation": "IP datagram fragment identifier."
+  },
+  {
+    "field": "ino / inode",
+    "format": "numeric",
+    "explanation": "Inode number of the referenced file/directory."
+  },
+  {
+    "field": "inode_gid",
+    "format": "numeric",
+    "explanation": "Group ID of the inode’s owner."
+  },
+  {
+    "field": "inode_uid",
+    "format": "numeric",
+    "explanation": "User ID of the inode’s owner."
+  },
+  {
+    "field": "invalid_context",
+    "format": "encoded",
+    "explanation": "Invalid SELinux context."
+  },
+  {
+    "field": "ioctlcmd",
+    "format": "numeric (hex)",
+    "explanation": "Request argument to the ioctl syscall."
+  },
+  {
+    "field": "ipx-net",
+    "format": "numeric",
+    "explanation": "IPX network number."
+  },
+  {
+    "field": "item",
+    "format": "numeric",
+    "explanation": "Which item (path record) is being recorded."
+  },
+  {
+    "field": "items",
+    "format": "numeric",
+    "explanation": "Number of PATH records attached to this event."
+  },
+  {
+    "field": "iuid",
+    "format": "numeric",
+    "explanation": "IPC object’s user ID."
+  },
+  {
+    "field": "kernel",
+    "format": "alphanumeric",
+    "explanation": "Kernel version number."
+  },
+  {
+    "field": "key",
+    "format": "encoded",
+    "explanation": "Arbitrary string attached to the audit rule that generated the event. Extremely useful for filtering."
+  },
+  {
+    "field": "kind",
+    "format": "alphabet",
+    "explanation": "Server or client in a crypto operation."
+  },
+  {
+    "field": "ksize",
+    "format": "numeric",
+    "explanation": "Key size used in a crypto operation."
+  },
+  {
+    "field": "laddr",
+    "format": "alphanumeric",
+    "explanation": "Local network address."
+  },
+  {
+    "field": "len",
+    "format": "numeric",
+    "explanation": "Length."
+  },
+  {
+    "field": "lport",
+    "format": "numeric",
+    "explanation": "Local network port."
+  },
+  {
+    "field": "list",
+    "format": "numeric",
+    "explanation": "Audit filter list ID (0=user, 1=task, 4=exit, 5=exclude)."
+  },
+  {
+    "field": "mac",
+    "format": "alphanumeric",
+    "explanation": "Crypto MAC algorithm selected."
+  },
+  {
+    "field": "macproto",
+    "format": "numeric",
+    "explanation": "Ethernet packet type ID field."
+  },
+  {
+    "field": "maj / major",
+    "format": "numeric",
+    "explanation": "Device major number."
+  },
+  {
+    "field": "minor",
+    "format": "numeric",
+    "explanation": "Device minor number."
+  },
+  {
+    "field": "mode",
+    "format": "numeric (octal)",
+    "explanation": "File or directory permissions."
+  },
+  {
+    "field": "model",
+    "format": "alphanumeric",
+    "explanation": "Security model used for virtualization."
+  },
+  {
+    "field": "msg",
+    "format": "alphanumeric",
+    "explanation": "Timestamp + unique event ID, or additional name=value pairs."
+  },
+  {
+    "field": "msgtype",
+    "format": "alphanumeric",
+    "explanation": "Message type for user-space AVC denials (usually from D-Bus)."
+  },
+  {
+    "field": "nargs",
+    "format": "numeric",
+    "explanation": "Number of arguments to a socket call."
+  },
+  {
+    "field": "name",
+    "format": "encoded",
+    "explanation": "Full path of the file/directory passed as an argument."
+  },
+  {
+    "field": "nametype",
+    "format": "alphabet",
+    "explanation": "Kind of file operation being referenced."
+  },
+  {
+    "field": "net",
+    "format": "alphanumeric",
+    "explanation": "Network MAC address."
+  },
+  {
+    "field": "new",
+    "format": "numeric",
+    "explanation": "New value being set for a feature."
+  },
+  {
+    "field": "new-chardev",
+    "format": "encoded",
+    "explanation": "New character device assigned to a VM."
+  },
+  {
+    "field": "new-disk",
+    "format": "encoded",
+    "explanation": "Name of a new disk resource assigned to a VM."
+  },
+  {
+    "field": "new-enabled",
+    "format": "numeric",
+    "explanation": "New TTY audit enabled setting."
+  },
+  {
+    "field": "new-fs",
+    "format": "encoded",
+    "explanation": "File system being added to a VM."
+  },
+  {
+    "field": "new_gid",
+    "format": "numeric",
+    "explanation": "New group ID assigned to a user."
+  },
+  {
+    "field": "new-level",
+    "format": "alphanumeric",
+    "explanation": "New run level."
+  },
+  {
+    "field": "new_lock",
+    "format": "numeric",
+    "explanation": "New value of a feature lock."
+  },
+  {
+    "field": "new-log_passwd",
+    "format": "numeric",
+    "explanation": "New value for TTY password logging."
+  },
+  {
+    "field": "new-mem",
+    "format": "numeric",
+    "explanation": "New amount of memory (KB) assigned to a VM."
+  },
+  {
+    "field": "new-net",
+    "format": "encoded",
+    "explanation": "MAC address of a new network interface assigned to a VM."
+  },
+  {
+    "field": "new_pe / new_pi / new_pp",
+    "format": "numeric",
+    "explanation": "New process capability maps (deprecated forms)."
+  },
+  {
+    "field": "new-range",
+    "format": "alphanumeric",
+    "explanation": "New SELinux range."
+  },
+  {
+    "field": "new-rng",
+    "format": "encoded",
+    "explanation": "Device name of an RNG being added to a VM."
+  },
+  {
+    "field": "new-role",
+    "format": "alphanumeric",
+    "explanation": "New SELinux role."
+  },
+  {
+    "field": "new-seuser",
+    "format": "alphanumeric",
+    "explanation": "New SELinux user."
+  },
+  {
+    "field": "new-vcpu",
+    "format": "numeric",
+    "explanation": "New number of virtual CPUs assigned to a VM."
+  },
+  {
+    "field": "nlnk-fam",
+    "format": "numeric",
+    "explanation": "Netlink protocol number."
+  },
+  {
+    "field": "nlnk-grp",
+    "format": "numeric",
+    "explanation": "Netlink group number."
+  },
+  {
+    "field": "nlnk-pid",
+    "format": "numeric",
+    "explanation": "PID of the netlink packet sender."
+  },
+  {
+    "field": "oauid",
+    "format": "numeric",
+    "explanation": "Audit UID of the user who originally logged in and started the target process (OBJ_PID records only)."
+  },
+  {
+    "field": "obj",
+    "format": "alphanumeric",
+    "explanation": "SELinux context of the object (the thing being acted upon)."
+  },
+  {
+    "field": "obj_gid",
+    "format": "numeric",
+    "explanation": "Group ID of the object."
+  },
+  {
+    "field": "obj_lev_high",
+    "format": "alphanumeric",
+    "explanation": "High SELinux sensitivity level of the object."
+  },
+  {
+    "field": "obj_lev_low",
+    "format": "alphanumeric",
+    "explanation": "Low SELinux sensitivity level of the object."
+  },
+  {
+    "field": "obj_role",
+    "format": "alphanumeric",
+    "explanation": "SELinux role of the object."
+  },
+  {
+    "field": "obj_type",
+    "format": "alphanumeric",
+    "explanation": "SELinux type of the object."
+  },
+  {
+    "field": "obj_uid",
+    "format": "numeric",
+    "explanation": "User ID of the object."
+  },
+  {
+    "field": "obj_user",
+    "format": "alphanumeric",
+    "explanation": "SELinux user associated with the object."
+  },
+  {
+    "field": "oflag",
+    "format": "numeric",
+    "explanation": "Flags passed to the open syscall."
+  },
+  {
+    "field": "ogid",
+    "format": "numeric",
+    "explanation": "Group ID of the object’s owner."
+  },
+  {
+    "field": "ocomm",
+    "format": "encoded",
+    "explanation": "Command name of the target process (OBJ_PID records only)."
+  },
+  {
+    "field": "old",
+    "format": "numeric",
+    "explanation": "Previous / present value of a kernel feature or audit setting."
+  },
+  {
+    "field": "old-auid",
+    "format": "numeric",
+    "explanation": "Previous auid value."
+  },
+  {
+    "field": "old-chardev",
+    "format": "encoded",
+    "explanation": "Previous character device assigned to a VM."
+  },
+  {
+    "field": "old-disk",
+    "format": "encoded",
+    "explanation": "Previous disk resource of a VM."
+  },
+  {
+    "field": "old-enabled",
+    "format": "numeric",
+    "explanation": "Previous TTY audit enabled setting."
+  },
+  {
+    "field": "old_enforcing",
+    "format": "numeric",
+    "explanation": "Previous MAC enforcement status."
+  },
+  {
+    "field": "old-fs",
+    "format": "encoded",
+    "explanation": "Previous file system of a VM."
+  },
+  {
+    "field": "old-level",
+    "format": "alphanumeric",
+    "explanation": "Previous run level."
+  },
+  {
+    "field": "old_lock",
+    "format": "numeric",
+    "explanation": "Previous value of a feature lock."
+  },
+  {
+    "field": "old-log_passwd",
+    "format": "numeric",
+    "explanation": "Previous TTY password logging setting."
+  },
+  {
+    "field": "old-mem",
+    "format": "numeric",
+    "explanation": "Previous memory allocation of a VM."
+  },
+  {
+    "field": "old-net",
+    "format": "encoded",
+    "explanation": "Previous MAC address of a VM network interface."
+  },
+  {
+    "field": "old_pa / old_pe / old_pi / old_pp",
+    "format": "numeric (hex)",
+    "explanation": "Previous process capability maps."
+  },
+  {
+    "field": "old_prom",
+    "format": "numeric",
+    "explanation": "Previous network promiscuity flag."
+  },
+  {
+    "field": "old-range",
+    "format": "alphanumeric",
+    "explanation": "Previous SELinux range."
+  },
+  {
+    "field": "old-rng",
+    "format": "encoded",
+    "explanation": "Previous RNG device of a VM."
+  },
+  {
+    "field": "old-role",
+    "format": "alphanumeric",
+    "explanation": "Previous SELinux role."
+  },
+  {
+    "field": "old-ses",
+    "format": "numeric",
+    "explanation": "Previous session ID."
+  },
+  {
+    "field": "old-seuser",
+    "format": "alphanumeric",
+    "explanation": "Previous SELinux user."
+  },
+  {
+    "field": "old_val",
+    "format": "numeric",
+    "explanation": "Previous value of an SELinux boolean."
+  },
+  {
+    "field": "old-vcpu",
+    "format": "numeric",
+    "explanation": "Previous number of virtual CPUs of a VM."
+  },
+  {
+    "field": "op",
+    "format": "alphanumeric",
+    "explanation": "Operation being performed that is audited."
+  },
+  {
+    "field": "opid",
+    "format": "numeric",
+    "explanation": "Process ID of the target process (OBJ_PID records only)."
+  },
+  {
+    "field": "oses",
+    "format": "numeric",
+    "explanation": "Session ID of the target process (OBJ_PID records only)."
+  },
+  {
+    "field": "ouid",
+    "format": "numeric",
+    "explanation": "Real user ID of the target process / object owner."
+  },
+  {
+    "field": "outif",
+    "format": "numeric",
+    "explanation": "Outgoing interface number."
+  },
+  {
+    "field": "pa / pe / pi / pp",
+    "format": "numeric (hex)",
+    "explanation": "Process ambient / effective / inherited / permitted capability maps."
+  },
+  {
+    "field": "parent",
+    "format": "numeric",
+    "explanation": "Inode number of the parent file."
+  },
+  {
+    "field": "path",
+    "format": "encoded",
+    "explanation": "Full path of the file/directory (especially in AVC events)."
+  },
+  {
+    "field": "per",
+    "format": "numeric (hex)",
+    "explanation": "Linux personality."
+  },
+  {
+    "field": "perm",
+    "format": "numeric",
+    "explanation": "File permission that triggered the event (read/write/execute/attribute)."
+  },
+  {
+    "field": "perm_mask",
+    "format": "numeric",
+    "explanation": "File permission mask that triggered a watch event."
+  },
+  {
+    "field": "permissive",
+    "format": "numeric",
+    "explanation": "Whether SELinux is in permissive mode."
+  },
+  {
+    "field": "pfs",
+    "format": "alphanumeric",
+    "explanation": "Perfect forward secrecy method."
+  },
+  {
+    "field": "pid",
+    "format": "numeric",
+    "explanation": "Process ID (userspace) or Thread ID (kernel). For single-threaded processes they are equal. This is the kernel TID (gettid), not a pthread_t."
+  },
+  {
+    "field": "ppid",
+    "format": "numeric",
+    "explanation": "Parent Process ID."
+  },
+  {
+    "field": "printer",
+    "format": "alphanumeric",
+    "explanation": "Printer name."
+  },
+  {
+    "field": "prom",
+    "format": "numeric",
+    "explanation": "Current network interface promiscuity flag."
+  },
+  {
+    "field": "proctitle",
+    "format": "encoded",
+    "explanation": "Full process title + command-line parameters (hex-encoded)."
+  },
+  {
+    "field": "proto",
+    "format": "numeric",
+    "explanation": "Networking protocol (iptables / netfilter)."
+  },
+  {
+    "field": "qbytes",
+    "format": "numeric (hex)",
+    "explanation": "Quantity of bytes of an IPC object."
+  },
+  {
+    "field": "range",
+    "format": "alphanumeric",
+    "explanation": "User’s SELinux range."
+  },
+  {
+    "field": "rdev",
+    "format": "numeric (hex-tuple)",
+    "explanation": "Device identifier (special files only)."
+  },
+  {
+    "field": "reason",
+    "format": "alphanumeric",
+    "explanation": "Text string explaining the reason for the action."
+  },
+  {
+    "field": "removed",
+    "format": "numeric",
+    "explanation": "Number of deleted files."
+  },
+  {
+    "field": "res / result",
+    "format": "numeric / alphanumeric",
+    "explanation": "Result of the audited operation (success/fail)."
+  },
+  {
+    "field": "resrc",
+    "format": "alphanumeric",
+    "explanation": "Resource being assigned."
+  },
+  {
+    "field": "role",
+    "format": "alphanumeric",
+    "explanation": "User’s SELinux role."
+  },
+  {
+    "field": "rport",
+    "format": "numeric",
+    "explanation": "Remote port number."
+  },
+  {
+    "field": "saddr",
+    "format": "encoded",
+    "explanation": "Socket address structure (often hex-encoded)."
+  },
+  {
+    "field": "sauid",
+    "format": "numeric",
+    "explanation": "Sender’s Audit UID (provided by D-Bus)."
+  },
+  {
+    "field": "scontext",
+    "format": "alphanumeric",
+    "explanation": "Subject’s SELinux context string."
+  },
+  {
+    "field": "selected-context",
+    "format": "alphanumeric",
+    "explanation": "New MAC context assigned to a session."
+  },
+  {
+    "field": "seperm",
+    "format": "alphanumeric",
+    "explanation": "SELinux permission being decided on."
+  },
+  {
+    "field": "seqno",
+    "format": "numeric",
+    "explanation": "Sequence number."
+  },
+  {
+    "field": "seperms",
+    "format": "alphabet",
+    "explanation": "SELinux permissions being used."
+  },
+  {
+    "field": "seresult",
+    "format": "alphabet",
+    "explanation": "SELinux AVC decision (granted / denied)."
+  },
+  {
+    "field": "ses",
+    "format": "numeric",
+    "explanation": "Session ID from which the process was started."
+  },
+  {
+    "field": "seuser",
+    "format": "alphanumeric",
+    "explanation": "User’s SELinux user account."
+  },
+  {
+    "field": "sgid",
+    "format": "numeric",
+    "explanation": "Set-Group-ID of the process."
+  },
+  {
+    "field": "sig / sigev_signo",
+    "format": "numeric",
+    "explanation": "Signal number that caused abnormal termination."
+  },
+  {
+    "field": "smac",
+    "format": "numeric",
+    "explanation": "Local MAC address."
+  },
+  {
+    "field": "spid",
+    "format": "numeric",
+    "explanation": "Sent process ID."
+  },
+  {
+    "field": "sport",
+    "format": "numeric",
+    "explanation": "Local port number."
+  },
+  {
+    "field": "state",
+    "format": "alphanumeric",
+    "explanation": "Resulting state of the audit daemon configuration."
+  },
+  {
+    "field": "subj",
+    "format": "alphanumeric",
+    "explanation": "SELinux context of the subject (the actor)."
+  },
+  {
+    "field": "subj_clr",
+    "format": "alphanumeric",
+    "explanation": "SELinux clearance of the subject."
+  },
+  {
+    "field": "subj_role",
+    "format": "alphanumeric",
+    "explanation": "SELinux role of the subject."
+  },
+  {
+    "field": "subj_sen",
+    "format": "alphanumeric",
+    "explanation": "SELinux sensitivity of the subject."
+  },
+  {
+    "field": "subj_type",
+    "format": "alphanumeric",
+    "explanation": "SELinux type of the subject."
+  },
+  {
+    "field": "subj_user",
+    "format": "alphanumeric",
+    "explanation": "SELinux user associated with the subject."
+  },
+  {
+    "field": "success",
+    "format": "alphanumeric",
+    "explanation": "Whether the system call succeeded (yes) or failed (no)."
+  },
+  {
+    "field": "suid",
+    "format": "numeric",
+    "explanation": "Set-User-ID of the process."
+  },
+  {
+    "field": "syscall",
+    "format": "numeric",
+    "explanation": "Numeric system-call number that was executed."
+  },
+  {
+    "field": "table",
+    "format": "alphanumeric",
+    "explanation": "Netfilter table name."
+  },
+  {
+    "field": "tclass",
+    "format": "alphanumeric",
+    "explanation": "Target’s object classification."
+  },
+  {
+    "field": "tcontext",
+    "format": "alphanumeric",
+    "explanation": "Target’s / object’s SELinux context string."
+  },
+  {
+    "field": "terminal",
+    "format": "alphanumeric",
+    "explanation": "Terminal name (without /dev/)."
+  },
+  {
+    "field": "tty",
+    "format": "alphanumeric",
+    "explanation": "Controlling terminal device. Value (none) means no controlling terminal."
+  },
+  {
+    "field": "type",
+    "format": "alphanumeric",
+    "explanation": "The audit record’s type (SYSCALL, PATH, EXECVE, AVC, etc.)."
+  },
+  {
+    "field": "uid",
+    "format": "numeric",
+    "explanation": "Real User ID of the process."
+  },
+  {
+    "field": "unit",
+    "format": "alphanumeric",
+    "explanation": "systemd unit name."
+  },
+  {
+    "field": "uri",
+    "format": "alphanumeric",
+    "explanation": "URI pointing to a printer."
+  },
+  {
+    "field": "user",
+    "format": "alphanumeric",
+    "explanation": "Account submitted for authentication."
+  },
+  {
+    "field": "uuid",
+    "format": "alphanumeric",
+    "explanation": "A UUID."
+  },
+  {
+    "field": "val",
+    "format": "alphanumeric / numeric",
+    "explanation": "Generic value associated with the operation (or new SELinux boolean value)."
+  },
+  {
+    "field": "ver",
+    "format": "numeric",
+    "explanation": "Audit daemon’s version number."
+  },
+  {
+    "field": "virt",
+    "format": "alphanumeric",
+    "explanation": "Kind of virtualization being referenced."
+  },
+  {
+    "field": "vm",
+    "format": "encoded",
+    "explanation": "Name of the virtual machine from which the event originated."
+  },
+  {
+    "field": "vm-ctx",
+    "format": "alphanumeric",
+    "explanation": "VM’s context string."
+  },
+  {
+    "field": "vm-pid",
+    "format": "numeric",
+    "explanation": "VM’s process ID."
+  },
+  {
+    "field": "watch",
+    "format": "encoded",
+    "explanation": "File name in a watch record."
+  }
+]

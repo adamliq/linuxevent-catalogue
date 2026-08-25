@@ -1,0 +1,235 @@
+field,format,explanation
+"a0, a1, a2, a3",numeric (hex),"First four arguments of the system call, stored in hexadecimal. Useful for reconstructing what a process was trying to do."
+a[[:digit:]+][.*],encoded,Arguments to an execve syscall (can be more than four).
+acct,encoded,User’s account name under which the process ran.
+acl,alphabet,Access mode of a resource assigned to a VM.
+action,numeric,Netfilter packet disposition (or integrity policy action).
+added,numeric,Number of new files detected.
+addr,encoded,IPv4 or IPv6 address (often follows a hostname field).
+apparmor,encoded,AppArmor event information.
+arch,numeric (hex),CPU architecture of the system (e.g. c000003e = x86_64).
+argc,numeric,Number of arguments to an execve syscall.
+audit_backlog_limit,numeric,Audit system’s backlog queue size.
+audit_backlog_wait_time,numeric,Audit system’s backlog wait time.
+audit_enabled,numeric,Audit system enable/disable status.
+audit_failure,numeric,Audit system failure mode.
+auid,numeric,"Audit User ID (loginuid). Assigned at login and never changes, even after su/sudo. Most reliable identity field."
+banners,alphanumeric,Banners used on a printed page.
+bool,alphanumeric,Name of an SELinux boolean.
+bus,alphanumeric,Name of the subsystem bus a VM resource belongs to.
+capability,numeric,Number of bits used when setting a Linux capability.
+cap_fe,numeric,File assigned effective capability map.
+cap_fi,numeric (hex),File inherited capability map.
+cap_fp,numeric (hex),File permitted capability map.
+cap_fver,numeric (hex),File-system capabilities version number.
+cap_pa,numeric (hex),Process ambient capability map.
+cap_pe,numeric (hex),Process effective capability map.
+cap_pi,numeric (hex),Process inherited capability map.
+cap_pp,numeric (hex),Process permitted capability map.
+category,alphabet,Resource category assigned to a VM.
+cgroup,encoded,Path to the cgroup that contained the process when the event was generated.
+changed,numeric,Number of changed files.
+cipher,alphanumeric,Name of the crypto cipher selected.
+class,alphabet,Resource class assigned to a VM.
+cmd,encoded,Full command line executed. Especially useful with interpreters (exe may show /bin/bash while cmd shows the real script + args).
+code,numeric (hex),Seccomp action code.
+comm,encoded,Short command name (basename of the executable or script).
+compat,numeric,Result of is_compat_task.
+cwd,encoded,Current working directory of the process when the system call was invoked.
+daddr,alphanumeric,Remote IP address.
+data,encoded,Data associated with TTY records (often hex-encoded keystrokes).
+default-context,alphanumeric,Default MAC context.
+dev,numeric (hex-tuple) / alphanumeric,Major:minor device numbers (path records) or device name as found in /dev (AVC).
+devmajor,numeric,Major device number.
+devminor,numeric,Minor device number.
+device,encoded,Device name.
+dir,encoded,Directory name.
+direction,alphanumeric,Direction of a crypto operation.
+dmac,numeric,Remote MAC address.
+dport,numeric,Remote port number.
+egid,numeric,Effective Group ID of the process.
+enforcing,numeric,New MAC enforcement status.
+entries,numeric,Number of entries in a netfilter table.
+errno,numeric,Error code of the audited operation.
+euid,numeric,Effective User ID of the process.
+exe,encoded,Full path to the executable that was invoked.
+exit,numeric,Exit / return code of the system call. Use ausearch -i --exit to decode.
+fam,alphanumeric,Socket address family.
+family,numeric,Netfilter protocol / address family (IPv4 or IPv6).
+fd,numeric,File descriptor number.
+file,encoded,File name (often integrity-related).
+filetype,alphanumeric,Type of the file.
+flags,numeric (hex),File-system name flags or mmap flags.
+fe,numeric,File assigned effective capability map (short form).
+feature,alphanumeric,Kernel feature being changed.
+fi,numeric (hex),File assigned inherited capability map (short form).
+fp,numeric (hex) / alphanumeric,File permitted capability map or crypto key fingerprint.
+format,alphanumeric,Audit log’s format.
+fsgid,numeric,File-system Group ID of the process.
+fsuid,numeric,File-system User ID of the process.
+fver,numeric (hex),File-system capabilities version number (short form).
+gid,numeric,Real Group ID of the process.
+grantors,alphanumeric,PAM modules that approved the action.
+grp,encoded,Group name.
+hook,numeric,Netfilter hook the packet came from.
+hostname,alphanumeric,Hostname associated with the event (often the remote host).
+icmp_type / icmptype,numeric,ICMP message type (usually from iptables).
+id,numeric,User ID of an account that was changed.
+igid,numeric,IPC object’s group ID.
+img-ctx,alphanumeric,VM’s disk image context string.
+inif,numeric,Incoming interface number.
+ip,alphanumeric,Network address of a printer (or instruction pointer in seccomp).
+ipid,numeric,IP datagram fragment identifier.
+ino / inode,numeric,Inode number of the referenced file/directory.
+inode_gid,numeric,Group ID of the inode’s owner.
+inode_uid,numeric,User ID of the inode’s owner.
+invalid_context,encoded,Invalid SELinux context.
+ioctlcmd,numeric (hex),Request argument to the ioctl syscall.
+ipx-net,numeric,IPX network number.
+item,numeric,Which item (path record) is being recorded.
+items,numeric,Number of PATH records attached to this event.
+iuid,numeric,IPC object’s user ID.
+kernel,alphanumeric,Kernel version number.
+key,encoded,Arbitrary string attached to the audit rule that generated the event. Extremely useful for filtering.
+kind,alphabet,Server or client in a crypto operation.
+ksize,numeric,Key size used in a crypto operation.
+laddr,alphanumeric,Local network address.
+len,numeric,Length.
+lport,numeric,Local network port.
+list,numeric,"Audit filter list ID (0=user, 1=task, 4=exit, 5=exclude)."
+mac,alphanumeric,Crypto MAC algorithm selected.
+macproto,numeric,Ethernet packet type ID field.
+maj / major,numeric,Device major number.
+minor,numeric,Device minor number.
+mode,numeric (octal),File or directory permissions.
+model,alphanumeric,Security model used for virtualization.
+msg,alphanumeric,"Timestamp + unique event ID, or additional name=value pairs."
+msgtype,alphanumeric,Message type for user-space AVC denials (usually from D-Bus).
+nargs,numeric,Number of arguments to a socket call.
+name,encoded,Full path of the file/directory passed as an argument.
+nametype,alphabet,Kind of file operation being referenced.
+net,alphanumeric,Network MAC address.
+new,numeric,New value being set for a feature.
+new-chardev,encoded,New character device assigned to a VM.
+new-disk,encoded,Name of a new disk resource assigned to a VM.
+new-enabled,numeric,New TTY audit enabled setting.
+new-fs,encoded,File system being added to a VM.
+new_gid,numeric,New group ID assigned to a user.
+new-level,alphanumeric,New run level.
+new_lock,numeric,New value of a feature lock.
+new-log_passwd,numeric,New value for TTY password logging.
+new-mem,numeric,New amount of memory (KB) assigned to a VM.
+new-net,encoded,MAC address of a new network interface assigned to a VM.
+new_pe / new_pi / new_pp,numeric,New process capability maps (deprecated forms).
+new-range,alphanumeric,New SELinux range.
+new-rng,encoded,Device name of an RNG being added to a VM.
+new-role,alphanumeric,New SELinux role.
+new-seuser,alphanumeric,New SELinux user.
+new-vcpu,numeric,New number of virtual CPUs assigned to a VM.
+nlnk-fam,numeric,Netlink protocol number.
+nlnk-grp,numeric,Netlink group number.
+nlnk-pid,numeric,PID of the netlink packet sender.
+oauid,numeric,Audit UID of the user who originally logged in and started the target process (OBJ_PID records only).
+obj,alphanumeric,SELinux context of the object (the thing being acted upon).
+obj_gid,numeric,Group ID of the object.
+obj_lev_high,alphanumeric,High SELinux sensitivity level of the object.
+obj_lev_low,alphanumeric,Low SELinux sensitivity level of the object.
+obj_role,alphanumeric,SELinux role of the object.
+obj_type,alphanumeric,SELinux type of the object.
+obj_uid,numeric,User ID of the object.
+obj_user,alphanumeric,SELinux user associated with the object.
+oflag,numeric,Flags passed to the open syscall.
+ogid,numeric,Group ID of the object’s owner.
+ocomm,encoded,Command name of the target process (OBJ_PID records only).
+old,numeric,Previous / present value of a kernel feature or audit setting.
+old-auid,numeric,Previous auid value.
+old-chardev,encoded,Previous character device assigned to a VM.
+old-disk,encoded,Previous disk resource of a VM.
+old-enabled,numeric,Previous TTY audit enabled setting.
+old_enforcing,numeric,Previous MAC enforcement status.
+old-fs,encoded,Previous file system of a VM.
+old-level,alphanumeric,Previous run level.
+old_lock,numeric,Previous value of a feature lock.
+old-log_passwd,numeric,Previous TTY password logging setting.
+old-mem,numeric,Previous memory allocation of a VM.
+old-net,encoded,Previous MAC address of a VM network interface.
+old_pa / old_pe / old_pi / old_pp,numeric (hex),Previous process capability maps.
+old_prom,numeric,Previous network promiscuity flag.
+old-range,alphanumeric,Previous SELinux range.
+old-rng,encoded,Previous RNG device of a VM.
+old-role,alphanumeric,Previous SELinux role.
+old-ses,numeric,Previous session ID.
+old-seuser,alphanumeric,Previous SELinux user.
+old_val,numeric,Previous value of an SELinux boolean.
+old-vcpu,numeric,Previous number of virtual CPUs of a VM.
+op,alphanumeric,Operation being performed that is audited.
+opid,numeric,Process ID of the target process (OBJ_PID records only).
+oses,numeric,Session ID of the target process (OBJ_PID records only).
+ouid,numeric,Real user ID of the target process / object owner.
+outif,numeric,Outgoing interface number.
+pa / pe / pi / pp,numeric (hex),Process ambient / effective / inherited / permitted capability maps.
+parent,numeric,Inode number of the parent file.
+path,encoded,Full path of the file/directory (especially in AVC events).
+per,numeric (hex),Linux personality.
+perm,numeric,File permission that triggered the event (read/write/execute/attribute).
+perm_mask,numeric,File permission mask that triggered a watch event.
+permissive,numeric,Whether SELinux is in permissive mode.
+pfs,alphanumeric,Perfect forward secrecy method.
+pid,numeric,"Process ID (userspace) or Thread ID (kernel). For single-threaded processes they are equal. This is the kernel TID (gettid), not a pthread_t."
+ppid,numeric,Parent Process ID.
+printer,alphanumeric,Printer name.
+prom,numeric,Current network interface promiscuity flag.
+proctitle,encoded,Full process title + command-line parameters (hex-encoded).
+proto,numeric,Networking protocol (iptables / netfilter).
+qbytes,numeric (hex),Quantity of bytes of an IPC object.
+range,alphanumeric,User’s SELinux range.
+rdev,numeric (hex-tuple),Device identifier (special files only).
+reason,alphanumeric,Text string explaining the reason for the action.
+removed,numeric,Number of deleted files.
+res / result,numeric / alphanumeric,Result of the audited operation (success/fail).
+resrc,alphanumeric,Resource being assigned.
+role,alphanumeric,User’s SELinux role.
+rport,numeric,Remote port number.
+saddr,encoded,Socket address structure (often hex-encoded).
+sauid,numeric,Sender’s Audit UID (provided by D-Bus).
+scontext,alphanumeric,Subject’s SELinux context string.
+selected-context,alphanumeric,New MAC context assigned to a session.
+seperm,alphanumeric,SELinux permission being decided on.
+seqno,numeric,Sequence number.
+seperms,alphabet,SELinux permissions being used.
+seresult,alphabet,SELinux AVC decision (granted / denied).
+ses,numeric,Session ID from which the process was started.
+seuser,alphanumeric,User’s SELinux user account.
+sgid,numeric,Set-Group-ID of the process.
+sig / sigev_signo,numeric,Signal number that caused abnormal termination.
+smac,numeric,Local MAC address.
+spid,numeric,Sent process ID.
+sport,numeric,Local port number.
+state,alphanumeric,Resulting state of the audit daemon configuration.
+subj,alphanumeric,SELinux context of the subject (the actor).
+subj_clr,alphanumeric,SELinux clearance of the subject.
+subj_role,alphanumeric,SELinux role of the subject.
+subj_sen,alphanumeric,SELinux sensitivity of the subject.
+subj_type,alphanumeric,SELinux type of the subject.
+subj_user,alphanumeric,SELinux user associated with the subject.
+success,alphanumeric,Whether the system call succeeded (yes) or failed (no).
+suid,numeric,Set-User-ID of the process.
+syscall,numeric,Numeric system-call number that was executed.
+table,alphanumeric,Netfilter table name.
+tclass,alphanumeric,Target’s object classification.
+tcontext,alphanumeric,Target’s / object’s SELinux context string.
+terminal,alphanumeric,Terminal name (without /dev/).
+tty,alphanumeric,Controlling terminal device. Value (none) means no controlling terminal.
+type,alphanumeric,"The audit record’s type (SYSCALL, PATH, EXECVE, AVC, etc.)."
+uid,numeric,Real User ID of the process.
+unit,alphanumeric,systemd unit name.
+uri,alphanumeric,URI pointing to a printer.
+user,alphanumeric,Account submitted for authentication.
+uuid,alphanumeric,A UUID.
+val,alphanumeric / numeric,Generic value associated with the operation (or new SELinux boolean value).
+ver,numeric,Audit daemon’s version number.
+virt,alphanumeric,Kind of virtualization being referenced.
+vm,encoded,Name of the virtual machine from which the event originated.
+vm-ctx,alphanumeric,VM’s context string.
+vm-pid,numeric,VM’s process ID.
+watch,encoded,File name in a watch record.
