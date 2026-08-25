@@ -459,6 +459,15 @@ flagged low-confidence entries instead of guessing.
   and `data/reference/fapolicyd_command_related_files.csv` / `.json` (7
   rows) — together powering the Fapolicyd tab's Commands submenu the
   same way the equivalent auditd files do.
+  `data/reference/fapolicyd_man_pages.csv` / `.json` — 5 entries:
+  full manual pages for `fapolicyd(8)`, `fapolicyd-cli(8)`,
+  `fagenrules(8)`, `fapolicyd.conf(5)`, and `fapolicyd.rules(5)`, in the
+  same `{command, purpose, sections, notes}` shape as
+  `auditd_man_pages.csv`. `fagenrules(8)` — the fapolicyd counterpart of
+  auditd's `augenrules(8)` — wasn't in `fapolicyd_commands.csv` above
+  (that file only covers the 2 tools an administrator runs day-to-day)
+  but is included here for a complete man-page set. Powers the
+  Fapolicyd tab's Man submenu.
 
 ## Web lookup
 
@@ -571,8 +580,8 @@ in full, since that's what replaced it.
 
 **Fapolicyd** — a separate top-level tab, next to Auditd Rules, for the
 File Access Policy daemon (`fapolicyd`): a distinct application
-allow/deny-listing subsystem from auditd, built with the same four-item
-**Rules / Fields / Decisions / Commands** submenu structure and UI
+allow/deny-listing subsystem from auditd, built with the same five-item
+**Rules / Fields / Decisions / Commands / Man** submenu structure and UI
 conventions as the Auditd Rules tab, scaled to fapolicyd's own (much
 smaller) surface area.
 
@@ -614,6 +623,20 @@ and health diagnostics) — plus the same **Quick operational cheat-sheet**
 (the STIG's own permissive-mode-first-then-enforce workflow) and
 **Related files** table pattern as the Auditd Rules tab's Commands
 submenu.
+
+*Man* is a list/detail view over the 5 rows of
+`data/reference/fapolicyd_man_pages.csv` — full upstream manual pages
+for `fapolicyd(8)`, `fapolicyd-cli(8)`, `fagenrules(8)` (the direct
+fapolicyd counterpart of auditd's `augenrules(8)`, not otherwise covered
+by the Commands submenu above), `fapolicyd.conf(5)`, and
+`fapolicyd.rules(5)` — using the identical rendering code as the Auditd
+Rules tab's Man submenu (same `{command, purpose, sections, notes}` row
+shape, same section-per-card layout, same search behavior). Unlike the
+Auditd Rules tab's Man submenu, every page here has a live, current
+upstream source — no merged-away tool to explain — so `fapolicyd.conf(5)`
+and `fapolicyd.rules(5)` round out the set with the full config-key and
+rule-syntax references the Rules/Fields/Decisions submenus above draw
+their data from in the first place.
 
 **Reference tables** — covers all 9 accordion-style reference tables
 (`auditd_rules` gets its own dedicated tab instead, given its size) with
@@ -697,6 +720,13 @@ used, not written from memory:
   so these were corroborated via two independent web searches rather than
   read from the primary document directly, the same caution flagged for
   the ACSC ISM guide cross-check above.
+- **Fapolicyd manual pages** (the Fapolicyd tab's Man submenu) —
+  `fapolicyd(8)`, `fapolicyd-cli(8)`, `fagenrules(8)`,
+  `fapolicyd.conf(5)`, and `fapolicyd.rules(5)` were all fetched from the
+  Ubuntu manpages mirror the same way the auditd family's man pages were.
+  Unlike `audispd(8)`, every one of these resolved on the first fetch —
+  fapolicyd's full command/config family is still live upstream, so this
+  tab needed no equivalent "page no longer exists" caveat.
 
 The category/subcategory taxonomy, event selection, sample content, field
 schemas, MITRE/NIST mappings, ACSC ISM subcategory-level tagging, and
