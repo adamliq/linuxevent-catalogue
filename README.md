@@ -253,6 +253,24 @@ flagged low-confidence entries instead of guessing.
   `events.csv`/`.json` catalogue — its CIS and DISA STIG identifiers are
   not reflected in `acsc_ism_control` or any other event field; it's a
   separate, much larger rule-level catalogue that stands on its own.
+- `docs/auditd-rules-log-examples.md` — 36 real
+  `/var/log/audit/audit.log` example blocks supplied by the repo owner
+  (one or more per major rule category), each showing the actual
+  multi-record output — `SYSCALL`/`PATH`/`CWD`/`EXECVE`/`PROCTITLE`/
+  `OBJ_PID` sharing one timestamp:serial — a matching rule produces.
+  `build.py` parses this file too and attaches each example to every
+  `auditd_rules.csv` row whose `audit_key` matches the example's own
+  `key="..."` value (not by section number, since a few keys — e.g.
+  `network_config` — are genuinely defined identically in two different
+  sections of the master reference, and key-matching correctly surfaces
+  the example on all of them). One exact mismatch surfaced by this: the
+  SSH Security log example was captured with `key="sshd_config"`, but
+  every §7 rule in the master reference uses `key="ssh_config"` (no
+  "d") — mapped explicitly via a small alias table rather than silently
+  merged, and the discrepancy is shown directly on the rendered example
+  rather than hidden. 136 of 321 rules end up with at least one attached
+  example; the rest (control flags with no `-k`, and categories the log
+  examples file doesn't cover) have none — see `log_samples` below.
 - `data/reference/auditd_rules.csv` / `.json` — 321 individual `auditctl`
   rules mechanically extracted from `docs/auditd-rules-master-reference.md`
   (every `-w`/`-a always,exit` line in the source, plus each row of its
@@ -295,6 +313,85 @@ flagged low-confidence entries instead of guessing.
   cell. All 321 rows resolve to a full explanation for every token — see
   the Auditd Rules tab's detail view for the rendered form.
 
+  Each row also carries a `log_samples` field: real
+  `/var/log/audit/audit.log` example(s) from
+  `docs/auditd-rules-log-examples.md`, attached by exact `audit_key`
+  match (136 of 321 rows have at least one). A nested array of `{title,
+  log, annotation, key_note}` objects — `annotation` carries the source
+  document's own decoded-value notes (e.g. "exit=-13 → EACCES /
+  Permission denied") where present; `key_note` flags the one known
+  key-spelling mismatch (§7 SSH Security, `sshd_config` in the captured
+  log vs. `ssh_config` in the rule) rather than silently smoothing it
+  over.
+- `data/reference/auditd_fields.csv` / `.json` — 234 entries: every field
+  name that can appear in a kernel audit record (`SYSCALL`, `PATH`,
+  `EXECVE`, `AVC`, `USER_*`, and the rest — `auid`, `arch`, `exe`, `cmd`,
+  `cap_pe`, `subj`/`obj` SELinux contexts, VM/container resource fields,
+  crypto fields, printer fields, and more), each with its value `format`
+  (numeric, numeric (hex), encoded, alphanumeric, alphabet, or a
+  combination) and a plain-English `explanation`. Supplied by the repo
+  owner as a merge of the fields already implicit in this catalogue's own
+  samples plus the official Linux Audit field dictionary. Powers the
+  Fields submenu under the Auditd Rules tab, described below.
+
+  Each row also carries a Splunk CIM (Common Information Model) enrichment,
+  supplied by the repo owner: `cim_potential_name` (the nearest CIM field
+  name or names), `supported_cim_field` (which of those, if any, Splunk's
+  CIM actually recognises — some potential names have no directly
+  supported CIM field), `cim_data_model_category` (which CIM data
+  model(s) the field falls under — Authentication, Change, Endpoint,
+  Network_Traffic, Intrusion_Detection, Inventory), and `splunk_app`
+  (which Splunk app/TA maps the field out of the box —
+  `Splunk Add-on for Linux`, the community `TA-linux_auditd`, `custom`
+  for a local `FIELDALIAS`/`EVAL`, or a slash-separated combination). The
+  source table itself grouped several related fields under one row (e.g.
+  `cap_*`, `obj`/`obj_*`, `subj`/`subj_*`, `new-*`/`old-*`) — `build.py`
+  expands each group against the actual field names already in
+  `AUDITD_FIELDS` rather than guessing new ones, and a later specific
+  entry always wins over an earlier wildcard one on overlap (e.g.
+  `old_prom`, which the `old-*`/`old_*` wildcard would otherwise put
+  under "Change", is pinned to its own "Network_Traffic" entry instead).
+  118 of the 234 fields have a CIM enrichment; the rest were not covered
+  by the source table and are left blank in all four columns — distinct
+  from the source table's own explicit `"—"` ("no known mapping" for a
+  field it did consider, e.g. `arch`, `data`, `items`, `list`, `msg`).
+- `data/reference/auditd_record_type_names.csv` / `.json` — 159 entries:
+  every value the `type=` field can take at the start of a record in
+  `/var/log/audit/audit.log` (`SYSCALL`, `PATH`, `AVC`, `USER_*`,
+  `DAEMON_*`, `APPARMOR_*`, `MAC_*`, `CRYPTO_*`, `INTEGRITY_*`, `VIRT_*`,
+  and the rest), each with a plain-English explanation, supplied by the
+  repo owner. `data/reference/auditd_record_type_ranges.csv` / `.json` —
+  the 15 numeric ranges these type names fall into per the kernel audit
+  header (`include/uapi/linux/audit.h`) and the audit userspace
+  message-type ranges (e.g. `1400–1499` = SELinux, `1500–1599` =
+  AppArmor, `2500–2599` = user-space virtualization events).
+  `data/reference/auditd_record_type_common.csv` / `.json` — the 10 record
+  types most frequently seen in day-to-day `audit.log` analysis, with
+  their typical origin (e.g. `SYSCALL`/`PATH`/`CWD`/`EXECVE`/`PROCTITLE`
+  from almost every syscall rule, `AVC` from SELinux denials/grants).
+  Together these power the Record Types submenu under the Auditd Rules
+  tab, described below.
+- `data/reference/auditd_commands.csv` / `.json` — 7 entries: the core
+  `auditd` tools (`auditctl`, `ausearch`, `aureport`, `auditd`,
+  `augenrules`, `autrace`, `audispd`) and their most useful options,
+  supplied by the repo owner. Columns: `command`, `purpose`, `sections`
+  (a nested array of `{title, code}` command-block groups — e.g.
+  `auditctl`'s "File watches"/"Syscall rules"/"Useful filters",
+  `ausearch`'s "By key"/"By time"/"By user / process"/etc. — JSON-
+  serialized into the CSV cell like `auditd_rules.csv`'s
+  `switches_explained`/`log_samples`), and `notes` (free-standing text
+  that isn't itself a command, e.g. the `-p` permission-flag legend).
+  `audispd` has no dedicated section content in the source. Also powers
+  two supplementary static blocks: a 6-step "quick operational
+  cheat-sheet" (one block of text rather than rows, so it's kept as a
+  single string injected straight into `index.html`'s data blob instead
+  of its own reference CSV) and
+  `data/reference/auditd_command_related_files.csv` / `.json` — 5 rows
+  mapping `/etc/audit/auditd.conf`, `/etc/audit/audit.rules`,
+  `/etc/audit/rules.d/`, `/var/log/audit/audit.log`, and
+  `/etc/audit/plugins.d/` to their purpose. Together these power the
+  Commands submenu under the Auditd Rules tab, described below.
+
 ## Web lookup
 
 `index.html` is a self-contained (no build step, no external requests)
@@ -317,21 +414,74 @@ codes on credential-validation events, the capabilities table on the
 CAPSET event, common errno codes on the SYSCALL event, the full SSH
 disconnect table on any `ssh/protocol` event).
 
-**Auditd Rules** — the same search/filter/detail layout applied to all
+**Auditd Rules** — a four-item submenu, **Rules**, **Fields**,
+**Record Types**, and **Commands**.
+
+*Rules* is the same search/filter/detail layout applied to all
 321 rows of `data/reference/auditd_rules.csv`: a free-text search across
 the rule text, title, category, audit key, description, every
-CIS/DISA-STIG/ACSC-ISM reference field, and every switch's explanation
-text (so searching `6.3.3.8`, `RHEL-09-654150`, `sudo_config`, or even a
-concept like "kernel module" or "root privileges" that only appears in
-an explanation, all work), plus a searchable multi-select Category
-combobox ordered by the source document's own section numbering (1–88)
-rather than alphabetically. The detail view shows the full `auditd_rule`
-in a code block, then a **Switches & Arguments Explained** section
-breaking the rule into one card per flag with its plain-English meaning
-(e.g. `-F auid>=1000` → why `auid` rather than `uid` matters for
-attributing an action through `su`/`sudo`, and why 1000 specifically),
-alongside its CIS/STIG/ACSC fields and a source note pointing back to
-the originating section of `docs/auditd-rules-master-reference.md`.
+CIS/DISA-STIG/ACSC-ISM reference field, every switch's explanation text,
+and every attached log example's own text (so searching `6.3.3.8`,
+`RHEL-09-654150`, `sudo_config`, "kernel module"/"root privileges" from
+an explanation, or `EACCES`/`modprobe` from a real captured log line,
+all work), plus a searchable multi-select Category combobox ordered by
+the source document's own section numbering (1–88) rather than
+alphabetically. Rows with a real log example carry a **LOG** badge. The
+detail view shows the full `auditd_rule` in a code block, then — where
+one is attached — a **Log Example** section with the real
+`/var/log/audit/audit.log` output (plus any decoded-value annotation and
+the one known key-spelling discrepancy, where it applies), then a
+**Switches & Arguments Explained** section breaking the rule into one
+card per flag with its plain-English meaning (e.g. `-F auid>=1000` → why
+`auid` rather than `uid` matters for attributing an action through
+`su`/`sudo`, and why 1000 specifically), alongside its CIS/STIG/ACSC
+fields and a source note pointing back to the originating section of
+`docs/auditd-rules-master-reference.md` (and, when present, the log
+example's source in `docs/auditd-rules-log-examples.md`).
+
+*Fields* is a single searchable table over all 234 rows of
+`data/reference/auditd_fields.csv` — field name, value format,
+explanation, and its Splunk CIM enrichment (potential CIM name,
+supported CIM field, CIM data model, and mapping Splunk app/TA) —
+filtered live as you type across all seven columns (so searching
+"SELinux" surfaces every `subj_*`/`obj_*`/`*context*` field at once, and
+searching "Intrusion_Detection" or "TA-linux_auditd" filters by the CIM
+columns alone). Blank CIM cells mean the field wasn't covered by the
+enrichment; an explicit "—" means it was considered and has no known
+mapping.
+
+*Record Types* is a searchable table over all 159 rows of
+`data/reference/auditd_record_type_names.csv` — the value the `type=`
+field takes at the start of every audit record, and what it means —
+filtered live by name or explanation, plus two static reference tables
+shown alongside it: the 15 numeric ranges these type names fall into per
+the kernel audit header (`data/reference/auditd_record_type_ranges.csv`)
+and the 10 record types most frequently seen in day-to-day log analysis
+with their typical origin
+(`data/reference/auditd_record_type_common.csv`), and a closing tip on
+using `ausearch -m` to see the exact list recognised by the installed
+audit package.
+
+*Commands* is a list/detail view (the same layout as *Rules*, scaled to 7
+rows) over `data/reference/auditd_commands.csv`/`.json` — the core
+`auditd` tools (`auditctl`, `ausearch`, `aureport`, `auditd`,
+`augenrules`, `autrace`, `audispd`) and their most useful options,
+supplied by the repo owner. Each row's `sections` field is a nested array
+of `{title, code}` command-block groups (e.g. `auditctl`'s "Status",
+"File watches", "Syscall rules", "Useful filters"; `ausearch`'s "By
+key", "By time", "By user / process", "By syscall / success", and more)
+— JSON-serialized into the CSV cell the same way `auditd_rules.csv`'s
+`switches_explained`/`log_samples` are. Search matches a command name, a
+section title, an option string inside a code block (e.g. `-ts today`,
+`--format csv`), or the row's free-standing `notes` (e.g. auditctl's
+`-p` permission-flag legend). `audispd` has no dedicated section content
+in the source — its detail view says so explicitly rather than
+rendering an empty block. Below the list/detail split, two always-visible
+reference blocks: a **Quick operational cheat-sheet** (six common
+day-to-day command sequences,
+`DATA.auditd_command_cheatsheet` client-side) and a **Related files**
+table (`data/reference/auditd_command_related_files.csv` — 5 rows:
+`auditd.conf`, `audit.rules`, `rules.d/`, `audit.log`, `plugins.d/`).
 
 **Reference tables** — covers all 9 accordion-style reference tables
 (`auditd_rules` gets its own dedicated tab instead, given its size) with

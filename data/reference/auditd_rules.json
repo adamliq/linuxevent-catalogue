@@ -16,7 +16,8 @@
         "token": "-D",
         "explanation": "Delete all currently loaded audit rules first, so this rule set loads from a clean baseline."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "01-02",
@@ -35,7 +36,8 @@
         "token": "-b 8192",
         "explanation": "Set the kernel audit backlog queue size to 8192 events — how many audit records the kernel buffers if auditd can't keep up, before the failure mode (-f) kicks in."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "01-03",
@@ -54,7 +56,8 @@
         "token": "-f 1",
         "explanation": "Failure mode 1 (printk) — log failures to the kernel log (dmesg) via printk(). The common default."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "01-04",
@@ -73,7 +76,8 @@
         "token": "-i",
         "explanation": "Ignore errors when reading rules (e.g. a rule referencing a path that doesn't exist on this host) instead of aborting the whole load."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "01-05",
@@ -92,7 +96,8 @@
         "token": "-e 2",
         "explanation": "Enable auditing and make the rule set immutable until reboot — no further rule changes, even by root, are possible without a restart."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "02-01",
@@ -119,7 +124,8 @@
         "token": "-k audit_config",
         "explanation": "Tag matching events with the audit key `audit_config` (search later with `ausearch -k audit_config`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "02-02",
@@ -146,7 +152,8 @@
         "token": "-k audit_config",
         "explanation": "Tag matching events with the audit key `audit_config` (search later with `ausearch -k audit_config`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "02-03",
@@ -172,6 +179,14 @@
       {
         "token": "-k audit_rules",
         "explanation": "Tag matching events with the audit key `audit_rules` (search later with `ausearch -k audit_rules`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "modification of audit rules",
+        "log": "type=SYSCALL msg=audit(1712345700.100:2001): arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=7fffd0dd98f0 a2=241 a3=1b6 items=2 ppid=1200 pid=1305 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=3 comm=\"vi\" exe=\"/usr/bin/vi\" key=\"audit_rules\"\ntype=CWD msg=audit(1712345700.100:2001): cwd=\"/etc/audit/rules.d\"\ntype=PATH msg=audit(1712345700.100:2001): item=0 name=\"/etc/audit/rules.d\" inode=12345 dev=08:01 mode=040755 ouid=0 ogid=0 rdev=00:00 nametype=PARENT\ntype=PATH msg=audit(1712345700.100:2001): item=1 name=\"99-finalize.rules\" inode=12350 dev=08:01 mode=0100640 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL\ntype=PROCTITLE msg=audit(1712345700.100:2001): proctitle=7669002F6574632F61756469742F72756C65732E642F39392D66696E616C697A652E72756C6573",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -200,6 +215,14 @@
         "token": "-k audit_rules",
         "explanation": "Tag matching events with the audit key `audit_rules` (search later with `ausearch -k audit_rules`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "modification of audit rules",
+        "log": "type=SYSCALL msg=audit(1712345700.100:2001): arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=7fffd0dd98f0 a2=241 a3=1b6 items=2 ppid=1200 pid=1305 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=3 comm=\"vi\" exe=\"/usr/bin/vi\" key=\"audit_rules\"\ntype=CWD msg=audit(1712345700.100:2001): cwd=\"/etc/audit/rules.d\"\ntype=PATH msg=audit(1712345700.100:2001): item=0 name=\"/etc/audit/rules.d\" inode=12345 dev=08:01 mode=040755 ouid=0 ogid=0 rdev=00:00 nametype=PARENT\ntype=PATH msg=audit(1712345700.100:2001): item=1 name=\"99-finalize.rules\" inode=12350 dev=08:01 mode=0100640 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL\ntype=PROCTITLE msg=audit(1712345700.100:2001): proctitle=7669002F6574632F61756469742F72756C65732E642F39392D66696E616C697A652E72756C6573",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -227,7 +250,8 @@
         "token": "-k audit_logs",
         "explanation": "Tag matching events with the audit key `audit_logs` (search later with `ausearch -k audit_logs`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "02-06",
@@ -253,6 +277,14 @@
       {
         "token": "-k audit_tools",
         "explanation": "Tag matching events with the audit key `audit_tools` (search later with `ausearch -k audit_tools`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "execution of auditctl",
+        "log": "type=SYSCALL msg=audit(1712345710.200:2002): arch=c000003e syscall=59 success=yes exit=0 a0=7f... a1=7f... a2=7f... a3=0 items=2 ppid=1200 pid=1310 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=3 comm=\"auditctl\" exe=\"/sbin/auditctl\" key=\"audit_tools\"\ntype=EXECVE msg=audit(1712345710.200:2002): argc=3 a0=\"auditctl\" a1=\"-l\"\ntype=CWD msg=audit(1712345710.200:2002): cwd=\"/root\"\ntype=PATH msg=audit(1712345710.200:2002): item=0 name=\"/sbin/auditctl\" inode=... mode=0100755 ouid=0 ogid=0 nametype=NORMAL\ntype=PROCTITLE msg=audit(1712345710.200:2002): proctitle=617564697463746C002D6C",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -281,6 +313,14 @@
         "token": "-k audit_tools",
         "explanation": "Tag matching events with the audit key `audit_tools` (search later with `ausearch -k audit_tools`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "execution of auditctl",
+        "log": "type=SYSCALL msg=audit(1712345710.200:2002): arch=c000003e syscall=59 success=yes exit=0 a0=7f... a1=7f... a2=7f... a3=0 items=2 ppid=1200 pid=1310 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=3 comm=\"auditctl\" exe=\"/sbin/auditctl\" key=\"audit_tools\"\ntype=EXECVE msg=audit(1712345710.200:2002): argc=3 a0=\"auditctl\" a1=\"-l\"\ntype=CWD msg=audit(1712345710.200:2002): cwd=\"/root\"\ntype=PATH msg=audit(1712345710.200:2002): item=0 name=\"/sbin/auditctl\" inode=... mode=0100755 ouid=0 ogid=0 nametype=NORMAL\ntype=PROCTITLE msg=audit(1712345710.200:2002): proctitle=617564697463746C002D6C",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -308,6 +348,14 @@
         "token": "-k audit_tools",
         "explanation": "Tag matching events with the audit key `audit_tools` (search later with `ausearch -k audit_tools`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "execution of auditctl",
+        "log": "type=SYSCALL msg=audit(1712345710.200:2002): arch=c000003e syscall=59 success=yes exit=0 a0=7f... a1=7f... a2=7f... a3=0 items=2 ppid=1200 pid=1310 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=3 comm=\"auditctl\" exe=\"/sbin/auditctl\" key=\"audit_tools\"\ntype=EXECVE msg=audit(1712345710.200:2002): argc=3 a0=\"auditctl\" a1=\"-l\"\ntype=CWD msg=audit(1712345710.200:2002): cwd=\"/root\"\ntype=PATH msg=audit(1712345710.200:2002): item=0 name=\"/sbin/auditctl\" inode=... mode=0100755 ouid=0 ogid=0 nametype=NORMAL\ntype=PROCTITLE msg=audit(1712345710.200:2002): proctitle=617564697463746C002D6C",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -334,6 +382,14 @@
       {
         "token": "-k audit_tools",
         "explanation": "Tag matching events with the audit key `audit_tools` (search later with `ausearch -k audit_tools`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "execution of auditctl",
+        "log": "type=SYSCALL msg=audit(1712345710.200:2002): arch=c000003e syscall=59 success=yes exit=0 a0=7f... a1=7f... a2=7f... a3=0 items=2 ppid=1200 pid=1310 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=3 comm=\"auditctl\" exe=\"/sbin/auditctl\" key=\"audit_tools\"\ntype=EXECVE msg=audit(1712345710.200:2002): argc=3 a0=\"auditctl\" a1=\"-l\"\ntype=CWD msg=audit(1712345710.200:2002): cwd=\"/root\"\ntype=PATH msg=audit(1712345710.200:2002): item=0 name=\"/sbin/auditctl\" inode=... mode=0100755 ouid=0 ogid=0 nametype=NORMAL\ntype=PROCTITLE msg=audit(1712345710.200:2002): proctitle=617564697463746C002D6C",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -366,6 +422,14 @@
         "token": "-k system_identity",
         "explanation": "Tag matching events with the audit key `system_identity` (search later with `ausearch -k system_identity`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "hostname change via syscall",
+        "log": "type=SYSCALL msg=audit(1712345800.300:2100): arch=c000003e syscall=170 success=yes exit=0 a0=7ffc... a1=10 a2=0 a3=0 items=0 ppid=1500 pid=1520 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts1 ses=4 comm=\"hostname\" exe=\"/usr/bin/hostname\" key=\"system_identity\"\ntype=PROCTITLE msg=audit(1712345800.300:2100): proctitle=686F73746E616D65006E6577686F7374",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -392,6 +456,14 @@
       {
         "token": "-k system_identity",
         "explanation": "Tag matching events with the audit key `system_identity` (search later with `ausearch -k system_identity`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "hostname change via syscall",
+        "log": "type=SYSCALL msg=audit(1712345800.300:2100): arch=c000003e syscall=170 success=yes exit=0 a0=7ffc... a1=10 a2=0 a3=0 items=0 ppid=1500 pid=1520 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts1 ses=4 comm=\"hostname\" exe=\"/usr/bin/hostname\" key=\"system_identity\"\ntype=PROCTITLE msg=audit(1712345800.300:2100): proctitle=686F73746E616D65006E6577686F7374",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -420,6 +492,14 @@
         "token": "-k network_config",
         "explanation": "Tag matching events with the audit key `network_config` (search later with `ausearch -k network_config`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "/etc/hosts modification",
+        "log": "type=SYSCALL msg=audit(1712345810.400:2101): arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=7fff... a2=241 a3=1b6 items=1 ppid=1500 pid=1525 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts1 ses=4 comm=\"vi\" exe=\"/usr/bin/vi\" key=\"network_config\"\ntype=CWD msg=audit(1712345810.400:2101): cwd=\"/etc\"\ntype=PATH msg=audit(1712345810.400:2101): item=0 name=\"/etc/hosts\" inode=... mode=0100644 ouid=0 ogid=0 nametype=NORMAL\ntype=PROCTITLE msg=audit(1712345810.400:2101): proctitle=7669002F6574632F686F737473",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -446,6 +526,14 @@
       {
         "token": "-k network_config",
         "explanation": "Tag matching events with the audit key `network_config` (search later with `ausearch -k network_config`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "/etc/hosts modification",
+        "log": "type=SYSCALL msg=audit(1712345810.400:2101): arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=7fff... a2=241 a3=1b6 items=1 ppid=1500 pid=1525 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts1 ses=4 comm=\"vi\" exe=\"/usr/bin/vi\" key=\"network_config\"\ntype=CWD msg=audit(1712345810.400:2101): cwd=\"/etc\"\ntype=PATH msg=audit(1712345810.400:2101): item=0 name=\"/etc/hosts\" inode=... mode=0100644 ouid=0 ogid=0 nametype=NORMAL\ntype=PROCTITLE msg=audit(1712345810.400:2101): proctitle=7669002F6574632F686F737473",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -474,6 +562,14 @@
         "token": "-k system_identity",
         "explanation": "Tag matching events with the audit key `system_identity` (search later with `ausearch -k system_identity`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "hostname change via syscall",
+        "log": "type=SYSCALL msg=audit(1712345800.300:2100): arch=c000003e syscall=170 success=yes exit=0 a0=7ffc... a1=10 a2=0 a3=0 items=0 ppid=1500 pid=1520 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts1 ses=4 comm=\"hostname\" exe=\"/usr/bin/hostname\" key=\"system_identity\"\ntype=PROCTITLE msg=audit(1712345800.300:2100): proctitle=686F73746E616D65006E6577686F7374",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -501,7 +597,8 @@
         "token": "-k system_locale",
         "explanation": "Tag matching events with the audit key `system_locale` (search later with `ausearch -k system_locale`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "03-07",
@@ -528,7 +625,8 @@
         "token": "-k system_locale",
         "explanation": "Tag matching events with the audit key `system_locale` (search later with `ausearch -k system_locale`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "04-01",
@@ -558,6 +656,20 @@
       {
         "token": "-k time_change",
         "explanation": "Tag matching events with the audit key `time_change` (search later with `ausearch -k time_change`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "clock_settime",
+        "log": "type=SYSCALL msg=audit(1712345900.500:2200): arch=c000003e syscall=227 success=yes exit=0 a0=0 a1=7fff... a2=0 a3=0 items=0 ppid=1600 pid=1610 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=5 comm=\"date\" exe=\"/usr/bin/date\" key=\"time_change\"\ntype=PROCTITLE msg=audit(1712345900.500:2200): proctitle=64617465002D7300323032342D30312D30312031323A30303A3030",
+        "annotation": "",
+        "key_note": ""
+      },
+      {
+        "title": "/etc/localtime change",
+        "log": "type=SYSCALL msg=audit(1712345910.600:2201): arch=c000003e syscall=82 success=yes exit=0 a0=7fff... a1=7fff... a2=0 a3=0 items=2 ppid=1600 pid=1615 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=5 comm=\"ln\" exe=\"/usr/bin/ln\" key=\"time_change\"\ntype=CWD msg=audit(1712345910.600:2201): cwd=\"/etc\"\ntype=PATH msg=audit(1712345910.600:2201): item=0 name=\"/etc/localtime\" inode=... mode=0120777 ouid=0 ogid=0 nametype=DELETE\ntype=PATH msg=audit(1712345910.600:2201): item=1 name=\"/usr/share/zoneinfo/Australia/Sydney\" inode=... mode=0100644 ouid=0 ogid=0 nametype=CREATE",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -594,6 +706,20 @@
         "token": "-k time_change",
         "explanation": "Tag matching events with the audit key `time_change` (search later with `ausearch -k time_change`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "clock_settime",
+        "log": "type=SYSCALL msg=audit(1712345900.500:2200): arch=c000003e syscall=227 success=yes exit=0 a0=0 a1=7fff... a2=0 a3=0 items=0 ppid=1600 pid=1610 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=5 comm=\"date\" exe=\"/usr/bin/date\" key=\"time_change\"\ntype=PROCTITLE msg=audit(1712345900.500:2200): proctitle=64617465002D7300323032342D30312D30312031323A30303A3030",
+        "annotation": "",
+        "key_note": ""
+      },
+      {
+        "title": "/etc/localtime change",
+        "log": "type=SYSCALL msg=audit(1712345910.600:2201): arch=c000003e syscall=82 success=yes exit=0 a0=7fff... a1=7fff... a2=0 a3=0 items=2 ppid=1600 pid=1615 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=5 comm=\"ln\" exe=\"/usr/bin/ln\" key=\"time_change\"\ntype=CWD msg=audit(1712345910.600:2201): cwd=\"/etc\"\ntype=PATH msg=audit(1712345910.600:2201): item=0 name=\"/etc/localtime\" inode=... mode=0120777 ouid=0 ogid=0 nametype=DELETE\ntype=PATH msg=audit(1712345910.600:2201): item=1 name=\"/usr/share/zoneinfo/Australia/Sydney\" inode=... mode=0100644 ouid=0 ogid=0 nametype=CREATE",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -624,6 +750,20 @@
       {
         "token": "-k time_change",
         "explanation": "Tag matching events with the audit key `time_change` (search later with `ausearch -k time_change`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "clock_settime",
+        "log": "type=SYSCALL msg=audit(1712345900.500:2200): arch=c000003e syscall=227 success=yes exit=0 a0=0 a1=7fff... a2=0 a3=0 items=0 ppid=1600 pid=1610 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=5 comm=\"date\" exe=\"/usr/bin/date\" key=\"time_change\"\ntype=PROCTITLE msg=audit(1712345900.500:2200): proctitle=64617465002D7300323032342D30312D30312031323A30303A3030",
+        "annotation": "",
+        "key_note": ""
+      },
+      {
+        "title": "/etc/localtime change",
+        "log": "type=SYSCALL msg=audit(1712345910.600:2201): arch=c000003e syscall=82 success=yes exit=0 a0=7fff... a1=7fff... a2=0 a3=0 items=2 ppid=1600 pid=1615 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=5 comm=\"ln\" exe=\"/usr/bin/ln\" key=\"time_change\"\ntype=CWD msg=audit(1712345910.600:2201): cwd=\"/etc\"\ntype=PATH msg=audit(1712345910.600:2201): item=0 name=\"/etc/localtime\" inode=... mode=0120777 ouid=0 ogid=0 nametype=DELETE\ntype=PATH msg=audit(1712345910.600:2201): item=1 name=\"/usr/share/zoneinfo/Australia/Sydney\" inode=... mode=0100644 ouid=0 ogid=0 nametype=CREATE",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -660,6 +800,20 @@
         "token": "-k time_change",
         "explanation": "Tag matching events with the audit key `time_change` (search later with `ausearch -k time_change`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "clock_settime",
+        "log": "type=SYSCALL msg=audit(1712345900.500:2200): arch=c000003e syscall=227 success=yes exit=0 a0=0 a1=7fff... a2=0 a3=0 items=0 ppid=1600 pid=1610 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=5 comm=\"date\" exe=\"/usr/bin/date\" key=\"time_change\"\ntype=PROCTITLE msg=audit(1712345900.500:2200): proctitle=64617465002D7300323032342D30312D30312031323A30303A3030",
+        "annotation": "",
+        "key_note": ""
+      },
+      {
+        "title": "/etc/localtime change",
+        "log": "type=SYSCALL msg=audit(1712345910.600:2201): arch=c000003e syscall=82 success=yes exit=0 a0=7fff... a1=7fff... a2=0 a3=0 items=2 ppid=1600 pid=1615 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=5 comm=\"ln\" exe=\"/usr/bin/ln\" key=\"time_change\"\ntype=CWD msg=audit(1712345910.600:2201): cwd=\"/etc\"\ntype=PATH msg=audit(1712345910.600:2201): item=0 name=\"/etc/localtime\" inode=... mode=0120777 ouid=0 ogid=0 nametype=DELETE\ntype=PATH msg=audit(1712345910.600:2201): item=1 name=\"/usr/share/zoneinfo/Australia/Sydney\" inode=... mode=0100644 ouid=0 ogid=0 nametype=CREATE",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -686,6 +840,20 @@
       {
         "token": "-k time_change",
         "explanation": "Tag matching events with the audit key `time_change` (search later with `ausearch -k time_change`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "clock_settime",
+        "log": "type=SYSCALL msg=audit(1712345900.500:2200): arch=c000003e syscall=227 success=yes exit=0 a0=0 a1=7fff... a2=0 a3=0 items=0 ppid=1600 pid=1610 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=5 comm=\"date\" exe=\"/usr/bin/date\" key=\"time_change\"\ntype=PROCTITLE msg=audit(1712345900.500:2200): proctitle=64617465002D7300323032342D30312D30312031323A30303A3030",
+        "annotation": "",
+        "key_note": ""
+      },
+      {
+        "title": "/etc/localtime change",
+        "log": "type=SYSCALL msg=audit(1712345910.600:2201): arch=c000003e syscall=82 success=yes exit=0 a0=7fff... a1=7fff... a2=0 a3=0 items=2 ppid=1600 pid=1615 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=5 comm=\"ln\" exe=\"/usr/bin/ln\" key=\"time_change\"\ntype=CWD msg=audit(1712345910.600:2201): cwd=\"/etc\"\ntype=PATH msg=audit(1712345910.600:2201): item=0 name=\"/etc/localtime\" inode=... mode=0120777 ouid=0 ogid=0 nametype=DELETE\ntype=PATH msg=audit(1712345910.600:2201): item=1 name=\"/usr/share/zoneinfo/Australia/Sydney\" inode=... mode=0100644 ouid=0 ogid=0 nametype=CREATE",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -714,7 +882,8 @@
         "token": "-k time_sync",
         "explanation": "Tag matching events with the audit key `time_sync` (search later with `ausearch -k time_sync`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "04-07",
@@ -741,7 +910,8 @@
         "token": "-k time_sync",
         "explanation": "Tag matching events with the audit key `time_sync` (search later with `ausearch -k time_sync`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "04-08",
@@ -768,7 +938,8 @@
         "token": "-k time_sync",
         "explanation": "Tag matching events with the audit key `time_sync` (search later with `ausearch -k time_sync`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "04-09",
@@ -799,7 +970,8 @@
         "token": "-k time-change",
         "explanation": "Tag matching events with the audit key `time-change` (search later with `ausearch -k time-change`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "04-10",
@@ -830,7 +1002,8 @@
         "token": "-k time-change",
         "explanation": "Tag matching events with the audit key `time-change` (search later with `ausearch -k time-change`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "04-11",
@@ -857,7 +1030,8 @@
         "token": "-k time-change",
         "explanation": "Tag matching events with the audit key `time-change` (search later with `ausearch -k time-change`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "04-12",
@@ -888,7 +1062,8 @@
         "token": "-F key=time-change",
         "explanation": "Tag matching events with the audit key `time-change` (search later with `ausearch -k time-change`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "04-13",
@@ -919,7 +1094,8 @@
         "token": "-F key=time-change",
         "explanation": "Tag matching events with the audit key `time-change` (search later with `ausearch -k time-change`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "04-14",
@@ -954,7 +1130,8 @@
         "token": "-F key=time-change",
         "explanation": "Tag matching events with the audit key `time-change` (search later with `ausearch -k time-change`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "04-15",
@@ -989,7 +1166,8 @@
         "token": "-F key=time-change",
         "explanation": "Tag matching events with the audit key `time-change` (search later with `ausearch -k time-change`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "04-16",
@@ -1024,7 +1202,8 @@
         "token": "-F key=time-change",
         "explanation": "Tag matching events with the audit key `time-change` (search later with `ausearch -k time-change`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "04-17",
@@ -1059,7 +1238,8 @@
         "token": "-F key=time-change",
         "explanation": "Tag matching events with the audit key `time-change` (search later with `ausearch -k time-change`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "05-01",
@@ -1085,6 +1265,14 @@
       {
         "token": "-k identity",
         "explanation": "Tag matching events with the audit key `identity` (search later with `ausearch -k identity`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "/etc/passwd modification (useradd)",
+        "log": "type=SYSCALL msg=audit(1712346000.700:2300): arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=7fff... a2=241 a3=1b6 items=1 ppid=1700 pid=1720 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=6 comm=\"useradd\" exe=\"/usr/sbin/useradd\" key=\"identity\"\ntype=CWD msg=audit(1712346000.700:2300): cwd=\"/root\"\ntype=PATH msg=audit(1712346000.700:2300): item=0 name=\"/etc/passwd\" inode=... mode=0100644 ouid=0 ogid=0 nametype=NORMAL\ntype=PROCTITLE msg=audit(1712346000.700:2300): proctitle=75736572616464006E657775736572",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -1113,6 +1301,14 @@
         "token": "-k identity",
         "explanation": "Tag matching events with the audit key `identity` (search later with `ausearch -k identity`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "/etc/passwd modification (useradd)",
+        "log": "type=SYSCALL msg=audit(1712346000.700:2300): arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=7fff... a2=241 a3=1b6 items=1 ppid=1700 pid=1720 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=6 comm=\"useradd\" exe=\"/usr/sbin/useradd\" key=\"identity\"\ntype=CWD msg=audit(1712346000.700:2300): cwd=\"/root\"\ntype=PATH msg=audit(1712346000.700:2300): item=0 name=\"/etc/passwd\" inode=... mode=0100644 ouid=0 ogid=0 nametype=NORMAL\ntype=PROCTITLE msg=audit(1712346000.700:2300): proctitle=75736572616464006E657775736572",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -1139,6 +1335,14 @@
       {
         "token": "-k identity",
         "explanation": "Tag matching events with the audit key `identity` (search later with `ausearch -k identity`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "/etc/passwd modification (useradd)",
+        "log": "type=SYSCALL msg=audit(1712346000.700:2300): arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=7fff... a2=241 a3=1b6 items=1 ppid=1700 pid=1720 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=6 comm=\"useradd\" exe=\"/usr/sbin/useradd\" key=\"identity\"\ntype=CWD msg=audit(1712346000.700:2300): cwd=\"/root\"\ntype=PATH msg=audit(1712346000.700:2300): item=0 name=\"/etc/passwd\" inode=... mode=0100644 ouid=0 ogid=0 nametype=NORMAL\ntype=PROCTITLE msg=audit(1712346000.700:2300): proctitle=75736572616464006E657775736572",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -1167,6 +1371,14 @@
         "token": "-k identity",
         "explanation": "Tag matching events with the audit key `identity` (search later with `ausearch -k identity`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "/etc/passwd modification (useradd)",
+        "log": "type=SYSCALL msg=audit(1712346000.700:2300): arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=7fff... a2=241 a3=1b6 items=1 ppid=1700 pid=1720 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=6 comm=\"useradd\" exe=\"/usr/sbin/useradd\" key=\"identity\"\ntype=CWD msg=audit(1712346000.700:2300): cwd=\"/root\"\ntype=PATH msg=audit(1712346000.700:2300): item=0 name=\"/etc/passwd\" inode=... mode=0100644 ouid=0 ogid=0 nametype=NORMAL\ntype=PROCTITLE msg=audit(1712346000.700:2300): proctitle=75736572616464006E657775736572",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -1193,6 +1405,14 @@
       {
         "token": "-k identity",
         "explanation": "Tag matching events with the audit key `identity` (search later with `ausearch -k identity`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "/etc/passwd modification (useradd)",
+        "log": "type=SYSCALL msg=audit(1712346000.700:2300): arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=7fff... a2=241 a3=1b6 items=1 ppid=1700 pid=1720 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=6 comm=\"useradd\" exe=\"/usr/sbin/useradd\" key=\"identity\"\ntype=CWD msg=audit(1712346000.700:2300): cwd=\"/root\"\ntype=PATH msg=audit(1712346000.700:2300): item=0 name=\"/etc/passwd\" inode=... mode=0100644 ouid=0 ogid=0 nametype=NORMAL\ntype=PROCTITLE msg=audit(1712346000.700:2300): proctitle=75736572616464006E657775736572",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -1221,6 +1441,14 @@
         "token": "-k account_management",
         "explanation": "Tag matching events with the audit key `account_management` (search later with `ausearch -k account_management`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "account-management binary execution",
+        "log": "type=SYSCALL msg=audit(1712346010.800:2301): arch=c000003e syscall=59 success=yes exit=0 a0=... a1=... a2=... a3=0 items=2 ppid=1700 pid=1725 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=6 comm=\"useradd\" exe=\"/usr/sbin/useradd\" key=\"account_management\"\ntype=EXECVE msg=audit(1712346010.800:2301): argc=2 a0=\"useradd\" a1=\"newuser\"\ntype=PATH msg=audit(1712346010.800:2301): item=0 name=\"/usr/sbin/useradd\" inode=... mode=0100755 ouid=0 ogid=0 nametype=NORMAL",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -1247,6 +1475,14 @@
       {
         "token": "-k account_management",
         "explanation": "Tag matching events with the audit key `account_management` (search later with `ausearch -k account_management`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "account-management binary execution",
+        "log": "type=SYSCALL msg=audit(1712346010.800:2301): arch=c000003e syscall=59 success=yes exit=0 a0=... a1=... a2=... a3=0 items=2 ppid=1700 pid=1725 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=6 comm=\"useradd\" exe=\"/usr/sbin/useradd\" key=\"account_management\"\ntype=EXECVE msg=audit(1712346010.800:2301): argc=2 a0=\"useradd\" a1=\"newuser\"\ntype=PATH msg=audit(1712346010.800:2301): item=0 name=\"/usr/sbin/useradd\" inode=... mode=0100755 ouid=0 ogid=0 nametype=NORMAL",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -1275,6 +1511,14 @@
         "token": "-k account_management",
         "explanation": "Tag matching events with the audit key `account_management` (search later with `ausearch -k account_management`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "account-management binary execution",
+        "log": "type=SYSCALL msg=audit(1712346010.800:2301): arch=c000003e syscall=59 success=yes exit=0 a0=... a1=... a2=... a3=0 items=2 ppid=1700 pid=1725 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=6 comm=\"useradd\" exe=\"/usr/sbin/useradd\" key=\"account_management\"\ntype=EXECVE msg=audit(1712346010.800:2301): argc=2 a0=\"useradd\" a1=\"newuser\"\ntype=PATH msg=audit(1712346010.800:2301): item=0 name=\"/usr/sbin/useradd\" inode=... mode=0100755 ouid=0 ogid=0 nametype=NORMAL",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -1301,6 +1545,14 @@
       {
         "token": "-k account_management",
         "explanation": "Tag matching events with the audit key `account_management` (search later with `ausearch -k account_management`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "account-management binary execution",
+        "log": "type=SYSCALL msg=audit(1712346010.800:2301): arch=c000003e syscall=59 success=yes exit=0 a0=... a1=... a2=... a3=0 items=2 ppid=1700 pid=1725 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=6 comm=\"useradd\" exe=\"/usr/sbin/useradd\" key=\"account_management\"\ntype=EXECVE msg=audit(1712346010.800:2301): argc=2 a0=\"useradd\" a1=\"newuser\"\ntype=PATH msg=audit(1712346010.800:2301): item=0 name=\"/usr/sbin/useradd\" inode=... mode=0100755 ouid=0 ogid=0 nametype=NORMAL",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -1329,6 +1581,14 @@
         "token": "-k account_management",
         "explanation": "Tag matching events with the audit key `account_management` (search later with `ausearch -k account_management`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "account-management binary execution",
+        "log": "type=SYSCALL msg=audit(1712346010.800:2301): arch=c000003e syscall=59 success=yes exit=0 a0=... a1=... a2=... a3=0 items=2 ppid=1700 pid=1725 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=6 comm=\"useradd\" exe=\"/usr/sbin/useradd\" key=\"account_management\"\ntype=EXECVE msg=audit(1712346010.800:2301): argc=2 a0=\"useradd\" a1=\"newuser\"\ntype=PATH msg=audit(1712346010.800:2301): item=0 name=\"/usr/sbin/useradd\" inode=... mode=0100755 ouid=0 ogid=0 nametype=NORMAL",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -1355,6 +1615,14 @@
       {
         "token": "-k account_management",
         "explanation": "Tag matching events with the audit key `account_management` (search later with `ausearch -k account_management`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "account-management binary execution",
+        "log": "type=SYSCALL msg=audit(1712346010.800:2301): arch=c000003e syscall=59 success=yes exit=0 a0=... a1=... a2=... a3=0 items=2 ppid=1700 pid=1725 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=6 comm=\"useradd\" exe=\"/usr/sbin/useradd\" key=\"account_management\"\ntype=EXECVE msg=audit(1712346010.800:2301): argc=2 a0=\"useradd\" a1=\"newuser\"\ntype=PATH msg=audit(1712346010.800:2301): item=0 name=\"/usr/sbin/useradd\" inode=... mode=0100755 ouid=0 ogid=0 nametype=NORMAL",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -1383,6 +1651,14 @@
         "token": "-k account_management",
         "explanation": "Tag matching events with the audit key `account_management` (search later with `ausearch -k account_management`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "account-management binary execution",
+        "log": "type=SYSCALL msg=audit(1712346010.800:2301): arch=c000003e syscall=59 success=yes exit=0 a0=... a1=... a2=... a3=0 items=2 ppid=1700 pid=1725 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=6 comm=\"useradd\" exe=\"/usr/sbin/useradd\" key=\"account_management\"\ntype=EXECVE msg=audit(1712346010.800:2301): argc=2 a0=\"useradd\" a1=\"newuser\"\ntype=PATH msg=audit(1712346010.800:2301): item=0 name=\"/usr/sbin/useradd\" inode=... mode=0100755 ouid=0 ogid=0 nametype=NORMAL",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -1410,6 +1686,14 @@
         "token": "-k account_management",
         "explanation": "Tag matching events with the audit key `account_management` (search later with `ausearch -k account_management`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "account-management binary execution",
+        "log": "type=SYSCALL msg=audit(1712346010.800:2301): arch=c000003e syscall=59 success=yes exit=0 a0=... a1=... a2=... a3=0 items=2 ppid=1700 pid=1725 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=6 comm=\"useradd\" exe=\"/usr/sbin/useradd\" key=\"account_management\"\ntype=EXECVE msg=audit(1712346010.800:2301): argc=2 a0=\"useradd\" a1=\"newuser\"\ntype=PATH msg=audit(1712346010.800:2301): item=0 name=\"/usr/sbin/useradd\" inode=... mode=0100755 ouid=0 ogid=0 nametype=NORMAL",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -1436,6 +1720,14 @@
       {
         "token": "-k account_management",
         "explanation": "Tag matching events with the audit key `account_management` (search later with `ausearch -k account_management`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "account-management binary execution",
+        "log": "type=SYSCALL msg=audit(1712346010.800:2301): arch=c000003e syscall=59 success=yes exit=0 a0=... a1=... a2=... a3=0 items=2 ppid=1700 pid=1725 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=6 comm=\"useradd\" exe=\"/usr/sbin/useradd\" key=\"account_management\"\ntype=EXECVE msg=audit(1712346010.800:2301): argc=2 a0=\"useradd\" a1=\"newuser\"\ntype=PATH msg=audit(1712346010.800:2301): item=0 name=\"/usr/sbin/useradd\" inode=... mode=0100755 ouid=0 ogid=0 nametype=NORMAL",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -1472,6 +1764,14 @@
         "token": "-F key=identity",
         "explanation": "Tag matching events with the audit key `identity` (search later with `ausearch -k identity`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "/etc/passwd modification (useradd)",
+        "log": "type=SYSCALL msg=audit(1712346000.700:2300): arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=7fff... a2=241 a3=1b6 items=1 ppid=1700 pid=1720 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=6 comm=\"useradd\" exe=\"/usr/sbin/useradd\" key=\"identity\"\ntype=CWD msg=audit(1712346000.700:2300): cwd=\"/root\"\ntype=PATH msg=audit(1712346000.700:2300): item=0 name=\"/etc/passwd\" inode=... mode=0100644 ouid=0 ogid=0 nametype=NORMAL\ntype=PROCTITLE msg=audit(1712346000.700:2300): proctitle=75736572616464006E657775736572",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -1506,6 +1806,14 @@
       {
         "token": "-F key=identity",
         "explanation": "Tag matching events with the audit key `identity` (search later with `ausearch -k identity`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "/etc/passwd modification (useradd)",
+        "log": "type=SYSCALL msg=audit(1712346000.700:2300): arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=7fff... a2=241 a3=1b6 items=1 ppid=1700 pid=1720 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=6 comm=\"useradd\" exe=\"/usr/sbin/useradd\" key=\"identity\"\ntype=CWD msg=audit(1712346000.700:2300): cwd=\"/root\"\ntype=PATH msg=audit(1712346000.700:2300): item=0 name=\"/etc/passwd\" inode=... mode=0100644 ouid=0 ogid=0 nametype=NORMAL\ntype=PROCTITLE msg=audit(1712346000.700:2300): proctitle=75736572616464006E657775736572",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -1542,6 +1850,14 @@
         "token": "-F key=identity",
         "explanation": "Tag matching events with the audit key `identity` (search later with `ausearch -k identity`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "/etc/passwd modification (useradd)",
+        "log": "type=SYSCALL msg=audit(1712346000.700:2300): arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=7fff... a2=241 a3=1b6 items=1 ppid=1700 pid=1720 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=6 comm=\"useradd\" exe=\"/usr/sbin/useradd\" key=\"identity\"\ntype=CWD msg=audit(1712346000.700:2300): cwd=\"/root\"\ntype=PATH msg=audit(1712346000.700:2300): item=0 name=\"/etc/passwd\" inode=... mode=0100644 ouid=0 ogid=0 nametype=NORMAL\ntype=PROCTITLE msg=audit(1712346000.700:2300): proctitle=75736572616464006E657775736572",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -1576,6 +1892,14 @@
       {
         "token": "-F key=identity",
         "explanation": "Tag matching events with the audit key `identity` (search later with `ausearch -k identity`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "/etc/passwd modification (useradd)",
+        "log": "type=SYSCALL msg=audit(1712346000.700:2300): arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=7fff... a2=241 a3=1b6 items=1 ppid=1700 pid=1720 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=6 comm=\"useradd\" exe=\"/usr/sbin/useradd\" key=\"identity\"\ntype=CWD msg=audit(1712346000.700:2300): cwd=\"/root\"\ntype=PATH msg=audit(1712346000.700:2300): item=0 name=\"/etc/passwd\" inode=... mode=0100644 ouid=0 ogid=0 nametype=NORMAL\ntype=PROCTITLE msg=audit(1712346000.700:2300): proctitle=75736572616464006E657775736572",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -1612,6 +1936,14 @@
         "token": "-F key=identity",
         "explanation": "Tag matching events with the audit key `identity` (search later with `ausearch -k identity`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "/etc/passwd modification (useradd)",
+        "log": "type=SYSCALL msg=audit(1712346000.700:2300): arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=7fff... a2=241 a3=1b6 items=1 ppid=1700 pid=1720 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=6 comm=\"useradd\" exe=\"/usr/sbin/useradd\" key=\"identity\"\ntype=CWD msg=audit(1712346000.700:2300): cwd=\"/root\"\ntype=PATH msg=audit(1712346000.700:2300): item=0 name=\"/etc/passwd\" inode=... mode=0100644 ouid=0 ogid=0 nametype=NORMAL\ntype=PROCTITLE msg=audit(1712346000.700:2300): proctitle=75736572616464006E657775736572",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -1646,6 +1978,14 @@
       {
         "token": "-F key=identity",
         "explanation": "Tag matching events with the audit key `identity` (search later with `ausearch -k identity`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "/etc/passwd modification (useradd)",
+        "log": "type=SYSCALL msg=audit(1712346000.700:2300): arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=7fff... a2=241 a3=1b6 items=1 ppid=1700 pid=1720 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=6 comm=\"useradd\" exe=\"/usr/sbin/useradd\" key=\"identity\"\ntype=CWD msg=audit(1712346000.700:2300): cwd=\"/root\"\ntype=PATH msg=audit(1712346000.700:2300): item=0 name=\"/etc/passwd\" inode=... mode=0100644 ouid=0 ogid=0 nametype=NORMAL\ntype=PROCTITLE msg=audit(1712346000.700:2300): proctitle=75736572616464006E657775736572",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -1682,6 +2022,14 @@
         "token": "-F key=identity",
         "explanation": "Tag matching events with the audit key `identity` (search later with `ausearch -k identity`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "/etc/passwd modification (useradd)",
+        "log": "type=SYSCALL msg=audit(1712346000.700:2300): arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=7fff... a2=241 a3=1b6 items=1 ppid=1700 pid=1720 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=6 comm=\"useradd\" exe=\"/usr/sbin/useradd\" key=\"identity\"\ntype=CWD msg=audit(1712346000.700:2300): cwd=\"/root\"\ntype=PATH msg=audit(1712346000.700:2300): item=0 name=\"/etc/passwd\" inode=... mode=0100644 ouid=0 ogid=0 nametype=NORMAL\ntype=PROCTITLE msg=audit(1712346000.700:2300): proctitle=75736572616464006E657775736572",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -1716,6 +2064,14 @@
       {
         "token": "-F key=identity",
         "explanation": "Tag matching events with the audit key `identity` (search later with `ausearch -k identity`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "/etc/passwd modification (useradd)",
+        "log": "type=SYSCALL msg=audit(1712346000.700:2300): arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=7fff... a2=241 a3=1b6 items=1 ppid=1700 pid=1720 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=6 comm=\"useradd\" exe=\"/usr/sbin/useradd\" key=\"identity\"\ntype=CWD msg=audit(1712346000.700:2300): cwd=\"/root\"\ntype=PATH msg=audit(1712346000.700:2300): item=0 name=\"/etc/passwd\" inode=... mode=0100644 ouid=0 ogid=0 nametype=NORMAL\ntype=PROCTITLE msg=audit(1712346000.700:2300): proctitle=75736572616464006E657775736572",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -1752,6 +2108,14 @@
         "token": "-F key=identity",
         "explanation": "Tag matching events with the audit key `identity` (search later with `ausearch -k identity`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "/etc/passwd modification (useradd)",
+        "log": "type=SYSCALL msg=audit(1712346000.700:2300): arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=7fff... a2=241 a3=1b6 items=1 ppid=1700 pid=1720 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=6 comm=\"useradd\" exe=\"/usr/sbin/useradd\" key=\"identity\"\ntype=CWD msg=audit(1712346000.700:2300): cwd=\"/root\"\ntype=PATH msg=audit(1712346000.700:2300): item=0 name=\"/etc/passwd\" inode=... mode=0100644 ouid=0 ogid=0 nametype=NORMAL\ntype=PROCTITLE msg=audit(1712346000.700:2300): proctitle=75736572616464006E657775736572",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -1787,6 +2151,14 @@
         "token": "-F key=identity",
         "explanation": "Tag matching events with the audit key `identity` (search later with `ausearch -k identity`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "/etc/passwd modification (useradd)",
+        "log": "type=SYSCALL msg=audit(1712346000.700:2300): arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=7fff... a2=241 a3=1b6 items=1 ppid=1700 pid=1720 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=6 comm=\"useradd\" exe=\"/usr/sbin/useradd\" key=\"identity\"\ntype=CWD msg=audit(1712346000.700:2300): cwd=\"/root\"\ntype=PATH msg=audit(1712346000.700:2300): item=0 name=\"/etc/passwd\" inode=... mode=0100644 ouid=0 ogid=0 nametype=NORMAL\ntype=PROCTITLE msg=audit(1712346000.700:2300): proctitle=75736572616464006E657775736572",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -1813,6 +2185,14 @@
       {
         "token": "-k authentication",
         "explanation": "Tag matching events with the audit key `authentication` (search later with `ausearch -k authentication`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "PAM configuration change",
+        "log": "type=SYSCALL msg=audit(1712346100.900:2400): arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=7fff... a2=241 a3=1b6 items=1 ppid=1800 pid=1810 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=7 comm=\"vi\" exe=\"/usr/bin/vi\" key=\"authentication\"\ntype=CWD msg=audit(1712346100.900:2400): cwd=\"/etc/pam.d\"\ntype=PATH msg=audit(1712346100.900:2400): item=0 name=\"/etc/pam.d/sshd\" inode=... mode=0100644 ouid=0 ogid=0 nametype=NORMAL",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -1841,6 +2221,14 @@
         "token": "-k authentication",
         "explanation": "Tag matching events with the audit key `authentication` (search later with `ausearch -k authentication`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "PAM configuration change",
+        "log": "type=SYSCALL msg=audit(1712346100.900:2400): arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=7fff... a2=241 a3=1b6 items=1 ppid=1800 pid=1810 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=7 comm=\"vi\" exe=\"/usr/bin/vi\" key=\"authentication\"\ntype=CWD msg=audit(1712346100.900:2400): cwd=\"/etc/pam.d\"\ntype=PATH msg=audit(1712346100.900:2400): item=0 name=\"/etc/pam.d/sshd\" inode=... mode=0100644 ouid=0 ogid=0 nametype=NORMAL",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -1867,6 +2255,14 @@
       {
         "token": "-k authentication",
         "explanation": "Tag matching events with the audit key `authentication` (search later with `ausearch -k authentication`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "PAM configuration change",
+        "log": "type=SYSCALL msg=audit(1712346100.900:2400): arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=7fff... a2=241 a3=1b6 items=1 ppid=1800 pid=1810 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=7 comm=\"vi\" exe=\"/usr/bin/vi\" key=\"authentication\"\ntype=CWD msg=audit(1712346100.900:2400): cwd=\"/etc/pam.d\"\ntype=PATH msg=audit(1712346100.900:2400): item=0 name=\"/etc/pam.d/sshd\" inode=... mode=0100644 ouid=0 ogid=0 nametype=NORMAL",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -1895,6 +2291,14 @@
         "token": "-k authentication",
         "explanation": "Tag matching events with the audit key `authentication` (search later with `ausearch -k authentication`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "PAM configuration change",
+        "log": "type=SYSCALL msg=audit(1712346100.900:2400): arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=7fff... a2=241 a3=1b6 items=1 ppid=1800 pid=1810 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=7 comm=\"vi\" exe=\"/usr/bin/vi\" key=\"authentication\"\ntype=CWD msg=audit(1712346100.900:2400): cwd=\"/etc/pam.d\"\ntype=PATH msg=audit(1712346100.900:2400): item=0 name=\"/etc/pam.d/sshd\" inode=... mode=0100644 ouid=0 ogid=0 nametype=NORMAL",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -1921,6 +2325,14 @@
       {
         "token": "-k authentication",
         "explanation": "Tag matching events with the audit key `authentication` (search later with `ausearch -k authentication`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "PAM configuration change",
+        "log": "type=SYSCALL msg=audit(1712346100.900:2400): arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=7fff... a2=241 a3=1b6 items=1 ppid=1800 pid=1810 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=7 comm=\"vi\" exe=\"/usr/bin/vi\" key=\"authentication\"\ntype=CWD msg=audit(1712346100.900:2400): cwd=\"/etc/pam.d\"\ntype=PATH msg=audit(1712346100.900:2400): item=0 name=\"/etc/pam.d/sshd\" inode=... mode=0100644 ouid=0 ogid=0 nametype=NORMAL",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -1949,6 +2361,14 @@
         "token": "-k ssh_config",
         "explanation": "Tag matching events with the audit key `ssh_config` (search later with `ausearch -k ssh_config`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "sshd_config modification attempt (permission denied)",
+        "log": "type=SYSCALL msg=audit(1364481363.243:24287): arch=c000003e syscall=2 success=no exit=-13 a0=7fffd19c5592 a1=0 a2=7fffd19c4b50 a3=a items=1 ppid=2686 pid=3538 auid=1000 uid=1000 gid=1000 euid=1000 suid=1000 fsuid=1000 egid=1000 sgid=1000 fsgid=1000 tty=pts0 ses=1 comm=\"cat\" exe=\"/bin/cat\" subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=\"sshd_config\"\ntype=CWD msg=audit(1364481363.243:24287): cwd=\"/home/shadowman\"\ntype=PATH msg=audit(1364481363.243:24287): item=0 name=\"/etc/ssh/sshd_config\" inode=409248 dev=fd:00 mode=0100600 ouid=0 ogid=0 rdev=00:00 obj=system_u:object_r:etc_t:s0 nametype=NORMAL\ntype=PROCTITLE msg=audit(1364481363.243:24287): proctitle=636174002F6574632F7373682F737368645F636F6E666967",
+        "annotation": "Interpreted: exit=-13 → Permission denied; proctitle → `cat /etc/ssh/sshd_config`",
+        "key_note": "Captured with key=\"sshd_config\" — this catalogue's matching rule(s) use key=\"ssh_config\"."
+      }
     ]
   },
   {
@@ -1975,6 +2395,14 @@
       {
         "token": "-k ssh_config",
         "explanation": "Tag matching events with the audit key `ssh_config` (search later with `ausearch -k ssh_config`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "sshd_config modification attempt (permission denied)",
+        "log": "type=SYSCALL msg=audit(1364481363.243:24287): arch=c000003e syscall=2 success=no exit=-13 a0=7fffd19c5592 a1=0 a2=7fffd19c4b50 a3=a items=1 ppid=2686 pid=3538 auid=1000 uid=1000 gid=1000 euid=1000 suid=1000 fsuid=1000 egid=1000 sgid=1000 fsgid=1000 tty=pts0 ses=1 comm=\"cat\" exe=\"/bin/cat\" subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=\"sshd_config\"\ntype=CWD msg=audit(1364481363.243:24287): cwd=\"/home/shadowman\"\ntype=PATH msg=audit(1364481363.243:24287): item=0 name=\"/etc/ssh/sshd_config\" inode=409248 dev=fd:00 mode=0100600 ouid=0 ogid=0 rdev=00:00 obj=system_u:object_r:etc_t:s0 nametype=NORMAL\ntype=PROCTITLE msg=audit(1364481363.243:24287): proctitle=636174002F6574632F7373682F737368645F636F6E666967",
+        "annotation": "Interpreted: exit=-13 → Permission denied; proctitle → `cat /etc/ssh/sshd_config`",
+        "key_note": "Captured with key=\"sshd_config\" — this catalogue's matching rule(s) use key=\"ssh_config\"."
       }
     ]
   },
@@ -2003,6 +2431,14 @@
         "token": "-k ssh_config",
         "explanation": "Tag matching events with the audit key `ssh_config` (search later with `ausearch -k ssh_config`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "sshd_config modification attempt (permission denied)",
+        "log": "type=SYSCALL msg=audit(1364481363.243:24287): arch=c000003e syscall=2 success=no exit=-13 a0=7fffd19c5592 a1=0 a2=7fffd19c4b50 a3=a items=1 ppid=2686 pid=3538 auid=1000 uid=1000 gid=1000 euid=1000 suid=1000 fsuid=1000 egid=1000 sgid=1000 fsgid=1000 tty=pts0 ses=1 comm=\"cat\" exe=\"/bin/cat\" subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=\"sshd_config\"\ntype=CWD msg=audit(1364481363.243:24287): cwd=\"/home/shadowman\"\ntype=PATH msg=audit(1364481363.243:24287): item=0 name=\"/etc/ssh/sshd_config\" inode=409248 dev=fd:00 mode=0100600 ouid=0 ogid=0 rdev=00:00 obj=system_u:object_r:etc_t:s0 nametype=NORMAL\ntype=PROCTITLE msg=audit(1364481363.243:24287): proctitle=636174002F6574632F7373682F737368645F636F6E666967",
+        "annotation": "Interpreted: exit=-13 → Permission denied; proctitle → `cat /etc/ssh/sshd_config`",
+        "key_note": "Captured with key=\"sshd_config\" — this catalogue's matching rule(s) use key=\"ssh_config\"."
+      }
     ]
   },
   {
@@ -2029,6 +2465,14 @@
       {
         "token": "-k ssh_config",
         "explanation": "Tag matching events with the audit key `ssh_config` (search later with `ausearch -k ssh_config`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "sshd_config modification attempt (permission denied)",
+        "log": "type=SYSCALL msg=audit(1364481363.243:24287): arch=c000003e syscall=2 success=no exit=-13 a0=7fffd19c5592 a1=0 a2=7fffd19c4b50 a3=a items=1 ppid=2686 pid=3538 auid=1000 uid=1000 gid=1000 euid=1000 suid=1000 fsuid=1000 egid=1000 sgid=1000 fsgid=1000 tty=pts0 ses=1 comm=\"cat\" exe=\"/bin/cat\" subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=\"sshd_config\"\ntype=CWD msg=audit(1364481363.243:24287): cwd=\"/home/shadowman\"\ntype=PATH msg=audit(1364481363.243:24287): item=0 name=\"/etc/ssh/sshd_config\" inode=409248 dev=fd:00 mode=0100600 ouid=0 ogid=0 rdev=00:00 obj=system_u:object_r:etc_t:s0 nametype=NORMAL\ntype=PROCTITLE msg=audit(1364481363.243:24287): proctitle=636174002F6574632F7373682F737368645F636F6E666967",
+        "annotation": "Interpreted: exit=-13 → Permission denied; proctitle → `cat /etc/ssh/sshd_config`",
+        "key_note": "Captured with key=\"sshd_config\" — this catalogue's matching rule(s) use key=\"ssh_config\"."
       }
     ]
   },
@@ -2057,7 +2501,8 @@
         "token": "-k ssh_keys",
         "explanation": "Tag matching events with the audit key `ssh_keys` (search later with `ausearch -k ssh_keys`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "07-06",
@@ -2084,7 +2529,8 @@
         "token": "-k remote_access",
         "explanation": "Tag matching events with the audit key `remote_access` (search later with `ausearch -k remote_access`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "07-07",
@@ -2111,7 +2557,8 @@
         "token": "-k remote_access",
         "explanation": "Tag matching events with the audit key `remote_access` (search later with `ausearch -k remote_access`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "07-08",
@@ -2138,7 +2585,8 @@
         "token": "-k remote_access",
         "explanation": "Tag matching events with the audit key `remote_access` (search later with `ausearch -k remote_access`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "08-01",
@@ -2164,6 +2612,14 @@
       {
         "token": "-k sudo_config",
         "explanation": "Tag matching events with the audit key `sudo_config` (search later with `ausearch -k sudo_config`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "/etc/sudoers modification",
+        "log": "type=SYSCALL msg=audit(1712346210.200:2501): arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=7fff... a2=241 a3=1b6 items=1 ppid=1900 pid=1925 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=8 comm=\"visudo\" exe=\"/usr/sbin/visudo\" key=\"sudo_config\"\ntype=PATH msg=audit(1712346210.200:2501): item=0 name=\"/etc/sudoers\" inode=... mode=0100440 ouid=0 ogid=0 nametype=NORMAL",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -2192,6 +2648,14 @@
         "token": "-k sudo_config",
         "explanation": "Tag matching events with the audit key `sudo_config` (search later with `ausearch -k sudo_config`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "/etc/sudoers modification",
+        "log": "type=SYSCALL msg=audit(1712346210.200:2501): arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=7fff... a2=241 a3=1b6 items=1 ppid=1900 pid=1925 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=8 comm=\"visudo\" exe=\"/usr/sbin/visudo\" key=\"sudo_config\"\ntype=PATH msg=audit(1712346210.200:2501): item=0 name=\"/etc/sudoers\" inode=... mode=0100440 ouid=0 ogid=0 nametype=NORMAL",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -2218,6 +2682,14 @@
       {
         "token": "-k privilege_escalation",
         "explanation": "Tag matching events with the audit key `privilege_escalation` (search later with `ausearch -k privilege_escalation`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "sudo execution",
+        "log": "type=SYSCALL msg=audit(1712346200.100:2500): arch=c000003e syscall=59 success=yes exit=0 a0=... a1=... a2=... a3=0 items=2 ppid=1900 pid=1920 auid=1000 uid=1000 gid=1000 euid=0 suid=0 fsuid=0 egid=1000 sgid=1000 fsgid=1000 tty=pts0 ses=8 comm=\"sudo\" exe=\"/usr/bin/sudo\" key=\"privilege_escalation\"\ntype=EXECVE msg=audit(1712346200.100:2500): argc=3 a0=\"sudo\" a1=\"cat\" a2=\"/etc/shadow\"\ntype=CWD msg=audit(1712346200.100:2500): cwd=\"/home/user\"\ntype=PATH msg=audit(1712346200.100:2500): item=0 name=\"/usr/bin/sudo\" inode=... mode=0104755 ouid=0 ogid=0 nametype=NORMAL\ntype=PROCTITLE msg=audit(1712346200.100:2500): proctitle=7375646F00636174002F6574632F736861646F77",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -2246,6 +2718,14 @@
         "token": "-k privilege_escalation",
         "explanation": "Tag matching events with the audit key `privilege_escalation` (search later with `ausearch -k privilege_escalation`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "sudo execution",
+        "log": "type=SYSCALL msg=audit(1712346200.100:2500): arch=c000003e syscall=59 success=yes exit=0 a0=... a1=... a2=... a3=0 items=2 ppid=1900 pid=1920 auid=1000 uid=1000 gid=1000 euid=0 suid=0 fsuid=0 egid=1000 sgid=1000 fsgid=1000 tty=pts0 ses=8 comm=\"sudo\" exe=\"/usr/bin/sudo\" key=\"privilege_escalation\"\ntype=EXECVE msg=audit(1712346200.100:2500): argc=3 a0=\"sudo\" a1=\"cat\" a2=\"/etc/shadow\"\ntype=CWD msg=audit(1712346200.100:2500): cwd=\"/home/user\"\ntype=PATH msg=audit(1712346200.100:2500): item=0 name=\"/usr/bin/sudo\" inode=... mode=0104755 ouid=0 ogid=0 nametype=NORMAL\ntype=PROCTITLE msg=audit(1712346200.100:2500): proctitle=7375646F00636174002F6574632F736861646F77",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -2273,7 +2753,8 @@
         "token": "-k sudo_activity",
         "explanation": "Tag matching events with the audit key `sudo_activity` (search later with `ausearch -k sudo_activity`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "08-06",
@@ -2308,7 +2789,8 @@
         "token": "-F key=actions",
         "explanation": "Tag matching events with the audit key `actions` (search later with `ausearch -k actions`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "08-07",
@@ -2343,7 +2825,8 @@
         "token": "-F key=actions",
         "explanation": "Tag matching events with the audit key `actions` (search later with `ausearch -k actions`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "08-08",
@@ -2378,7 +2861,8 @@
         "token": "-F key=actions",
         "explanation": "Tag matching events with the audit key `actions` (search later with `ausearch -k actions`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "08-09",
@@ -2413,7 +2897,8 @@
         "token": "-F key=actions",
         "explanation": "Tag matching events with the audit key `actions` (search later with `ausearch -k actions`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "08-10",
@@ -2452,7 +2937,8 @@
         "token": "-k priv_cmd",
         "explanation": "Tag matching events with the audit key `priv_cmd` (search later with `ausearch -k priv_cmd`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "08-11",
@@ -2491,7 +2977,8 @@
         "token": "-k privileged",
         "explanation": "Tag matching events with the audit key `privileged` (search later with `ausearch -k privileged`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "08-12",
@@ -2530,7 +3017,8 @@
         "token": "-k privileged-mount",
         "explanation": "Tag matching events with the audit key `privileged-mount` (search later with `ausearch -k privileged-mount`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "08-13",
@@ -2569,7 +3057,8 @@
         "token": "-k privileged-reboot",
         "explanation": "Tag matching events with the audit key `privileged-reboot` (search later with `ausearch -k privileged-reboot`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "08-14",
@@ -2608,7 +3097,8 @@
         "token": "-k privileged-shutdown",
         "explanation": "Tag matching events with the audit key `privileged-shutdown` (search later with `ausearch -k privileged-shutdown`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "08-15",
@@ -2647,7 +3137,8 @@
         "token": "-F key=maybe-escalation",
         "explanation": "Tag matching events with the audit key `maybe-escalation` (search later with `ausearch -k maybe-escalation`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "08-16",
@@ -2686,7 +3177,8 @@
         "token": "-F key=maybe-escalation",
         "explanation": "Tag matching events with the audit key `maybe-escalation` (search later with `ausearch -k maybe-escalation`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "08-17",
@@ -2721,7 +3213,8 @@
         "token": "-F key=maybe-escalation",
         "explanation": "Tag matching events with the audit key `maybe-escalation` (search later with `ausearch -k maybe-escalation`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "08-18",
@@ -2756,7 +3249,8 @@
         "token": "-F key=maybe-escalation",
         "explanation": "Tag matching events with the audit key `maybe-escalation` (search later with `ausearch -k maybe-escalation`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "09-01",
@@ -2786,6 +3280,14 @@
       {
         "token": "-k credential_change",
         "explanation": "Tag matching events with the audit key `credential_change` (search later with `ausearch -k credential_change`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "setuid",
+        "log": "type=SYSCALL msg=audit(1712346300.300:2600): arch=c000003e syscall=105 success=yes exit=0 a0=0 a1=0 a2=0 a3=0 items=0 ppid=2000 pid=2010 auid=1000 uid=1000 gid=1000 euid=0 suid=0 fsuid=0 egid=1000 sgid=1000 fsgid=1000 tty=pts0 ses=9 comm=\"su\" exe=\"/usr/bin/su\" key=\"credential_change\"\ntype=PROCTITLE msg=audit(1712346300.300:2600): proctitle=7375",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -2818,6 +3320,14 @@
         "token": "-k credential_change",
         "explanation": "Tag matching events with the audit key `credential_change` (search later with `ausearch -k credential_change`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "setuid",
+        "log": "type=SYSCALL msg=audit(1712346300.300:2600): arch=c000003e syscall=105 success=yes exit=0 a0=0 a1=0 a2=0 a3=0 items=0 ppid=2000 pid=2010 auid=1000 uid=1000 gid=1000 euid=0 suid=0 fsuid=0 egid=1000 sgid=1000 fsgid=1000 tty=pts0 ses=9 comm=\"su\" exe=\"/usr/bin/su\" key=\"credential_change\"\ntype=PROCTITLE msg=audit(1712346300.300:2600): proctitle=7375",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -2848,6 +3358,14 @@
       {
         "token": "-k credential_change",
         "explanation": "Tag matching events with the audit key `credential_change` (search later with `ausearch -k credential_change`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "setuid",
+        "log": "type=SYSCALL msg=audit(1712346300.300:2600): arch=c000003e syscall=105 success=yes exit=0 a0=0 a1=0 a2=0 a3=0 items=0 ppid=2000 pid=2010 auid=1000 uid=1000 gid=1000 euid=0 suid=0 fsuid=0 egid=1000 sgid=1000 fsgid=1000 tty=pts0 ses=9 comm=\"su\" exe=\"/usr/bin/su\" key=\"credential_change\"\ntype=PROCTITLE msg=audit(1712346300.300:2600): proctitle=7375",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -2880,6 +3398,14 @@
         "token": "-k credential_change",
         "explanation": "Tag matching events with the audit key `credential_change` (search later with `ausearch -k credential_change`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "setuid",
+        "log": "type=SYSCALL msg=audit(1712346300.300:2600): arch=c000003e syscall=105 success=yes exit=0 a0=0 a1=0 a2=0 a3=0 items=0 ppid=2000 pid=2010 auid=1000 uid=1000 gid=1000 euid=0 suid=0 fsuid=0 egid=1000 sgid=1000 fsgid=1000 tty=pts0 ses=9 comm=\"su\" exe=\"/usr/bin/su\" key=\"credential_change\"\ntype=PROCTITLE msg=audit(1712346300.300:2600): proctitle=7375",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -2910,6 +3436,14 @@
       {
         "token": "-k credential_change",
         "explanation": "Tag matching events with the audit key `credential_change` (search later with `ausearch -k credential_change`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "setuid",
+        "log": "type=SYSCALL msg=audit(1712346300.300:2600): arch=c000003e syscall=105 success=yes exit=0 a0=0 a1=0 a2=0 a3=0 items=0 ppid=2000 pid=2010 auid=1000 uid=1000 gid=1000 euid=0 suid=0 fsuid=0 egid=1000 sgid=1000 fsgid=1000 tty=pts0 ses=9 comm=\"su\" exe=\"/usr/bin/su\" key=\"credential_change\"\ntype=PROCTITLE msg=audit(1712346300.300:2600): proctitle=7375",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -2942,6 +3476,14 @@
         "token": "-k credential_change",
         "explanation": "Tag matching events with the audit key `credential_change` (search later with `ausearch -k credential_change`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "setuid",
+        "log": "type=SYSCALL msg=audit(1712346300.300:2600): arch=c000003e syscall=105 success=yes exit=0 a0=0 a1=0 a2=0 a3=0 items=0 ppid=2000 pid=2010 auid=1000 uid=1000 gid=1000 euid=0 suid=0 fsuid=0 egid=1000 sgid=1000 fsgid=1000 tty=pts0 ses=9 comm=\"su\" exe=\"/usr/bin/su\" key=\"credential_change\"\ntype=PROCTITLE msg=audit(1712346300.300:2600): proctitle=7375",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -2968,6 +3510,14 @@
       {
         "token": "-k session",
         "explanation": "Tag matching events with the audit key `session` (search later with `ausearch -k session`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "session record update (login)",
+        "log": "type=SYSCALL msg=audit(1712346400.400:2700): arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=7fff... a2=2 a3=0 items=1 ppid=1 pid=2100 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=10 comm=\"login\" exe=\"/usr/bin/login\" key=\"session\"\ntype=PATH msg=audit(1712346400.400:2700): item=0 name=\"/var/log/wtmp\" inode=... mode=0100664 ouid=0 ogid=0 nametype=NORMAL",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -2996,6 +3546,14 @@
         "token": "-k session",
         "explanation": "Tag matching events with the audit key `session` (search later with `ausearch -k session`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "session record update (login)",
+        "log": "type=SYSCALL msg=audit(1712346400.400:2700): arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=7fff... a2=2 a3=0 items=1 ppid=1 pid=2100 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=10 comm=\"login\" exe=\"/usr/bin/login\" key=\"session\"\ntype=PATH msg=audit(1712346400.400:2700): item=0 name=\"/var/log/wtmp\" inode=... mode=0100664 ouid=0 ogid=0 nametype=NORMAL",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -3022,6 +3580,14 @@
       {
         "token": "-k session",
         "explanation": "Tag matching events with the audit key `session` (search later with `ausearch -k session`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "session record update (login)",
+        "log": "type=SYSCALL msg=audit(1712346400.400:2700): arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=7fff... a2=2 a3=0 items=1 ppid=1 pid=2100 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=10 comm=\"login\" exe=\"/usr/bin/login\" key=\"session\"\ntype=PATH msg=audit(1712346400.400:2700): item=0 name=\"/var/log/wtmp\" inode=... mode=0100664 ouid=0 ogid=0 nametype=NORMAL",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -3050,6 +3616,14 @@
         "token": "-k session",
         "explanation": "Tag matching events with the audit key `session` (search later with `ausearch -k session`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "session record update (login)",
+        "log": "type=SYSCALL msg=audit(1712346400.400:2700): arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=7fff... a2=2 a3=0 items=1 ppid=1 pid=2100 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=10 comm=\"login\" exe=\"/usr/bin/login\" key=\"session\"\ntype=PATH msg=audit(1712346400.400:2700): item=0 name=\"/var/log/wtmp\" inode=... mode=0100664 ouid=0 ogid=0 nametype=NORMAL",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -3076,6 +3650,14 @@
       {
         "token": "-k session",
         "explanation": "Tag matching events with the audit key `session` (search later with `ausearch -k session`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "session record update (login)",
+        "log": "type=SYSCALL msg=audit(1712346400.400:2700): arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=7fff... a2=2 a3=0 items=1 ppid=1 pid=2100 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=10 comm=\"login\" exe=\"/usr/bin/login\" key=\"session\"\ntype=PATH msg=audit(1712346400.400:2700): item=0 name=\"/var/log/wtmp\" inode=... mode=0100664 ouid=0 ogid=0 nametype=NORMAL",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -3104,7 +3686,8 @@
         "token": "-k logins",
         "explanation": "Tag matching events with the audit key `logins` (search later with `ausearch -k logins`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "11-01",
@@ -3146,6 +3729,14 @@
       {
         "token": "-k access_denied",
         "explanation": "Tag matching events with the audit key `access_denied` (search later with `ausearch -k access_denied`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "permission denied on /etc/shadow",
+        "log": "type=SYSCALL msg=audit(1690783519.928:929): arch=c000003e syscall=257 success=no exit=-13 a0=ffffff9c a1=7fffd0dd98f0 a2=80000 a3=0 items=1 ppid=1160 pid=1184 auid=4294967295 uid=1000 gid=1000 euid=1000 suid=1000 fsuid=1000 egid=1000 sgid=1000 fsgid=1000 tty=pts2 ses=4294967295 comm=\"bat\" exe=\"/usr/bin/bat\" key=\"access_denied\"\ntype=PATH msg=audit(1690783519.928:929): item=0 name=\"/etc/shadow\" inode=270575 dev=ca:03 mode=0100000 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL\ntype=PROCTITLE msg=audit(1690783519.928:929): proctitle=626174002D70002F6574632F736861646F77",
+        "annotation": "exit=-13 → EACCES / Permission denied",
+        "key_note": ""
       }
     ]
   },
@@ -3190,6 +3781,14 @@
         "token": "-k access_denied",
         "explanation": "Tag matching events with the audit key `access_denied` (search later with `ausearch -k access_denied`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "permission denied on /etc/shadow",
+        "log": "type=SYSCALL msg=audit(1690783519.928:929): arch=c000003e syscall=257 success=no exit=-13 a0=ffffff9c a1=7fffd0dd98f0 a2=80000 a3=0 items=1 ppid=1160 pid=1184 auid=4294967295 uid=1000 gid=1000 euid=1000 suid=1000 fsuid=1000 egid=1000 sgid=1000 fsgid=1000 tty=pts2 ses=4294967295 comm=\"bat\" exe=\"/usr/bin/bat\" key=\"access_denied\"\ntype=PATH msg=audit(1690783519.928:929): item=0 name=\"/etc/shadow\" inode=270575 dev=ca:03 mode=0100000 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL\ntype=PROCTITLE msg=audit(1690783519.928:929): proctitle=626174002D70002F6574632F736861646F77",
+        "annotation": "exit=-13 → EACCES / Permission denied",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -3232,6 +3831,14 @@
       {
         "token": "-k access_denied",
         "explanation": "Tag matching events with the audit key `access_denied` (search later with `ausearch -k access_denied`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "permission denied on /etc/shadow",
+        "log": "type=SYSCALL msg=audit(1690783519.928:929): arch=c000003e syscall=257 success=no exit=-13 a0=ffffff9c a1=7fffd0dd98f0 a2=80000 a3=0 items=1 ppid=1160 pid=1184 auid=4294967295 uid=1000 gid=1000 euid=1000 suid=1000 fsuid=1000 egid=1000 sgid=1000 fsgid=1000 tty=pts2 ses=4294967295 comm=\"bat\" exe=\"/usr/bin/bat\" key=\"access_denied\"\ntype=PATH msg=audit(1690783519.928:929): item=0 name=\"/etc/shadow\" inode=270575 dev=ca:03 mode=0100000 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL\ntype=PROCTITLE msg=audit(1690783519.928:929): proctitle=626174002D70002F6574632F736861646F77",
+        "annotation": "exit=-13 → EACCES / Permission denied",
+        "key_note": ""
       }
     ]
   },
@@ -3276,6 +3883,14 @@
         "token": "-k access_denied",
         "explanation": "Tag matching events with the audit key `access_denied` (search later with `ausearch -k access_denied`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "permission denied on /etc/shadow",
+        "log": "type=SYSCALL msg=audit(1690783519.928:929): arch=c000003e syscall=257 success=no exit=-13 a0=ffffff9c a1=7fffd0dd98f0 a2=80000 a3=0 items=1 ppid=1160 pid=1184 auid=4294967295 uid=1000 gid=1000 euid=1000 suid=1000 fsuid=1000 egid=1000 sgid=1000 fsgid=1000 tty=pts2 ses=4294967295 comm=\"bat\" exe=\"/usr/bin/bat\" key=\"access_denied\"\ntype=PATH msg=audit(1690783519.928:929): item=0 name=\"/etc/shadow\" inode=270575 dev=ca:03 mode=0100000 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL\ntype=PROCTITLE msg=audit(1690783519.928:929): proctitle=626174002D70002F6574632F736861646F77",
+        "annotation": "exit=-13 → EACCES / Permission denied",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -3319,7 +3934,8 @@
         "token": "-F key=access",
         "explanation": "Tag matching events with the audit key `access` (search later with `ausearch -k access`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "11-06",
@@ -3362,7 +3978,8 @@
         "token": "-F key=access",
         "explanation": "Tag matching events with the audit key `access` (search later with `ausearch -k access`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "11-07",
@@ -3405,7 +4022,8 @@
         "token": "-F key=access",
         "explanation": "Tag matching events with the audit key `access` (search later with `ausearch -k access`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "11-08",
@@ -3448,7 +4066,8 @@
         "token": "-F key=access",
         "explanation": "Tag matching events with the audit key `access` (search later with `ausearch -k access`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "12-01",
@@ -3486,6 +4105,14 @@
       {
         "token": "-k file_delete",
         "explanation": "Tag matching events with the audit key `file_delete` (search later with `ausearch -k file_delete`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "unlink / rm",
+        "log": "type=SYSCALL msg=audit(1691747463.379:6628264): arch=c000003e syscall=263 success=yes exit=0 a0=ffffff9c a1=561b659c14d0 a2=0 a3=fffffffffffffb8c items=2 ppid=25291 pid=25450 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts4 ses=3 comm=\"rm\" exe=\"/usr/bin/rm\" key=\"file_delete\"\ntype=CWD msg=audit(1691747463.379:6628264): cwd=\"/root\"\ntype=PATH msg=audit(1691747463.379:6628264): item=0 name=\"/root\" inode=654081 dev=08:01 mode=040700 ouid=0 ogid=0 rdev=00:00 nametype=PARENT\ntype=PATH msg=audit(1691747463.379:6628264): item=1 name=\"test_creation.txt\" inode=655075 dev=08:01 mode=0100644 ouid=0 ogid=0 rdev=00:00 nametype=DELETE\ntype=PROCTITLE msg=audit(1691747463.379:6628264): proctitle=726D00746573745F6372656174696F6E2E747874",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -3526,6 +4153,14 @@
         "token": "-k file_delete",
         "explanation": "Tag matching events with the audit key `file_delete` (search later with `ausearch -k file_delete`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "unlink / rm",
+        "log": "type=SYSCALL msg=audit(1691747463.379:6628264): arch=c000003e syscall=263 success=yes exit=0 a0=ffffff9c a1=561b659c14d0 a2=0 a3=fffffffffffffb8c items=2 ppid=25291 pid=25450 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts4 ses=3 comm=\"rm\" exe=\"/usr/bin/rm\" key=\"file_delete\"\ntype=CWD msg=audit(1691747463.379:6628264): cwd=\"/root\"\ntype=PATH msg=audit(1691747463.379:6628264): item=0 name=\"/root\" inode=654081 dev=08:01 mode=040700 ouid=0 ogid=0 rdev=00:00 nametype=PARENT\ntype=PATH msg=audit(1691747463.379:6628264): item=1 name=\"test_creation.txt\" inode=655075 dev=08:01 mode=0100644 ouid=0 ogid=0 rdev=00:00 nametype=DELETE\ntype=PROCTITLE msg=audit(1691747463.379:6628264): proctitle=726D00746573745F6372656174696F6E2E747874",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -3565,7 +4200,8 @@
         "token": "-F key=delete",
         "explanation": "Tag matching events with the audit key `delete` (search later with `ausearch -k delete`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "12-04",
@@ -3604,7 +4240,8 @@
         "token": "-F key=delete",
         "explanation": "Tag matching events with the audit key `delete` (search later with `ausearch -k delete`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "13-01",
@@ -3642,6 +4279,14 @@
       {
         "token": "-k permissions",
         "explanation": "Tag matching events with the audit key `permissions` (search later with `ausearch -k permissions`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "chmod",
+        "log": "type=PROCTITLE msg=audit(02/15/2022 20:56:56.248:12696): proctitle=chmod --recursive 777 /baeldung\ntype=PATH msg=audit(02/15/2022 20:56:56.248:12696): item=0 name=/baeldung inode=1966582 dev=08:11 mode=dir,755 ouid=root ogid=root rdev=00:00 nametype=NORMAL\ntype=CWD msg=audit(02/15/2022 20:56:56.248:12696): cwd=/\ntype=SYSCALL msg=audit(02/15/2022 20:56:56.248:12696): arch=x86_64 syscall=fchmodat success=yes exit=0 a0=AT_FDCWD a1=0x55b15f13e500 a2=0777 items=1 ppid=... pid=... auid=... uid=... gid=... euid=... suid=... fsuid=... egid=... sgid=... fsgid=... tty=pts1 ses=... comm=chmod exe=/usr/bin/chmod key=\"permissions\"",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -3682,7 +4327,8 @@
         "token": "-k ownership",
         "explanation": "Tag matching events with the audit key `ownership` (search later with `ausearch -k ownership`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "13-03",
@@ -3720,6 +4366,14 @@
       {
         "token": "-k permissions",
         "explanation": "Tag matching events with the audit key `permissions` (search later with `ausearch -k permissions`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "chmod",
+        "log": "type=PROCTITLE msg=audit(02/15/2022 20:56:56.248:12696): proctitle=chmod --recursive 777 /baeldung\ntype=PATH msg=audit(02/15/2022 20:56:56.248:12696): item=0 name=/baeldung inode=1966582 dev=08:11 mode=dir,755 ouid=root ogid=root rdev=00:00 nametype=NORMAL\ntype=CWD msg=audit(02/15/2022 20:56:56.248:12696): cwd=/\ntype=SYSCALL msg=audit(02/15/2022 20:56:56.248:12696): arch=x86_64 syscall=fchmodat success=yes exit=0 a0=AT_FDCWD a1=0x55b15f13e500 a2=0777 items=1 ppid=... pid=... auid=... uid=... gid=... euid=... suid=... fsuid=... egid=... sgid=... fsgid=... tty=pts1 ses=... comm=chmod exe=/usr/bin/chmod key=\"permissions\"",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -3760,7 +4414,8 @@
         "token": "-k ownership",
         "explanation": "Tag matching events with the audit key `ownership` (search later with `ausearch -k ownership`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "13-05",
@@ -3799,7 +4454,8 @@
         "token": "-F key=perm_mod",
         "explanation": "Tag matching events with the audit key `perm_mod` (search later with `ausearch -k perm_mod`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "13-06",
@@ -3838,7 +4494,8 @@
         "token": "-F key=perm_mod",
         "explanation": "Tag matching events with the audit key `perm_mod` (search later with `ausearch -k perm_mod`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "13-07",
@@ -3877,7 +4534,8 @@
         "token": "-F key=perm_mod",
         "explanation": "Tag matching events with the audit key `perm_mod` (search later with `ausearch -k perm_mod`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "13-08",
@@ -3916,7 +4574,8 @@
         "token": "-F key=perm_mod",
         "explanation": "Tag matching events with the audit key `perm_mod` (search later with `ausearch -k perm_mod`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "13-09",
@@ -3955,7 +4614,8 @@
         "token": "-F key=perm_mod",
         "explanation": "Tag matching events with the audit key `perm_mod` (search later with `ausearch -k perm_mod`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "13-10",
@@ -3994,7 +4654,8 @@
         "token": "-F key=perm_mod",
         "explanation": "Tag matching events with the audit key `perm_mod` (search later with `ausearch -k perm_mod`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "14-01",
@@ -4032,6 +4693,14 @@
       {
         "token": "-k xattr",
         "explanation": "Tag matching events with the audit key `xattr` (search later with `ausearch -k xattr`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "setxattr",
+        "log": "type=SYSCALL msg=audit(1712346500.500:2800): arch=c000003e syscall=188 success=yes exit=0 a0=7fff... a1=7fff... a2=7fff... a3=0 items=1 ppid=2200 pid=2210 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=11 comm=\"setfattr\" exe=\"/usr/bin/setfattr\" key=\"xattr\"\ntype=PATH msg=audit(1712346500.500:2800): item=0 name=\"/tmp/testfile\" inode=... mode=0100644 ouid=0 ogid=0 nametype=NORMAL",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -4072,6 +4741,14 @@
         "token": "-k xattr",
         "explanation": "Tag matching events with the audit key `xattr` (search later with `ausearch -k xattr`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "setxattr",
+        "log": "type=SYSCALL msg=audit(1712346500.500:2800): arch=c000003e syscall=188 success=yes exit=0 a0=7fff... a1=7fff... a2=7fff... a3=0 items=1 ppid=2200 pid=2210 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=11 comm=\"setfattr\" exe=\"/usr/bin/setfattr\" key=\"xattr\"\ntype=PATH msg=audit(1712346500.500:2800): item=0 name=\"/tmp/testfile\" inode=... mode=0100644 ouid=0 ogid=0 nametype=NORMAL",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -4098,6 +4775,14 @@
       {
         "token": "-k permissions",
         "explanation": "Tag matching events with the audit key `permissions` (search later with `ausearch -k permissions`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "chmod",
+        "log": "type=PROCTITLE msg=audit(02/15/2022 20:56:56.248:12696): proctitle=chmod --recursive 777 /baeldung\ntype=PATH msg=audit(02/15/2022 20:56:56.248:12696): item=0 name=/baeldung inode=1966582 dev=08:11 mode=dir,755 ouid=root ogid=root rdev=00:00 nametype=NORMAL\ntype=CWD msg=audit(02/15/2022 20:56:56.248:12696): cwd=/\ntype=SYSCALL msg=audit(02/15/2022 20:56:56.248:12696): arch=x86_64 syscall=fchmodat success=yes exit=0 a0=AT_FDCWD a1=0x55b15f13e500 a2=0777 items=1 ppid=... pid=... auid=... uid=... gid=... euid=... suid=... fsuid=... egid=... sgid=... fsgid=... tty=pts1 ses=... comm=chmod exe=/usr/bin/chmod key=\"permissions\"",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -4126,6 +4811,14 @@
         "token": "-k permissions",
         "explanation": "Tag matching events with the audit key `permissions` (search later with `ausearch -k permissions`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "chmod",
+        "log": "type=PROCTITLE msg=audit(02/15/2022 20:56:56.248:12696): proctitle=chmod --recursive 777 /baeldung\ntype=PATH msg=audit(02/15/2022 20:56:56.248:12696): item=0 name=/baeldung inode=1966582 dev=08:11 mode=dir,755 ouid=root ogid=root rdev=00:00 nametype=NORMAL\ntype=CWD msg=audit(02/15/2022 20:56:56.248:12696): cwd=/\ntype=SYSCALL msg=audit(02/15/2022 20:56:56.248:12696): arch=x86_64 syscall=fchmodat success=yes exit=0 a0=AT_FDCWD a1=0x55b15f13e500 a2=0777 items=1 ppid=... pid=... auid=... uid=... gid=... euid=... suid=... fsuid=... egid=... sgid=... fsgid=... tty=pts1 ses=... comm=chmod exe=/usr/bin/chmod key=\"permissions\"",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -4152,6 +4845,14 @@
       {
         "token": "-k permissions",
         "explanation": "Tag matching events with the audit key `permissions` (search later with `ausearch -k permissions`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "chmod",
+        "log": "type=PROCTITLE msg=audit(02/15/2022 20:56:56.248:12696): proctitle=chmod --recursive 777 /baeldung\ntype=PATH msg=audit(02/15/2022 20:56:56.248:12696): item=0 name=/baeldung inode=1966582 dev=08:11 mode=dir,755 ouid=root ogid=root rdev=00:00 nametype=NORMAL\ntype=CWD msg=audit(02/15/2022 20:56:56.248:12696): cwd=/\ntype=SYSCALL msg=audit(02/15/2022 20:56:56.248:12696): arch=x86_64 syscall=fchmodat success=yes exit=0 a0=AT_FDCWD a1=0x55b15f13e500 a2=0777 items=1 ppid=... pid=... auid=... uid=... gid=... euid=... suid=... fsuid=... egid=... sgid=... fsgid=... tty=pts1 ses=... comm=chmod exe=/usr/bin/chmod key=\"permissions\"",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -4184,6 +4885,14 @@
         "token": "-k capabilities",
         "explanation": "Tag matching events with the audit key `capabilities` (search later with `ausearch -k capabilities`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "setcap execution",
+        "log": "type=SYSCALL msg=audit(1712346600.600:2900): arch=c000003e syscall=59 success=yes exit=0 a0=... a1=... a2=... a3=0 items=2 ppid=2300 pid=2310 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=12 comm=\"setcap\" exe=\"/usr/sbin/setcap\" key=\"capabilities\"\ntype=EXECVE msg=audit(1712346600.600:2900): argc=3 a0=\"setcap\" a1=\"cap_net_bind_service=+ep\" a2=\"/usr/bin/myapp\"",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -4215,6 +4924,14 @@
         "token": "-k capabilities",
         "explanation": "Tag matching events with the audit key `capabilities` (search later with `ausearch -k capabilities`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "setcap execution",
+        "log": "type=SYSCALL msg=audit(1712346600.600:2900): arch=c000003e syscall=59 success=yes exit=0 a0=... a1=... a2=... a3=0 items=2 ppid=2300 pid=2310 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=12 comm=\"setcap\" exe=\"/usr/sbin/setcap\" key=\"capabilities\"\ntype=EXECVE msg=audit(1712346600.600:2900): argc=3 a0=\"setcap\" a1=\"cap_net_bind_service=+ep\" a2=\"/usr/bin/myapp\"",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -4242,6 +4959,14 @@
         "token": "-k capabilities",
         "explanation": "Tag matching events with the audit key `capabilities` (search later with `ausearch -k capabilities`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "setcap execution",
+        "log": "type=SYSCALL msg=audit(1712346600.600:2900): arch=c000003e syscall=59 success=yes exit=0 a0=... a1=... a2=... a3=0 items=2 ppid=2300 pid=2310 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=12 comm=\"setcap\" exe=\"/usr/sbin/setcap\" key=\"capabilities\"\ntype=EXECVE msg=audit(1712346600.600:2900): argc=3 a0=\"setcap\" a1=\"cap_net_bind_service=+ep\" a2=\"/usr/bin/myapp\"",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -4268,6 +4993,14 @@
       {
         "token": "-k capabilities",
         "explanation": "Tag matching events with the audit key `capabilities` (search later with `ausearch -k capabilities`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "setcap execution",
+        "log": "type=SYSCALL msg=audit(1712346600.600:2900): arch=c000003e syscall=59 success=yes exit=0 a0=... a1=... a2=... a3=0 items=2 ppid=2300 pid=2310 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=12 comm=\"setcap\" exe=\"/usr/sbin/setcap\" key=\"capabilities\"\ntype=EXECVE msg=audit(1712346600.600:2900): argc=3 a0=\"setcap\" a1=\"cap_net_bind_service=+ep\" a2=\"/usr/bin/myapp\"",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -4312,6 +5045,14 @@
         "token": "-k privileged_exec",
         "explanation": "Tag matching events with the audit key `privileged_exec` (search later with `ausearch -k privileged_exec`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "privileged execve (euid=0)",
+        "log": "type=SYSCALL msg=audit(1712346700.700:3000): arch=c000003e syscall=59 success=yes exit=0 a0=... a1=... a2=... a3=0 items=2 ppid=2400 pid=2410 auid=1000 uid=1000 gid=1000 euid=0 suid=0 fsuid=0 egid=1000 sgid=1000 fsgid=1000 tty=pts0 ses=13 comm=\"passwd\" exe=\"/usr/bin/passwd\" key=\"privileged_exec\"\ntype=EXECVE msg=audit(1712346700.700:3000): argc=1 a0=\"passwd\"\ntype=PATH msg=audit(1712346700.700:3000): item=0 name=\"/usr/bin/passwd\" inode=... mode=0104755 ouid=0 ogid=0 nametype=NORMAL",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -4351,7 +5092,8 @@
         "token": "-k privileged",
         "explanation": "Tag matching events with the audit key `privileged` (search later with `ausearch -k privileged`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "17-01",
@@ -4377,6 +5119,14 @@
       {
         "token": "-k kernel_module",
         "explanation": "Tag matching events with the audit key `kernel_module` (search later with `ausearch -k kernel_module`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "modprobe",
+        "log": "type=SYSCALL msg=audit(1712346800.800:3100): arch=c000003e syscall=59 success=yes exit=0 a0=... a1=... a2=... a3=0 items=2 ppid=2500 pid=2510 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=14 comm=\"modprobe\" exe=\"/usr/sbin/modprobe\" key=\"kernel_module\"\ntype=EXECVE msg=audit(1712346800.800:3100): argc=2 a0=\"modprobe\" a1=\"nfs\"\ntype=PATH msg=audit(1712346800.800:3100): item=0 name=\"/usr/sbin/modprobe\" inode=... mode=0100755 ouid=0 ogid=0 nametype=NORMAL",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -4405,6 +5155,14 @@
         "token": "-k kernel_module",
         "explanation": "Tag matching events with the audit key `kernel_module` (search later with `ausearch -k kernel_module`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "modprobe",
+        "log": "type=SYSCALL msg=audit(1712346800.800:3100): arch=c000003e syscall=59 success=yes exit=0 a0=... a1=... a2=... a3=0 items=2 ppid=2500 pid=2510 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=14 comm=\"modprobe\" exe=\"/usr/sbin/modprobe\" key=\"kernel_module\"\ntype=EXECVE msg=audit(1712346800.800:3100): argc=2 a0=\"modprobe\" a1=\"nfs\"\ntype=PATH msg=audit(1712346800.800:3100): item=0 name=\"/usr/sbin/modprobe\" inode=... mode=0100755 ouid=0 ogid=0 nametype=NORMAL",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -4431,6 +5189,14 @@
       {
         "token": "-k kernel_module",
         "explanation": "Tag matching events with the audit key `kernel_module` (search later with `ausearch -k kernel_module`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "modprobe",
+        "log": "type=SYSCALL msg=audit(1712346800.800:3100): arch=c000003e syscall=59 success=yes exit=0 a0=... a1=... a2=... a3=0 items=2 ppid=2500 pid=2510 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=14 comm=\"modprobe\" exe=\"/usr/sbin/modprobe\" key=\"kernel_module\"\ntype=EXECVE msg=audit(1712346800.800:3100): argc=2 a0=\"modprobe\" a1=\"nfs\"\ntype=PATH msg=audit(1712346800.800:3100): item=0 name=\"/usr/sbin/modprobe\" inode=... mode=0100755 ouid=0 ogid=0 nametype=NORMAL",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -4463,6 +5229,14 @@
         "token": "-k kernel_module",
         "explanation": "Tag matching events with the audit key `kernel_module` (search later with `ausearch -k kernel_module`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "modprobe",
+        "log": "type=SYSCALL msg=audit(1712346800.800:3100): arch=c000003e syscall=59 success=yes exit=0 a0=... a1=... a2=... a3=0 items=2 ppid=2500 pid=2510 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=14 comm=\"modprobe\" exe=\"/usr/sbin/modprobe\" key=\"kernel_module\"\ntype=EXECVE msg=audit(1712346800.800:3100): argc=2 a0=\"modprobe\" a1=\"nfs\"\ntype=PATH msg=audit(1712346800.800:3100): item=0 name=\"/usr/sbin/modprobe\" inode=... mode=0100755 ouid=0 ogid=0 nametype=NORMAL",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -4494,6 +5268,14 @@
         "token": "-k kernel_module",
         "explanation": "Tag matching events with the audit key `kernel_module` (search later with `ausearch -k kernel_module`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "modprobe",
+        "log": "type=SYSCALL msg=audit(1712346800.800:3100): arch=c000003e syscall=59 success=yes exit=0 a0=... a1=... a2=... a3=0 items=2 ppid=2500 pid=2510 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=14 comm=\"modprobe\" exe=\"/usr/sbin/modprobe\" key=\"kernel_module\"\ntype=EXECVE msg=audit(1712346800.800:3100): argc=2 a0=\"modprobe\" a1=\"nfs\"\ntype=PATH msg=audit(1712346800.800:3100): item=0 name=\"/usr/sbin/modprobe\" inode=... mode=0100755 ouid=0 ogid=0 nametype=NORMAL",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -4521,7 +5303,8 @@
         "token": "-k kernel_config",
         "explanation": "Tag matching events with the audit key `kernel_config` (search later with `ausearch -k kernel_config`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "18-02",
@@ -4548,7 +5331,8 @@
         "token": "-k kernel_config",
         "explanation": "Tag matching events with the audit key `kernel_config` (search later with `ausearch -k kernel_config`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "18-03",
@@ -4575,7 +5359,8 @@
         "token": "-k kernel_config",
         "explanation": "Tag matching events with the audit key `kernel_config` (search later with `ausearch -k kernel_config`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "18-04",
@@ -4602,7 +5387,8 @@
         "token": "-k kernel_config",
         "explanation": "Tag matching events with the audit key `kernel_config` (search later with `ausearch -k kernel_config`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "19-01",
@@ -4629,7 +5415,8 @@
         "token": "-k boot_config",
         "explanation": "Tag matching events with the audit key `boot_config` (search later with `ausearch -k boot_config`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "19-02",
@@ -4656,7 +5443,8 @@
         "token": "-k boot_config",
         "explanation": "Tag matching events with the audit key `boot_config` (search later with `ausearch -k boot_config`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "19-03",
@@ -4683,7 +5471,8 @@
         "token": "-k boot_config",
         "explanation": "Tag matching events with the audit key `boot_config` (search later with `ausearch -k boot_config`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "19-04",
@@ -4710,7 +5499,8 @@
         "token": "-k boot_config",
         "explanation": "Tag matching events with the audit key `boot_config` (search later with `ausearch -k boot_config`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "20-01",
@@ -4736,6 +5526,20 @@
       {
         "token": "-k selinux",
         "explanation": "Tag matching events with the audit key `selinux` (search later with `ausearch -k selinux`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "SELinux config change",
+        "log": "type=SYSCALL msg=audit(1712346900.900:3200): arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=7fff... a2=241 a3=1b6 items=1 ppid=2600 pid=2610 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=15 comm=\"vi\" exe=\"/usr/bin/vi\" key=\"selinux\"\ntype=PATH msg=audit(1712346900.900:3200): item=0 name=\"/etc/selinux/config\" inode=... mode=0100644 ouid=0 ogid=0 nametype=NORMAL",
+        "annotation": "",
+        "key_note": ""
+      },
+      {
+        "title": "setenforce",
+        "log": "type=SYSCALL msg=audit(1712346910.000:3201): arch=c000003e syscall=59 success=yes exit=0 a0=... a1=... a2=... a3=0 items=2 ppid=2600 pid=2615 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=15 comm=\"setenforce\" exe=\"/usr/sbin/setenforce\" key=\"selinux\"\ntype=EXECVE msg=audit(1712346910.000:3201): argc=2 a0=\"setenforce\" a1=\"0\"",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -4764,6 +5568,20 @@
         "token": "-k selinux",
         "explanation": "Tag matching events with the audit key `selinux` (search later with `ausearch -k selinux`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "SELinux config change",
+        "log": "type=SYSCALL msg=audit(1712346900.900:3200): arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=7fff... a2=241 a3=1b6 items=1 ppid=2600 pid=2610 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=15 comm=\"vi\" exe=\"/usr/bin/vi\" key=\"selinux\"\ntype=PATH msg=audit(1712346900.900:3200): item=0 name=\"/etc/selinux/config\" inode=... mode=0100644 ouid=0 ogid=0 nametype=NORMAL",
+        "annotation": "",
+        "key_note": ""
+      },
+      {
+        "title": "setenforce",
+        "log": "type=SYSCALL msg=audit(1712346910.000:3201): arch=c000003e syscall=59 success=yes exit=0 a0=... a1=... a2=... a3=0 items=2 ppid=2600 pid=2615 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=15 comm=\"setenforce\" exe=\"/usr/sbin/setenforce\" key=\"selinux\"\ntype=EXECVE msg=audit(1712346910.000:3201): argc=2 a0=\"setenforce\" a1=\"0\"",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -4790,6 +5608,20 @@
       {
         "token": "-k selinux",
         "explanation": "Tag matching events with the audit key `selinux` (search later with `ausearch -k selinux`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "SELinux config change",
+        "log": "type=SYSCALL msg=audit(1712346900.900:3200): arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=7fff... a2=241 a3=1b6 items=1 ppid=2600 pid=2610 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=15 comm=\"vi\" exe=\"/usr/bin/vi\" key=\"selinux\"\ntype=PATH msg=audit(1712346900.900:3200): item=0 name=\"/etc/selinux/config\" inode=... mode=0100644 ouid=0 ogid=0 nametype=NORMAL",
+        "annotation": "",
+        "key_note": ""
+      },
+      {
+        "title": "setenforce",
+        "log": "type=SYSCALL msg=audit(1712346910.000:3201): arch=c000003e syscall=59 success=yes exit=0 a0=... a1=... a2=... a3=0 items=2 ppid=2600 pid=2615 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=15 comm=\"setenforce\" exe=\"/usr/sbin/setenforce\" key=\"selinux\"\ntype=EXECVE msg=audit(1712346910.000:3201): argc=2 a0=\"setenforce\" a1=\"0\"",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -4818,6 +5650,20 @@
         "token": "-k selinux",
         "explanation": "Tag matching events with the audit key `selinux` (search later with `ausearch -k selinux`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "SELinux config change",
+        "log": "type=SYSCALL msg=audit(1712346900.900:3200): arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=7fff... a2=241 a3=1b6 items=1 ppid=2600 pid=2610 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=15 comm=\"vi\" exe=\"/usr/bin/vi\" key=\"selinux\"\ntype=PATH msg=audit(1712346900.900:3200): item=0 name=\"/etc/selinux/config\" inode=... mode=0100644 ouid=0 ogid=0 nametype=NORMAL",
+        "annotation": "",
+        "key_note": ""
+      },
+      {
+        "title": "setenforce",
+        "log": "type=SYSCALL msg=audit(1712346910.000:3201): arch=c000003e syscall=59 success=yes exit=0 a0=... a1=... a2=... a3=0 items=2 ppid=2600 pid=2615 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=15 comm=\"setenforce\" exe=\"/usr/sbin/setenforce\" key=\"selinux\"\ntype=EXECVE msg=audit(1712346910.000:3201): argc=2 a0=\"setenforce\" a1=\"0\"",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -4845,6 +5691,20 @@
         "token": "-k selinux",
         "explanation": "Tag matching events with the audit key `selinux` (search later with `ausearch -k selinux`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "SELinux config change",
+        "log": "type=SYSCALL msg=audit(1712346900.900:3200): arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=7fff... a2=241 a3=1b6 items=1 ppid=2600 pid=2610 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=15 comm=\"vi\" exe=\"/usr/bin/vi\" key=\"selinux\"\ntype=PATH msg=audit(1712346900.900:3200): item=0 name=\"/etc/selinux/config\" inode=... mode=0100644 ouid=0 ogid=0 nametype=NORMAL",
+        "annotation": "",
+        "key_note": ""
+      },
+      {
+        "title": "setenforce",
+        "log": "type=SYSCALL msg=audit(1712346910.000:3201): arch=c000003e syscall=59 success=yes exit=0 a0=... a1=... a2=... a3=0 items=2 ppid=2600 pid=2615 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=15 comm=\"setenforce\" exe=\"/usr/sbin/setenforce\" key=\"selinux\"\ntype=EXECVE msg=audit(1712346910.000:3201): argc=2 a0=\"setenforce\" a1=\"0\"",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -4871,6 +5731,20 @@
       {
         "token": "-k selinux",
         "explanation": "Tag matching events with the audit key `selinux` (search later with `ausearch -k selinux`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "SELinux config change",
+        "log": "type=SYSCALL msg=audit(1712346900.900:3200): arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=7fff... a2=241 a3=1b6 items=1 ppid=2600 pid=2610 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=15 comm=\"vi\" exe=\"/usr/bin/vi\" key=\"selinux\"\ntype=PATH msg=audit(1712346900.900:3200): item=0 name=\"/etc/selinux/config\" inode=... mode=0100644 ouid=0 ogid=0 nametype=NORMAL",
+        "annotation": "",
+        "key_note": ""
+      },
+      {
+        "title": "setenforce",
+        "log": "type=SYSCALL msg=audit(1712346910.000:3201): arch=c000003e syscall=59 success=yes exit=0 a0=... a1=... a2=... a3=0 items=2 ppid=2600 pid=2615 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=15 comm=\"setenforce\" exe=\"/usr/sbin/setenforce\" key=\"selinux\"\ntype=EXECVE msg=audit(1712346910.000:3201): argc=2 a0=\"setenforce\" a1=\"0\"",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -4907,7 +5781,8 @@
         "token": "-F key=MAC-policy",
         "explanation": "Tag matching events with the audit key `MAC-policy` (search later with `ausearch -k MAC-policy`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "20-08",
@@ -4942,7 +5817,8 @@
         "token": "-F key=MAC-policy",
         "explanation": "Tag matching events with the audit key `MAC-policy` (search later with `ausearch -k MAC-policy`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "21-01",
@@ -4968,6 +5844,14 @@
       {
         "token": "-k firewall",
         "explanation": "Tag matching events with the audit key `firewall` (search later with `ausearch -k firewall`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "firewall-cmd",
+        "log": "type=SYSCALL msg=audit(1712347000.100:3300): arch=c000003e syscall=59 success=yes exit=0 a0=... a1=... a2=... a3=0 items=2 ppid=2700 pid=2710 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=16 comm=\"firewall-cmd\" exe=\"/usr/bin/firewall-cmd\" key=\"firewall\"\ntype=EXECVE msg=audit(1712347000.100:3300): argc=3 a0=\"firewall-cmd\" a1=\"--add-port=8080/tcp\" a2=\"--permanent\"",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -4996,6 +5880,14 @@
         "token": "-k firewall",
         "explanation": "Tag matching events with the audit key `firewall` (search later with `ausearch -k firewall`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "firewall-cmd",
+        "log": "type=SYSCALL msg=audit(1712347000.100:3300): arch=c000003e syscall=59 success=yes exit=0 a0=... a1=... a2=... a3=0 items=2 ppid=2700 pid=2710 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=16 comm=\"firewall-cmd\" exe=\"/usr/bin/firewall-cmd\" key=\"firewall\"\ntype=EXECVE msg=audit(1712347000.100:3300): argc=3 a0=\"firewall-cmd\" a1=\"--add-port=8080/tcp\" a2=\"--permanent\"",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -5022,6 +5914,14 @@
       {
         "token": "-k firewall",
         "explanation": "Tag matching events with the audit key `firewall` (search later with `ausearch -k firewall`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "firewall-cmd",
+        "log": "type=SYSCALL msg=audit(1712347000.100:3300): arch=c000003e syscall=59 success=yes exit=0 a0=... a1=... a2=... a3=0 items=2 ppid=2700 pid=2710 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=16 comm=\"firewall-cmd\" exe=\"/usr/bin/firewall-cmd\" key=\"firewall\"\ntype=EXECVE msg=audit(1712347000.100:3300): argc=3 a0=\"firewall-cmd\" a1=\"--add-port=8080/tcp\" a2=\"--permanent\"",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -5050,6 +5950,14 @@
         "token": "-k firewall",
         "explanation": "Tag matching events with the audit key `firewall` (search later with `ausearch -k firewall`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "firewall-cmd",
+        "log": "type=SYSCALL msg=audit(1712347000.100:3300): arch=c000003e syscall=59 success=yes exit=0 a0=... a1=... a2=... a3=0 items=2 ppid=2700 pid=2710 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=16 comm=\"firewall-cmd\" exe=\"/usr/bin/firewall-cmd\" key=\"firewall\"\ntype=EXECVE msg=audit(1712347000.100:3300): argc=3 a0=\"firewall-cmd\" a1=\"--add-port=8080/tcp\" a2=\"--permanent\"",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -5076,6 +5984,14 @@
       {
         "token": "-k firewall",
         "explanation": "Tag matching events with the audit key `firewall` (search later with `ausearch -k firewall`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "firewall-cmd",
+        "log": "type=SYSCALL msg=audit(1712347000.100:3300): arch=c000003e syscall=59 success=yes exit=0 a0=... a1=... a2=... a3=0 items=2 ppid=2700 pid=2710 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=16 comm=\"firewall-cmd\" exe=\"/usr/bin/firewall-cmd\" key=\"firewall\"\ntype=EXECVE msg=audit(1712347000.100:3300): argc=3 a0=\"firewall-cmd\" a1=\"--add-port=8080/tcp\" a2=\"--permanent\"",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -5104,6 +6020,14 @@
         "token": "-k firewall",
         "explanation": "Tag matching events with the audit key `firewall` (search later with `ausearch -k firewall`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "firewall-cmd",
+        "log": "type=SYSCALL msg=audit(1712347000.100:3300): arch=c000003e syscall=59 success=yes exit=0 a0=... a1=... a2=... a3=0 items=2 ppid=2700 pid=2710 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=16 comm=\"firewall-cmd\" exe=\"/usr/bin/firewall-cmd\" key=\"firewall\"\ntype=EXECVE msg=audit(1712347000.100:3300): argc=3 a0=\"firewall-cmd\" a1=\"--add-port=8080/tcp\" a2=\"--permanent\"",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -5130,6 +6054,14 @@
       {
         "token": "-k firewall",
         "explanation": "Tag matching events with the audit key `firewall` (search later with `ausearch -k firewall`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "firewall-cmd",
+        "log": "type=SYSCALL msg=audit(1712347000.100:3300): arch=c000003e syscall=59 success=yes exit=0 a0=... a1=... a2=... a3=0 items=2 ppid=2700 pid=2710 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=16 comm=\"firewall-cmd\" exe=\"/usr/bin/firewall-cmd\" key=\"firewall\"\ntype=EXECVE msg=audit(1712347000.100:3300): argc=3 a0=\"firewall-cmd\" a1=\"--add-port=8080/tcp\" a2=\"--permanent\"",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -5158,6 +6090,14 @@
         "token": "-k network_config",
         "explanation": "Tag matching events with the audit key `network_config` (search later with `ausearch -k network_config`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "/etc/hosts modification",
+        "log": "type=SYSCALL msg=audit(1712345810.400:2101): arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=7fff... a2=241 a3=1b6 items=1 ppid=1500 pid=1525 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts1 ses=4 comm=\"vi\" exe=\"/usr/bin/vi\" key=\"network_config\"\ntype=CWD msg=audit(1712345810.400:2101): cwd=\"/etc\"\ntype=PATH msg=audit(1712345810.400:2101): item=0 name=\"/etc/hosts\" inode=... mode=0100644 ouid=0 ogid=0 nametype=NORMAL\ntype=PROCTITLE msg=audit(1712345810.400:2101): proctitle=7669002F6574632F686F737473",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -5185,7 +6125,8 @@
         "token": "-k dns_config",
         "explanation": "Tag matching events with the audit key `dns_config` (search later with `ausearch -k dns_config`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "22-03",
@@ -5211,6 +6152,14 @@
       {
         "token": "-k network_config",
         "explanation": "Tag matching events with the audit key `network_config` (search later with `ausearch -k network_config`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "/etc/hosts modification",
+        "log": "type=SYSCALL msg=audit(1712345810.400:2101): arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=7fff... a2=241 a3=1b6 items=1 ppid=1500 pid=1525 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts1 ses=4 comm=\"vi\" exe=\"/usr/bin/vi\" key=\"network_config\"\ntype=CWD msg=audit(1712345810.400:2101): cwd=\"/etc\"\ntype=PATH msg=audit(1712345810.400:2101): item=0 name=\"/etc/hosts\" inode=... mode=0100644 ouid=0 ogid=0 nametype=NORMAL\ntype=PROCTITLE msg=audit(1712345810.400:2101): proctitle=7669002F6574632F686F737473",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -5239,6 +6188,14 @@
         "token": "-k network_config",
         "explanation": "Tag matching events with the audit key `network_config` (search later with `ausearch -k network_config`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "/etc/hosts modification",
+        "log": "type=SYSCALL msg=audit(1712345810.400:2101): arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=7fff... a2=241 a3=1b6 items=1 ppid=1500 pid=1525 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts1 ses=4 comm=\"vi\" exe=\"/usr/bin/vi\" key=\"network_config\"\ntype=CWD msg=audit(1712345810.400:2101): cwd=\"/etc\"\ntype=PATH msg=audit(1712345810.400:2101): item=0 name=\"/etc/hosts\" inode=... mode=0100644 ouid=0 ogid=0 nametype=NORMAL\ntype=PROCTITLE msg=audit(1712345810.400:2101): proctitle=7669002F6574632F686F737473",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -5266,7 +6223,8 @@
         "token": "-k network_admin",
         "explanation": "Tag matching events with the audit key `network_admin` (search later with `ausearch -k network_admin`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "22-06",
@@ -5293,7 +6251,8 @@
         "token": "-k network_admin",
         "explanation": "Tag matching events with the audit key `network_admin` (search later with `ausearch -k network_admin`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "23-01",
@@ -5320,7 +6279,8 @@
         "token": "-k route_change",
         "explanation": "Tag matching events with the audit key `route_change` (search later with `ausearch -k route_change`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "23-02",
@@ -5347,7 +6307,8 @@
         "token": "-k route_change",
         "explanation": "Tag matching events with the audit key `route_change` (search later with `ausearch -k route_change`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "24-01",
@@ -5385,6 +6346,14 @@
       {
         "token": "-k mounts",
         "explanation": "Tag matching events with the audit key `mounts` (search later with `ausearch -k mounts`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "mount",
+        "log": "type=SYSCALL msg=audit(1712347100.200:3400): arch=c000003e syscall=165 success=yes exit=0 a0=7fff... a1=7fff... a2=7fff... a3=0 items=2 ppid=2800 pid=2810 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=17 comm=\"mount\" exe=\"/usr/bin/mount\" key=\"mounts\"\ntype=EXECVE msg=audit(1712347100.200:3400): argc=3 a0=\"mount\" a1=\"/dev/sdb1\" a2=\"/mnt/data\"\ntype=PATH msg=audit(1712347100.200:3400): item=0 name=\"/dev/sdb1\" inode=... mode=060660 ouid=0 ogid=0 nametype=NORMAL\ntype=PATH msg=audit(1712347100.200:3400): item=1 name=\"/mnt/data\" inode=... mode=040755 ouid=0 ogid=0 nametype=NORMAL",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -5425,6 +6394,14 @@
         "token": "-k mounts",
         "explanation": "Tag matching events with the audit key `mounts` (search later with `ausearch -k mounts`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "mount",
+        "log": "type=SYSCALL msg=audit(1712347100.200:3400): arch=c000003e syscall=165 success=yes exit=0 a0=7fff... a1=7fff... a2=7fff... a3=0 items=2 ppid=2800 pid=2810 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=17 comm=\"mount\" exe=\"/usr/bin/mount\" key=\"mounts\"\ntype=EXECVE msg=audit(1712347100.200:3400): argc=3 a0=\"mount\" a1=\"/dev/sdb1\" a2=\"/mnt/data\"\ntype=PATH msg=audit(1712347100.200:3400): item=0 name=\"/dev/sdb1\" inode=... mode=060660 ouid=0 ogid=0 nametype=NORMAL\ntype=PATH msg=audit(1712347100.200:3400): item=1 name=\"/mnt/data\" inode=... mode=040755 ouid=0 ogid=0 nametype=NORMAL",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -5452,6 +6429,14 @@
         "token": "-k mounts",
         "explanation": "Tag matching events with the audit key `mounts` (search later with `ausearch -k mounts`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "mount",
+        "log": "type=SYSCALL msg=audit(1712347100.200:3400): arch=c000003e syscall=165 success=yes exit=0 a0=7fff... a1=7fff... a2=7fff... a3=0 items=2 ppid=2800 pid=2810 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=17 comm=\"mount\" exe=\"/usr/bin/mount\" key=\"mounts\"\ntype=EXECVE msg=audit(1712347100.200:3400): argc=3 a0=\"mount\" a1=\"/dev/sdb1\" a2=\"/mnt/data\"\ntype=PATH msg=audit(1712347100.200:3400): item=0 name=\"/dev/sdb1\" inode=... mode=060660 ouid=0 ogid=0 nametype=NORMAL\ntype=PATH msg=audit(1712347100.200:3400): item=1 name=\"/mnt/data\" inode=... mode=040755 ouid=0 ogid=0 nametype=NORMAL",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -5478,6 +6463,14 @@
       {
         "token": "-k mounts",
         "explanation": "Tag matching events with the audit key `mounts` (search later with `ausearch -k mounts`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "mount",
+        "log": "type=SYSCALL msg=audit(1712347100.200:3400): arch=c000003e syscall=165 success=yes exit=0 a0=7fff... a1=7fff... a2=7fff... a3=0 items=2 ppid=2800 pid=2810 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=17 comm=\"mount\" exe=\"/usr/bin/mount\" key=\"mounts\"\ntype=EXECVE msg=audit(1712347100.200:3400): argc=3 a0=\"mount\" a1=\"/dev/sdb1\" a2=\"/mnt/data\"\ntype=PATH msg=audit(1712347100.200:3400): item=0 name=\"/dev/sdb1\" inode=... mode=060660 ouid=0 ogid=0 nametype=NORMAL\ntype=PATH msg=audit(1712347100.200:3400): item=1 name=\"/mnt/data\" inode=... mode=040755 ouid=0 ogid=0 nametype=NORMAL",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -5518,7 +6511,8 @@
         "token": "-F key=export",
         "explanation": "Tag matching events with the audit key `export` (search later with `ausearch -k export`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "24-06",
@@ -5557,7 +6551,8 @@
         "token": "-F key=export",
         "explanation": "Tag matching events with the audit key `export` (search later with `ausearch -k export`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "25-01",
@@ -5584,7 +6579,8 @@
         "token": "-k removable_media",
         "explanation": "Tag matching events with the audit key `removable_media` (search later with `ausearch -k removable_media`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "25-02",
@@ -5611,7 +6607,8 @@
         "token": "-k removable_media",
         "explanation": "Tag matching events with the audit key `removable_media` (search later with `ausearch -k removable_media`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "26-01",
@@ -5637,6 +6634,14 @@
       {
         "token": "-k scheduled_tasks",
         "explanation": "Tag matching events with the audit key `scheduled_tasks` (search later with `ausearch -k scheduled_tasks`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "crontab modification",
+        "log": "type=SYSCALL msg=audit(1712347200.300:3500): arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=7fff... a2=241 a3=1b6 items=1 ppid=2900 pid=2910 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=18 comm=\"crontab\" exe=\"/usr/bin/crontab\" key=\"scheduled_tasks\"\ntype=PATH msg=audit(1712347200.300:3500): item=0 name=\"/var/spool/cron/root\" inode=... mode=0100600 ouid=0 ogid=0 nametype=NORMAL",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -5665,6 +6670,14 @@
         "token": "-k scheduled_tasks",
         "explanation": "Tag matching events with the audit key `scheduled_tasks` (search later with `ausearch -k scheduled_tasks`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "crontab modification",
+        "log": "type=SYSCALL msg=audit(1712347200.300:3500): arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=7fff... a2=241 a3=1b6 items=1 ppid=2900 pid=2910 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=18 comm=\"crontab\" exe=\"/usr/bin/crontab\" key=\"scheduled_tasks\"\ntype=PATH msg=audit(1712347200.300:3500): item=0 name=\"/var/spool/cron/root\" inode=... mode=0100600 ouid=0 ogid=0 nametype=NORMAL",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -5691,6 +6704,14 @@
       {
         "token": "-k scheduled_tasks",
         "explanation": "Tag matching events with the audit key `scheduled_tasks` (search later with `ausearch -k scheduled_tasks`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "crontab modification",
+        "log": "type=SYSCALL msg=audit(1712347200.300:3500): arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=7fff... a2=241 a3=1b6 items=1 ppid=2900 pid=2910 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=18 comm=\"crontab\" exe=\"/usr/bin/crontab\" key=\"scheduled_tasks\"\ntype=PATH msg=audit(1712347200.300:3500): item=0 name=\"/var/spool/cron/root\" inode=... mode=0100600 ouid=0 ogid=0 nametype=NORMAL",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -5719,6 +6740,14 @@
         "token": "-k scheduled_tasks",
         "explanation": "Tag matching events with the audit key `scheduled_tasks` (search later with `ausearch -k scheduled_tasks`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "crontab modification",
+        "log": "type=SYSCALL msg=audit(1712347200.300:3500): arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=7fff... a2=241 a3=1b6 items=1 ppid=2900 pid=2910 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=18 comm=\"crontab\" exe=\"/usr/bin/crontab\" key=\"scheduled_tasks\"\ntype=PATH msg=audit(1712347200.300:3500): item=0 name=\"/var/spool/cron/root\" inode=... mode=0100600 ouid=0 ogid=0 nametype=NORMAL",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -5745,6 +6774,14 @@
       {
         "token": "-k scheduled_tasks",
         "explanation": "Tag matching events with the audit key `scheduled_tasks` (search later with `ausearch -k scheduled_tasks`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "crontab modification",
+        "log": "type=SYSCALL msg=audit(1712347200.300:3500): arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=7fff... a2=241 a3=1b6 items=1 ppid=2900 pid=2910 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=18 comm=\"crontab\" exe=\"/usr/bin/crontab\" key=\"scheduled_tasks\"\ntype=PATH msg=audit(1712347200.300:3500): item=0 name=\"/var/spool/cron/root\" inode=... mode=0100600 ouid=0 ogid=0 nametype=NORMAL",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -5773,6 +6810,14 @@
         "token": "-k scheduled_tasks",
         "explanation": "Tag matching events with the audit key `scheduled_tasks` (search later with `ausearch -k scheduled_tasks`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "crontab modification",
+        "log": "type=SYSCALL msg=audit(1712347200.300:3500): arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=7fff... a2=241 a3=1b6 items=1 ppid=2900 pid=2910 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=18 comm=\"crontab\" exe=\"/usr/bin/crontab\" key=\"scheduled_tasks\"\ntype=PATH msg=audit(1712347200.300:3500): item=0 name=\"/var/spool/cron/root\" inode=... mode=0100600 ouid=0 ogid=0 nametype=NORMAL",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -5799,6 +6844,14 @@
       {
         "token": "-k scheduled_tasks",
         "explanation": "Tag matching events with the audit key `scheduled_tasks` (search later with `ausearch -k scheduled_tasks`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "crontab modification",
+        "log": "type=SYSCALL msg=audit(1712347200.300:3500): arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=7fff... a2=241 a3=1b6 items=1 ppid=2900 pid=2910 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=18 comm=\"crontab\" exe=\"/usr/bin/crontab\" key=\"scheduled_tasks\"\ntype=PATH msg=audit(1712347200.300:3500): item=0 name=\"/var/spool/cron/root\" inode=... mode=0100600 ouid=0 ogid=0 nametype=NORMAL",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -5827,7 +6880,8 @@
         "token": "-k cronjobs",
         "explanation": "Tag matching events with the audit key `cronjobs` (search later with `ausearch -k cronjobs`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "26-09",
@@ -5854,7 +6908,8 @@
         "token": "-k cronjobs",
         "explanation": "Tag matching events with the audit key `cronjobs` (search later with `ausearch -k cronjobs`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "27-01",
@@ -5881,7 +6936,8 @@
         "token": "-k systemd",
         "explanation": "Tag matching events with the audit key `systemd` (search later with `ausearch -k systemd`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "27-02",
@@ -5908,7 +6964,8 @@
         "token": "-k systemd",
         "explanation": "Tag matching events with the audit key `systemd` (search later with `ausearch -k systemd`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "27-03",
@@ -5934,6 +6991,14 @@
       {
         "token": "-k service_management",
         "explanation": "Tag matching events with the audit key `service_management` (search later with `ausearch -k service_management`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "systemctl",
+        "log": "type=SYSCALL msg=audit(1712347300.400:3600): arch=c000003e syscall=59 success=yes exit=0 a0=... a1=... a2=... a3=0 items=2 ppid=3000 pid=3010 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=19 comm=\"systemctl\" exe=\"/usr/bin/systemctl\" key=\"service_management\"\ntype=EXECVE msg=audit(1712347300.400:3600): argc=3 a0=\"systemctl\" a1=\"enable\" a2=\"myservice.service\"",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -5962,7 +7027,8 @@
         "token": "-k persistence",
         "explanation": "Tag matching events with the audit key `persistence` (search later with `ausearch -k persistence`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "28-02",
@@ -5989,7 +7055,8 @@
         "token": "-k persistence",
         "explanation": "Tag matching events with the audit key `persistence` (search later with `ausearch -k persistence`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "29-01",
@@ -6016,7 +7083,8 @@
         "token": "-k shell_config",
         "explanation": "Tag matching events with the audit key `shell_config` (search later with `ausearch -k shell_config`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "29-02",
@@ -6043,7 +7111,8 @@
         "token": "-k shell_config",
         "explanation": "Tag matching events with the audit key `shell_config` (search later with `ausearch -k shell_config`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "29-03",
@@ -6070,7 +7139,8 @@
         "token": "-k shell_config",
         "explanation": "Tag matching events with the audit key `shell_config` (search later with `ausearch -k shell_config`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "30-01",
@@ -6096,6 +7166,14 @@
       {
         "token": "-k library_injection",
         "explanation": "Tag matching events with the audit key `library_injection` (search later with `ausearch -k library_injection`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "ld.so.preload write",
+        "log": "type=SYSCALL msg=audit(1712347400.500:3700): arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=7fff... a2=241 a3=1b6 items=1 ppid=3100 pid=3110 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=20 comm=\"vi\" exe=\"/usr/bin/vi\" key=\"library_injection\"\ntype=PATH msg=audit(1712347400.500:3700): item=0 name=\"/etc/ld.so.preload\" inode=... mode=0100644 ouid=0 ogid=0 nametype=NORMAL",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -6124,7 +7202,8 @@
         "token": "-k library_config",
         "explanation": "Tag matching events with the audit key `library_config` (search later with `ausearch -k library_config`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "30-03",
@@ -6151,7 +7230,8 @@
         "token": "-k library_config",
         "explanation": "Tag matching events with the audit key `library_config` (search later with `ausearch -k library_config`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "31-01",
@@ -6177,6 +7257,14 @@
       {
         "token": "-k software_install",
         "explanation": "Tag matching events with the audit key `software_install` (search later with `ausearch -k software_install`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "dnf / rpm execution",
+        "log": "type=SYSCALL msg=audit(1712347500.600:3800): arch=c000003e syscall=59 success=yes exit=0 a0=... a1=... a2=... a3=0 items=2 ppid=3200 pid=3210 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=21 comm=\"dnf\" exe=\"/usr/bin/dnf\" key=\"software_install\"\ntype=EXECVE msg=audit(1712347500.600:3800): argc=3 a0=\"dnf\" a1=\"install\" a2=\"httpd\"",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -6205,6 +7293,14 @@
         "token": "-k software_install",
         "explanation": "Tag matching events with the audit key `software_install` (search later with `ausearch -k software_install`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "dnf / rpm execution",
+        "log": "type=SYSCALL msg=audit(1712347500.600:3800): arch=c000003e syscall=59 success=yes exit=0 a0=... a1=... a2=... a3=0 items=2 ppid=3200 pid=3210 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=21 comm=\"dnf\" exe=\"/usr/bin/dnf\" key=\"software_install\"\ntype=EXECVE msg=audit(1712347500.600:3800): argc=3 a0=\"dnf\" a1=\"install\" a2=\"httpd\"",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -6231,6 +7327,14 @@
       {
         "token": "-k software_install",
         "explanation": "Tag matching events with the audit key `software_install` (search later with `ausearch -k software_install`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "dnf / rpm execution",
+        "log": "type=SYSCALL msg=audit(1712347500.600:3800): arch=c000003e syscall=59 success=yes exit=0 a0=... a1=... a2=... a3=0 items=2 ppid=3200 pid=3210 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=21 comm=\"dnf\" exe=\"/usr/bin/dnf\" key=\"software_install\"\ntype=EXECVE msg=audit(1712347500.600:3800): argc=3 a0=\"dnf\" a1=\"install\" a2=\"httpd\"",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -6259,7 +7363,8 @@
         "token": "-k repository_config",
         "explanation": "Tag matching events with the audit key `repository_config` (search later with `ausearch -k repository_config`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "31-05",
@@ -6286,7 +7391,8 @@
         "token": "-k repository_config",
         "explanation": "Tag matching events with the audit key `repository_config` (search later with `ausearch -k repository_config`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "32-01",
@@ -6313,7 +7419,8 @@
         "token": "-k package_database",
         "explanation": "Tag matching events with the audit key `package_database` (search later with `ausearch -k package_database`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "33-01",
@@ -6340,7 +7447,8 @@
         "token": "-k security_tools",
         "explanation": "Tag matching events with the audit key `security_tools` (search later with `ausearch -k security_tools`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "33-02",
@@ -6367,7 +7475,8 @@
         "token": "-k fapolicyd",
         "explanation": "Tag matching events with the audit key `fapolicyd` (search later with `ausearch -k fapolicyd`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "33-03",
@@ -6394,7 +7503,8 @@
         "token": "-k fapolicyd",
         "explanation": "Tag matching events with the audit key `fapolicyd` (search later with `ausearch -k fapolicyd`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "33-04",
@@ -6421,7 +7531,8 @@
         "token": "-k fapolicyd",
         "explanation": "Tag matching events with the audit key `fapolicyd` (search later with `ausearch -k fapolicyd`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "33-05",
@@ -6448,7 +7559,8 @@
         "token": "-k fapolicyd",
         "explanation": "Tag matching events with the audit key `fapolicyd` (search later with `ausearch -k fapolicyd`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "33-06",
@@ -6475,7 +7587,8 @@
         "token": "-k fapolicyd",
         "explanation": "Tag matching events with the audit key `fapolicyd` (search later with `ausearch -k fapolicyd`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "34-01",
@@ -6502,7 +7615,8 @@
         "token": "-k file_integrity",
         "explanation": "Tag matching events with the audit key `file_integrity` (search later with `ausearch -k file_integrity`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "34-02",
@@ -6529,7 +7643,8 @@
         "token": "-k file_integrity",
         "explanation": "Tag matching events with the audit key `file_integrity` (search later with `ausearch -k file_integrity`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "35-01",
@@ -6556,7 +7671,8 @@
         "token": "-k logging_config",
         "explanation": "Tag matching events with the audit key `logging_config` (search later with `ausearch -k logging_config`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "35-02",
@@ -6583,7 +7699,8 @@
         "token": "-k logging_config",
         "explanation": "Tag matching events with the audit key `logging_config` (search later with `ausearch -k logging_config`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "35-03",
@@ -6610,7 +7727,8 @@
         "token": "-k logging_config",
         "explanation": "Tag matching events with the audit key `logging_config` (search later with `ausearch -k logging_config`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "35-04",
@@ -6637,7 +7755,8 @@
         "token": "-k logging_config",
         "explanation": "Tag matching events with the audit key `logging_config` (search later with `ausearch -k logging_config`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "35-05",
@@ -6664,7 +7783,8 @@
         "token": "-k logging_config",
         "explanation": "Tag matching events with the audit key `logging_config` (search later with `ausearch -k logging_config`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "35-06",
@@ -6691,7 +7811,8 @@
         "token": "-k logging_config",
         "explanation": "Tag matching events with the audit key `logging_config` (search later with `ausearch -k logging_config`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "36-01",
@@ -6717,6 +7838,14 @@
       {
         "token": "-k anti_forensics",
         "explanation": "Tag matching events with the audit key `anti_forensics` (search later with `ausearch -k anti_forensics`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "shred",
+        "log": "type=SYSCALL msg=audit(1712347600.700:3900): arch=c000003e syscall=59 success=yes exit=0 a0=... a1=... a2=... a3=0 items=2 ppid=3300 pid=3310 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=22 comm=\"shred\" exe=\"/usr/bin/shred\" key=\"anti_forensics\"\ntype=EXECVE msg=audit(1712347600.700:3900): argc=3 a0=\"shred\" a1=\"-u\" a2=\"/tmp/secret.txt\"",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -6744,6 +7873,14 @@
       {
         "token": "-k anti_forensics",
         "explanation": "Tag matching events with the audit key `anti_forensics` (search later with `ausearch -k anti_forensics`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "shred",
+        "log": "type=SYSCALL msg=audit(1712347600.700:3900): arch=c000003e syscall=59 success=yes exit=0 a0=... a1=... a2=... a3=0 items=2 ppid=3300 pid=3310 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=22 comm=\"shred\" exe=\"/usr/bin/shred\" key=\"anti_forensics\"\ntype=EXECVE msg=audit(1712347600.700:3900): argc=3 a0=\"shred\" a1=\"-u\" a2=\"/tmp/secret.txt\"",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -6784,6 +7921,14 @@
         "token": "-k user_exec",
         "explanation": "Tag matching events with the audit key `user_exec` (search later with `ausearch -k user_exec`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "full command execution (python script)",
+        "log": "type=SYSCALL msg=audit(1675255174.901:30777): arch=c000003e syscall=59 success=yes exit=0 a0=11ba5a8 a1=13f78c8 a2=10ab008 a3=598 items=2 ppid=8720 pid=24107 auid=4294967295 uid=1000 gid=1000 euid=1000 suid=1000 fsuid=1000 egid=1000 sgid=1000 fsgid=1000 tty=pts19 ses=4294967295 comm=\"python\" exe=\"/usr/bin/python2.7\" key=\"user_exec\"\ntype=EXECVE msg=audit(1675255174.901:30777): argc=2 a0=\"python\" a1=\"badscript.py\"\ntype=CWD msg=audit(1675255174.901:30777): cwd=\"/home/izy/Documents/testing\"\ntype=PATH msg=audit(1675255174.901:30777): item=0 name=\"/usr/bin/python\" inode=659272 dev=08:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL\ntype=PATH msg=audit(1675255174.901:30777): item=1 name=\"/lib64/ld-linux-x86-64.so.2\" inode=926913 dev=08:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL\ntype=PROCTITLE msg=audit(1675255174.901:30777): proctitle=707974686F6E006261647363726970742E7079",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -6822,6 +7967,14 @@
       {
         "token": "-k user_exec",
         "explanation": "Tag matching events with the audit key `user_exec` (search later with `ausearch -k user_exec`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "full command execution (python script)",
+        "log": "type=SYSCALL msg=audit(1675255174.901:30777): arch=c000003e syscall=59 success=yes exit=0 a0=11ba5a8 a1=13f78c8 a2=10ab008 a3=598 items=2 ppid=8720 pid=24107 auid=4294967295 uid=1000 gid=1000 euid=1000 suid=1000 fsuid=1000 egid=1000 sgid=1000 fsgid=1000 tty=pts19 ses=4294967295 comm=\"python\" exe=\"/usr/bin/python2.7\" key=\"user_exec\"\ntype=EXECVE msg=audit(1675255174.901:30777): argc=2 a0=\"python\" a1=\"badscript.py\"\ntype=CWD msg=audit(1675255174.901:30777): cwd=\"/home/izy/Documents/testing\"\ntype=PATH msg=audit(1675255174.901:30777): item=0 name=\"/usr/bin/python\" inode=659272 dev=08:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL\ntype=PATH msg=audit(1675255174.901:30777): item=1 name=\"/lib64/ld-linux-x86-64.so.2\" inode=926913 dev=08:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL\ntype=PROCTITLE msg=audit(1675255174.901:30777): proctitle=707974686F6E006261647363726970742E7079",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -6866,6 +8019,14 @@
         "token": "-k root_command",
         "explanation": "Tag matching events with the audit key `root_command` (search later with `ausearch -k root_command`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "root_command (euid=0 from auid≥1000)",
+        "log": "type=SYSCALL msg=audit(1532489108.216:3721): arch=c000003e syscall=59 success=yes exit=0 a0=16169e0 a1=16116f0 a2=161ab60 a3=7ffd940300a0 items=2 ppid=10627 pid=20240 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts1 ses=3 comm=\"cat\" exe=\"/usr/bin/cat\" key=\"root_command\"\ntype=EXECVE msg=audit(1532489108.216:3721): argc=2 a0=\"cat\" a1=\"10-procmon.rules\"",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -6901,7 +8062,8 @@
         "token": "-k root_session",
         "explanation": "Tag matching events with the audit key `root_session` (search later with `ausearch -k root_session`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "40-01",
@@ -6931,6 +8093,14 @@
       {
         "token": "-k process_injection",
         "explanation": "Tag matching events with the audit key `process_injection` (search later with `ausearch -k process_injection`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "ptrace",
+        "log": "type=SYSCALL msg=audit(1712347700.800:4000): arch=c000003e syscall=101 success=yes exit=0 a0=0 a1=1234 a2=0 a3=0 items=0 ppid=3400 pid=3410 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=23 comm=\"gdb\" exe=\"/usr/bin/gdb\" key=\"process_injection\"\ntype=OBJ_PID msg=audit(1712347700.800:4000): opid=1234 oauid=1000 ouid=1000 oses=5 ocomm=\"target\"",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -6963,6 +8133,14 @@
         "token": "-k process_injection",
         "explanation": "Tag matching events with the audit key `process_injection` (search later with `ausearch -k process_injection`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "ptrace",
+        "log": "type=SYSCALL msg=audit(1712347700.800:4000): arch=c000003e syscall=101 success=yes exit=0 a0=0 a1=1234 a2=0 a3=0 items=0 ppid=3400 pid=3410 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=23 comm=\"gdb\" exe=\"/usr/bin/gdb\" key=\"process_injection\"\ntype=OBJ_PID msg=audit(1712347700.800:4000): opid=1234 oauid=1000 ouid=1000 oses=5 ocomm=\"target\"",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -6994,7 +8172,8 @@
         "token": "-k process_memory",
         "explanation": "Tag matching events with the audit key `process_memory` (search later with `ausearch -k process_memory`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "42-01",
@@ -7033,7 +8212,8 @@
         "token": "-k namespace",
         "explanation": "Tag matching events with the audit key `namespace` (search later with `ausearch -k namespace`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "43-01",
@@ -7072,7 +8252,8 @@
         "token": "-k chroot",
         "explanation": "Tag matching events with the audit key `chroot` (search later with `ausearch -k chroot`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "43-02",
@@ -7111,7 +8292,8 @@
         "token": "-k chroot",
         "explanation": "Tag matching events with the audit key `chroot` (search later with `ausearch -k chroot`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "44-01",
@@ -7137,6 +8319,14 @@
       {
         "token": "-k system_shutdown",
         "explanation": "Tag matching events with the audit key `system_shutdown` (search later with `ausearch -k system_shutdown`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "reboot",
+        "log": "type=SYSCALL msg=audit(1712347800.900:4100): arch=c000003e syscall=59 success=yes exit=0 a0=... a1=... a2=... a3=0 items=2 ppid=3500 pid=3510 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=24 comm=\"reboot\" exe=\"/usr/sbin/reboot\" key=\"system_shutdown\"\ntype=EXECVE msg=audit(1712347800.900:4100): argc=1 a0=\"reboot\"",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -7165,6 +8355,14 @@
         "token": "-k system_shutdown",
         "explanation": "Tag matching events with the audit key `system_shutdown` (search later with `ausearch -k system_shutdown`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "reboot",
+        "log": "type=SYSCALL msg=audit(1712347800.900:4100): arch=c000003e syscall=59 success=yes exit=0 a0=... a1=... a2=... a3=0 items=2 ppid=3500 pid=3510 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=24 comm=\"reboot\" exe=\"/usr/sbin/reboot\" key=\"system_shutdown\"\ntype=EXECVE msg=audit(1712347800.900:4100): argc=1 a0=\"reboot\"",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -7191,6 +8389,14 @@
       {
         "token": "-k system_shutdown",
         "explanation": "Tag matching events with the audit key `system_shutdown` (search later with `ausearch -k system_shutdown`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "reboot",
+        "log": "type=SYSCALL msg=audit(1712347800.900:4100): arch=c000003e syscall=59 success=yes exit=0 a0=... a1=... a2=... a3=0 items=2 ppid=3500 pid=3510 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=24 comm=\"reboot\" exe=\"/usr/sbin/reboot\" key=\"system_shutdown\"\ntype=EXECVE msg=audit(1712347800.900:4100): argc=1 a0=\"reboot\"",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -7219,6 +8425,14 @@
         "token": "-k service_management",
         "explanation": "Tag matching events with the audit key `service_management` (search later with `ausearch -k service_management`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "systemctl",
+        "log": "type=SYSCALL msg=audit(1712347300.400:3600): arch=c000003e syscall=59 success=yes exit=0 a0=... a1=... a2=... a3=0 items=2 ppid=3000 pid=3010 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=19 comm=\"systemctl\" exe=\"/usr/bin/systemctl\" key=\"service_management\"\ntype=EXECVE msg=audit(1712347300.400:3600): argc=3 a0=\"systemctl\" a1=\"enable\" a2=\"myservice.service\"",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -7246,7 +8460,8 @@
         "token": "-k splunk_config",
         "explanation": "Tag matching events with the audit key `splunk_config` (search later with `ausearch -k splunk_config`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "45-03",
@@ -7273,7 +8488,8 @@
         "token": "-k splunk_admin",
         "explanation": "Tag matching events with the audit key `splunk_admin` (search later with `ausearch -k splunk_admin`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "46-01",
@@ -7300,7 +8516,8 @@
         "token": "-k kernel_logs",
         "explanation": "Tag matching events with the audit key `kernel_logs` (search later with `ausearch -k kernel_logs`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "48-01",
@@ -7327,7 +8544,8 @@
         "token": "-k dns_config",
         "explanation": "Tag matching events with the audit key `dns_config` (search later with `ausearch -k dns_config`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "48-02",
@@ -7354,7 +8572,8 @@
         "token": "-k dns_config",
         "explanation": "Tag matching events with the audit key `dns_config` (search later with `ausearch -k dns_config`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "48-03",
@@ -7381,7 +8600,8 @@
         "token": "-k dns_config",
         "explanation": "Tag matching events with the audit key `dns_config` (search later with `ausearch -k dns_config`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "49-01",
@@ -7408,7 +8628,8 @@
         "token": "-k trusted_certificates",
         "explanation": "Tag matching events with the audit key `trusted_certificates` (search later with `ausearch -k trusted_certificates`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "49-02",
@@ -7435,7 +8656,8 @@
         "token": "-k certificates",
         "explanation": "Tag matching events with the audit key `certificates` (search later with `ausearch -k certificates`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "49-03",
@@ -7462,7 +8684,8 @@
         "token": "-k trusted_certificates",
         "explanation": "Tag matching events with the audit key `trusted_certificates` (search later with `ausearch -k trusted_certificates`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "50-01",
@@ -7489,7 +8712,8 @@
         "token": "-k ssh_host_keys",
         "explanation": "Tag matching events with the audit key `ssh_host_keys` (search later with `ausearch -k ssh_host_keys`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "50-02",
@@ -7516,7 +8740,8 @@
         "token": "-k ssh_host_keys",
         "explanation": "Tag matching events with the audit key `ssh_host_keys` (search later with `ausearch -k ssh_host_keys`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "50-03",
@@ -7543,7 +8768,8 @@
         "token": "-k ssh_host_keys",
         "explanation": "Tag matching events with the audit key `ssh_host_keys` (search later with `ausearch -k ssh_host_keys`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "51-01",
@@ -7570,7 +8796,8 @@
         "token": "-k etc_changes",
         "explanation": "Tag matching events with the audit key `etc_changes` (search later with `ausearch -k etc_changes`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "52-01",
@@ -7596,6 +8823,14 @@
       {
         "token": "-k container_admin",
         "explanation": "Tag matching events with the audit key `container_admin` (search later with `ausearch -k container_admin`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "docker / podman",
+        "log": "type=SYSCALL msg=audit(1712347900.000:4200): arch=c000003e syscall=59 success=yes exit=0 a0=... a1=... a2=... a3=0 items=2 ppid=3600 pid=3610 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=25 comm=\"podman\" exe=\"/usr/bin/podman\" key=\"container_admin\"\ntype=EXECVE msg=audit(1712347900.000:4200): argc=4 a0=\"podman\" a1=\"run\" a2=\"-it\" a3=\"ubi9\"",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -7624,7 +8859,8 @@
         "token": "-k docker_config",
         "explanation": "Tag matching events with the audit key `docker_config` (search later with `ausearch -k docker_config`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "52-03",
@@ -7651,7 +8887,8 @@
         "token": "-k docker_config",
         "explanation": "Tag matching events with the audit key `docker_config` (search later with `ausearch -k docker_config`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "53-01",
@@ -7677,6 +8914,14 @@
       {
         "token": "-k container_admin",
         "explanation": "Tag matching events with the audit key `container_admin` (search later with `ausearch -k container_admin`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "docker / podman",
+        "log": "type=SYSCALL msg=audit(1712347900.000:4200): arch=c000003e syscall=59 success=yes exit=0 a0=... a1=... a2=... a3=0 items=2 ppid=3600 pid=3610 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=25 comm=\"podman\" exe=\"/usr/bin/podman\" key=\"container_admin\"\ntype=EXECVE msg=audit(1712347900.000:4200): argc=4 a0=\"podman\" a1=\"run\" a2=\"-it\" a3=\"ubi9\"",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -7705,7 +8950,8 @@
         "token": "-k container_config",
         "explanation": "Tag matching events with the audit key `container_config` (search later with `ausearch -k container_config`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "54-01",
@@ -7732,7 +8978,8 @@
         "token": "-k container_runtime",
         "explanation": "Tag matching events with the audit key `container_runtime` (search later with `ausearch -k container_runtime`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "54-02",
@@ -7759,7 +9006,8 @@
         "token": "-k container_runtime",
         "explanation": "Tag matching events with the audit key `container_runtime` (search later with `ausearch -k container_runtime`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "55-01",
@@ -7786,7 +9034,8 @@
         "token": "-k kubernetes",
         "explanation": "Tag matching events with the audit key `kubernetes` (search later with `ausearch -k kubernetes`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "55-02",
@@ -7813,7 +9062,8 @@
         "token": "-k kubernetes",
         "explanation": "Tag matching events with the audit key `kubernetes` (search later with `ausearch -k kubernetes`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "56-01",
@@ -7840,7 +9090,8 @@
         "token": "-k sensitive_file",
         "explanation": "Tag matching events with the audit key `sensitive_file` (search later with `ausearch -k sensitive_file`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "56-02",
@@ -7866,6 +9117,14 @@
       {
         "token": "-k identity",
         "explanation": "Tag matching events with the audit key `identity` (search later with `ausearch -k identity`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "/etc/passwd modification (useradd)",
+        "log": "type=SYSCALL msg=audit(1712346000.700:2300): arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=7fff... a2=241 a3=1b6 items=1 ppid=1700 pid=1720 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=6 comm=\"useradd\" exe=\"/usr/sbin/useradd\" key=\"identity\"\ntype=CWD msg=audit(1712346000.700:2300): cwd=\"/root\"\ntype=PATH msg=audit(1712346000.700:2300): item=0 name=\"/etc/passwd\" inode=... mode=0100644 ouid=0 ogid=0 nametype=NORMAL\ntype=PROCTITLE msg=audit(1712346000.700:2300): proctitle=75736572616464006E657775736572",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -7894,7 +9153,8 @@
         "token": "-k security_policy",
         "explanation": "Tag matching events with the audit key `security_policy` (search later with `ausearch -k security_policy`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "58-01",
@@ -7921,7 +9181,8 @@
         "token": "-k password_policy",
         "explanation": "Tag matching events with the audit key `password_policy` (search later with `ausearch -k password_policy`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "58-02",
@@ -7948,7 +9209,8 @@
         "token": "-k password_policy",
         "explanation": "Tag matching events with the audit key `password_policy` (search later with `ausearch -k password_policy`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "58-03",
@@ -7975,7 +9237,8 @@
         "token": "-k password_policy",
         "explanation": "Tag matching events with the audit key `password_policy` (search later with `ausearch -k password_policy`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "59-01",
@@ -8002,7 +9265,8 @@
         "token": "-k authentication_policy",
         "explanation": "Tag matching events with the audit key `authentication_policy` (search later with `ausearch -k authentication_policy`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "60-01",
@@ -8029,7 +9293,8 @@
         "token": "-k crypto_policy",
         "explanation": "Tag matching events with the audit key `crypto_policy` (search later with `ausearch -k crypto_policy`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "60-02",
@@ -8056,7 +9321,8 @@
         "token": "-k crypto_policy",
         "explanation": "Tag matching events with the audit key `crypto_policy` (search later with `ausearch -k crypto_policy`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "61-01",
@@ -8083,7 +9349,8 @@
         "token": "-k crypto_policy",
         "explanation": "Tag matching events with the audit key `crypto_policy` (search later with `ausearch -k crypto_policy`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "62-01",
@@ -8110,7 +9377,8 @@
         "token": "-k environment_config",
         "explanation": "Tag matching events with the audit key `environment_config` (search later with `ausearch -k environment_config`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "63-01",
@@ -8137,7 +9405,8 @@
         "token": "-k proxy_config",
         "explanation": "Tag matching events with the audit key `proxy_config` (search later with `ausearch -k proxy_config`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "63-02",
@@ -8164,7 +9433,8 @@
         "token": "-k proxy_config",
         "explanation": "Tag matching events with the audit key `proxy_config` (search later with `ausearch -k proxy_config`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "64-01",
@@ -8191,7 +9461,8 @@
         "token": "-k network_tools",
         "explanation": "Tag matching events with the audit key `network_tools` (search later with `ausearch -k network_tools`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "64-02",
@@ -8218,7 +9489,8 @@
         "token": "-k network_tools",
         "explanation": "Tag matching events with the audit key `network_tools` (search later with `ausearch -k network_tools`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "65-01",
@@ -8245,7 +9517,8 @@
         "token": "-k network_tools",
         "explanation": "Tag matching events with the audit key `network_tools` (search later with `ausearch -k network_tools`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "65-02",
@@ -8272,7 +9545,8 @@
         "token": "-k network_tools",
         "explanation": "Tag matching events with the audit key `network_tools` (search later with `ausearch -k network_tools`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "65-03",
@@ -8299,7 +9573,8 @@
         "token": "-k remote_access",
         "explanation": "Tag matching events with the audit key `remote_access` (search later with `ausearch -k remote_access`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "65-04",
@@ -8326,7 +9601,8 @@
         "token": "-k network_scan",
         "explanation": "Tag matching events with the audit key `network_scan` (search later with `ausearch -k network_scan`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "66-01",
@@ -8353,7 +9629,8 @@
         "token": "-k compiler",
         "explanation": "Tag matching events with the audit key `compiler` (search later with `ausearch -k compiler`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "66-02",
@@ -8380,7 +9657,8 @@
         "token": "-k compiler",
         "explanation": "Tag matching events with the audit key `compiler` (search later with `ausearch -k compiler`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "66-03",
@@ -8407,7 +9685,8 @@
         "token": "-k compiler",
         "explanation": "Tag matching events with the audit key `compiler` (search later with `ausearch -k compiler`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "67-01",
@@ -8434,7 +9713,8 @@
         "token": "-k interpreter",
         "explanation": "Tag matching events with the audit key `interpreter` (search later with `ausearch -k interpreter`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "67-02",
@@ -8461,7 +9741,8 @@
         "token": "-k interpreter",
         "explanation": "Tag matching events with the audit key `interpreter` (search later with `ausearch -k interpreter`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "68-01",
@@ -8488,7 +9769,8 @@
         "token": "-k file_transfer",
         "explanation": "Tag matching events with the audit key `file_transfer` (search later with `ausearch -k file_transfer`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "68-02",
@@ -8515,7 +9797,8 @@
         "token": "-k file_transfer",
         "explanation": "Tag matching events with the audit key `file_transfer` (search later with `ausearch -k file_transfer`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "68-03",
@@ -8542,7 +9825,8 @@
         "token": "-k file_transfer",
         "explanation": "Tag matching events with the audit key `file_transfer` (search later with `ausearch -k file_transfer`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "69-01",
@@ -8569,7 +9853,8 @@
         "token": "-k archive",
         "explanation": "Tag matching events with the audit key `archive` (search later with `ausearch -k archive`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "69-02",
@@ -8596,7 +9881,8 @@
         "token": "-k archive",
         "explanation": "Tag matching events with the audit key `archive` (search later with `ausearch -k archive`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "70-01",
@@ -8623,7 +9909,8 @@
         "token": "-k encoding_tool",
         "explanation": "Tag matching events with the audit key `encoding_tool` (search later with `ausearch -k encoding_tool`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "71-01",
@@ -8649,6 +9936,14 @@
       {
         "token": "-k scheduled_tasks",
         "explanation": "Tag matching events with the audit key `scheduled_tasks` (search later with `ausearch -k scheduled_tasks`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "crontab modification",
+        "log": "type=SYSCALL msg=audit(1712347200.300:3500): arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=7fff... a2=241 a3=1b6 items=1 ppid=2900 pid=2910 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=18 comm=\"crontab\" exe=\"/usr/bin/crontab\" key=\"scheduled_tasks\"\ntype=PATH msg=audit(1712347200.300:3500): item=0 name=\"/var/spool/cron/root\" inode=... mode=0100600 ouid=0 ogid=0 nametype=NORMAL",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -8677,6 +9972,14 @@
         "token": "-k scheduled_tasks",
         "explanation": "Tag matching events with the audit key `scheduled_tasks` (search later with `ausearch -k scheduled_tasks`)."
       }
+    ],
+    "log_samples": [
+      {
+        "title": "crontab modification",
+        "log": "type=SYSCALL msg=audit(1712347200.300:3500): arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=7fff... a2=241 a3=1b6 items=1 ppid=2900 pid=2910 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=18 comm=\"crontab\" exe=\"/usr/bin/crontab\" key=\"scheduled_tasks\"\ntype=PATH msg=audit(1712347200.300:3500): item=0 name=\"/var/spool/cron/root\" inode=... mode=0100600 ouid=0 ogid=0 nametype=NORMAL",
+        "annotation": "",
+        "key_note": ""
+      }
     ]
   },
   {
@@ -8703,6 +10006,14 @@
       {
         "token": "-k scheduled_tasks",
         "explanation": "Tag matching events with the audit key `scheduled_tasks` (search later with `ausearch -k scheduled_tasks`)."
+      }
+    ],
+    "log_samples": [
+      {
+        "title": "crontab modification",
+        "log": "type=SYSCALL msg=audit(1712347200.300:3500): arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=7fff... a2=241 a3=1b6 items=1 ppid=2900 pid=2910 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=18 comm=\"crontab\" exe=\"/usr/bin/crontab\" key=\"scheduled_tasks\"\ntype=PATH msg=audit(1712347200.300:3500): item=0 name=\"/var/spool/cron/root\" inode=... mode=0100600 ouid=0 ogid=0 nametype=NORMAL",
+        "annotation": "",
+        "key_note": ""
       }
     ]
   },
@@ -8731,7 +10042,8 @@
         "token": "-k root_config",
         "explanation": "Tag matching events with the audit key `root_config` (search later with `ausearch -k root_config`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "72-02",
@@ -8758,7 +10070,8 @@
         "token": "-k root_config",
         "explanation": "Tag matching events with the audit key `root_config` (search later with `ausearch -k root_config`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "72-03",
@@ -8785,7 +10098,8 @@
         "token": "-k root_config",
         "explanation": "Tag matching events with the audit key `root_config` (search later with `ausearch -k root_config`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "72-04",
@@ -8812,7 +10126,8 @@
         "token": "-k root_ssh",
         "explanation": "Tag matching events with the audit key `root_ssh` (search later with `ausearch -k root_ssh`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "73-01",
@@ -8839,7 +10154,8 @@
         "token": "-k shell_history",
         "explanation": "Tag matching events with the audit key `shell_history` (search later with `ausearch -k shell_history`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "74-01",
@@ -8866,7 +10182,8 @@
         "token": "-k file_attributes",
         "explanation": "Tag matching events with the audit key `file_attributes` (search later with `ausearch -k file_attributes`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "74-02",
@@ -8893,7 +10210,8 @@
         "token": "-k file_attributes",
         "explanation": "Tag matching events with the audit key `file_attributes` (search later with `ausearch -k file_attributes`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "75-01",
@@ -8920,7 +10238,8 @@
         "token": "-k filesystem_admin",
         "explanation": "Tag matching events with the audit key `filesystem_admin` (search later with `ausearch -k filesystem_admin`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "76-01",
@@ -8947,7 +10266,8 @@
         "token": "-k storage_admin",
         "explanation": "Tag matching events with the audit key `storage_admin` (search later with `ausearch -k storage_admin`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "76-02",
@@ -8974,7 +10294,8 @@
         "token": "-k storage_admin",
         "explanation": "Tag matching events with the audit key `storage_admin` (search later with `ausearch -k storage_admin`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "76-03",
@@ -9001,7 +10322,8 @@
         "token": "-k storage_admin",
         "explanation": "Tag matching events with the audit key `storage_admin` (search later with `ausearch -k storage_admin`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "76-04",
@@ -9028,7 +10350,8 @@
         "token": "-k storage_admin",
         "explanation": "Tag matching events with the audit key `storage_admin` (search later with `ausearch -k storage_admin`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "77-01",
@@ -9055,7 +10378,8 @@
         "token": "-k memory_admin",
         "explanation": "Tag matching events with the audit key `memory_admin` (search later with `ausearch -k memory_admin`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "77-02",
@@ -9082,7 +10406,8 @@
         "token": "-k memory_admin",
         "explanation": "Tag matching events with the audit key `memory_admin` (search later with `ausearch -k memory_admin`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "78-01",
@@ -9109,7 +10434,8 @@
         "token": "-k access_control",
         "explanation": "Tag matching events with the audit key `access_control` (search later with `ausearch -k access_control`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "78-02",
@@ -9136,7 +10462,8 @@
         "token": "-k access_control",
         "explanation": "Tag matching events with the audit key `access_control` (search later with `ausearch -k access_control`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "79-01",
@@ -9163,7 +10490,8 @@
         "token": "-k kerberos",
         "explanation": "Tag matching events with the audit key `kerberos` (search later with `ausearch -k kerberos`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "79-02",
@@ -9190,7 +10518,8 @@
         "token": "-k kerberos",
         "explanation": "Tag matching events with the audit key `kerberos` (search later with `ausearch -k kerberos`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "80-01",
@@ -9217,7 +10546,8 @@
         "token": "-k identity_provider",
         "explanation": "Tag matching events with the audit key `identity_provider` (search later with `ausearch -k identity_provider`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "80-02",
@@ -9244,7 +10574,8 @@
         "token": "-k identity_provider",
         "explanation": "Tag matching events with the audit key `identity_provider` (search later with `ausearch -k identity_provider`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "81-01",
@@ -9271,7 +10602,8 @@
         "token": "-k ipa_config",
         "explanation": "Tag matching events with the audit key `ipa_config` (search later with `ausearch -k ipa_config`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "81-02",
@@ -9298,7 +10630,8 @@
         "token": "-k ipa_config",
         "explanation": "Tag matching events with the audit key `ipa_config` (search later with `ausearch -k ipa_config`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "81-03",
@@ -9325,7 +10658,8 @@
         "token": "-k ipa_config",
         "explanation": "Tag matching events with the audit key `ipa_config` (search later with `ausearch -k ipa_config`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "82-01",
@@ -9352,7 +10686,8 @@
         "token": "-k ldap_config",
         "explanation": "Tag matching events with the audit key `ldap_config` (search later with `ausearch -k ldap_config`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "83-01",
@@ -9379,7 +10714,8 @@
         "token": "-k splunk_config",
         "explanation": "Tag matching events with the audit key `splunk_config` (search later with `ausearch -k splunk_config`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "83-02",
@@ -9406,7 +10742,8 @@
         "token": "-k splunk_config",
         "explanation": "Tag matching events with the audit key `splunk_config` (search later with `ausearch -k splunk_config`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "86-01",
@@ -9433,7 +10770,8 @@
         "token": "-k credentials",
         "explanation": "Tag matching events with the audit key `credentials` (search later with `ausearch -k credentials`)."
       }
-    ]
+    ],
+    "log_samples": []
   },
   {
     "rule_id": "86-02",
@@ -9460,6 +10798,7 @@
         "token": "-k credentials",
         "explanation": "Tag matching events with the audit key `credentials` (search later with `ausearch -k credentials`)."
       }
-    ]
+    ],
+    "log_samples": []
   }
 ]
