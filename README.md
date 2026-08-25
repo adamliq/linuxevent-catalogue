@@ -4,14 +4,19 @@ A structured catalogue of Linux security & system event IDs — the Linux
 counterpart to [`Winevent-catalogue`](https://github.com/adamliq/Winevent-catalogue).
 Covers the Linux Audit Framework (`auditd`/kernel audit — authentication,
 account management, privilege use, process execution, file access, kernel
-modules, SELinux/AppArmor, netfilter), SSH protocol-level session events,
-and systemd/journald (unit lifecycle, service failures, session management,
+modules, SELinux/AppArmor, netfilter, package management, removable
+media, cron persistence, dynamic-linker injection, container
+administration, PKI/trust-store and SSH-host-key tampering, Kerberos/SSSD
+identity-provider config), SSH protocol-level session events, and
+systemd/journald (unit lifecycle, service failures, session management,
 boot/shutdown, time changes, the journal itself). Also cross-referenced
 against the Australian Cyber Security Centre's Information Security
 Manual (ISM) via the `xccdf_org.ssgproject.content_profile_ism_o` SCAP
-profile — see `acsc_ism_control` below.
+profile (`acsc_ism_control`) and against CIS RHEL 9 Benchmark v2.0.0 /
+DISA RHEL 9 STIG via the repo owner's supplied master rule catalogue
+(`cis_control`/`disa_stig_id`) — see below.
 
-This is a curated **seed catalogue** (61 events), not an exhaustive one —
+This is a curated **seed catalogue** (77 events), not an exhaustive one —
 Windows' Event ID space is large enough that the source repo's bulk ETW
 manifest import alone added thousands of rows; Linux has no equivalent
 single exhaustive registry to import from, so this repo instead prioritizes
@@ -116,7 +121,7 @@ flagged low-confidence entries instead of guessing.
     [`ComplianceAsCode/content`](https://github.com/ComplianceAsCode/content) —
     the project that maintains the `xccdf_org.ssgproject.content_profile_ism_o`
     SCAP profile — fetched directly from the upstream repo rather than
-    guessed. 33 of this catalogue's 61 events are tagged, covering 4 of the
+    guessed. 33 of this catalogue's 77 events are tagged, covering 4 of the
     profile's 41 controls (the ones whose rule list actually corresponds to
     an auditing mechanism this catalogue documents; the other 37 controls
     are about password policy, MFA, SSH hardening, antivirus, and similar,
@@ -133,6 +138,24 @@ flagged low-confidence entries instead of guessing.
     `data/reference/acsc_ism_controls.csv` for the full control list with
     its complete related-rules text, and the "ACSC ISM OFFICIAL controls"
     section of the Reference tables tab.
+  - `cis_control` / `disa_stig_id` — CIS RHEL 9 Benchmark v2.0.0 §6.3.3
+    control ID(s) and DISA RHEL 9 STIG `RHEL-09-654xxx` ID(s), mined from
+    `docs/auditd-rules-master-reference.md` — the same document
+    `data/reference/auditd_rules.csv` is parsed from — at the (category,
+    subcategory) level, same as `acsc_ism_control`, plus one event-level
+    override (the pam_faillock lockout event gets `RHEL-09-654250`
+    specifically rather than its subcategory's blanket tag, since that's
+    exactly what that STIG ID is about). Populated on 25 events (`cis_control`)
+    and 21 events (`disa_stig_id`) of the 77 — only where a section of the
+    master reference gives an *exact* identifier and this catalogue's own
+    event mechanism plausibly corresponds to that section's rule (e.g.
+    SELinux/AppArmor AVC *denial* events are deliberately **not** tagged
+    with §20's `6.3.3.14`, because that control covers auditing changes to
+    the MAC *policy/config* — this catalogue's separate MAC Policy
+    subcategory — not AVC denial records, which §20 doesn't actually
+    cover). Sections that only say "aligns with 30-stig.rules" without a
+    numbered ID contribute a `cis_control` but leave `disa_stig_id` blank,
+    rather than citing a non-exact alignment as if it were a verified ID.
   - `nist_800_53_au` — NIST SP 800-53 Audit and Accountability (AU) control
     ID(s): `AU-9` (Protection of Audit Information) for log/audit-tampering
     events, `AU-8` (Time Stamps) for the clock-change event, `AU-4` (Audit
@@ -207,12 +230,78 @@ flagged low-confidence entries instead of guessing.
   PAM, SELinux/AppArmor, and systemd to collect each event: the config
   path or command to run, step-by-step instructions, and the event IDs
   each setting produces.
+- `docs/auditd-rules-master-reference.md` — a much broader (321-rule,
+  88-section) `auditd` rule catalogue supplied by the repo owner, covering
+  CIS RHEL 9 Benchmark v2.0.0 §6.3.3, DISA RHEL 9 STIG (`RHEL-09-654xxx`),
+  ACSC ISM outcome alignment, and SCAP/ComplianceAsCode integration. Its
+  ~88 sections were also used as a roadmap to add 16 new curated events
+  (file deletion, DAC permission/ownership changes, extended attributes,
+  filesystem mounts, removable media, cron persistence, dynamic-linker
+  injection, package management, DNS/SSH-host-key/PKI-trust-store
+  tampering, container administration, Kerberos/SSSD identity-provider
+  config, `ptrace`-based process injection, and namespace manipulation) —
+  each event's `reference` field cites the exact corresponding
+  `auditd_rules.csv` `rule_id`(s). Some sections remain uncovered by a
+  curated event (Kubernetes/OpenShift specifics, LDAP, IPA beyond what
+  the shared Kerberos/SSSD config watch covers, and the more exotic
+  system-administration sections) — this is still a seed, not a claim of
+  full coverage of the master reference. This document is the single
+  source of truth for the Auditd Rules tab and
+  `data/reference/auditd_rules.csv`/`.json` below —
+  `build.py` parses it directly, so editing the markdown and re-running
+  the build regenerates both. It is **not** wired into the main
+  `events.csv`/`.json` catalogue — its CIS and DISA STIG identifiers are
+  not reflected in `acsc_ism_control` or any other event field; it's a
+  separate, much larger rule-level catalogue that stands on its own.
+- `data/reference/auditd_rules.csv` / `.json` — 321 individual `auditctl`
+  rules mechanically extracted from `docs/auditd-rules-master-reference.md`
+  (every `-w`/`-a always,exit` line in the source, plus each row of its
+  five hand-authored per-rule tables), across 83 of the source's 88
+  sections (the other 5 are prose-only, with no copy-pasteable rule
+  syntax to extract). Columns: `rule_id` (`section-sequence`, e.g.
+  `08-03`), `category_no`/`category` (the source's own section numbering),
+  `title`, `auditd_rule`, `audit_key`, `description`, `cis_ref`,
+  `disa_stig_ref`, `acsc_ism_alignment`, and `form` (`table` — from one of
+  the source's 5 per-rule tables, highest fidelity; `code_block` — a rule
+  line from a fenced code block; `stig_canonical` — from a "DISA STIG
+  canonical form" subsection, the stricter `-a always,exit -F path=...`
+  syntax offered as an alternative to the shorthand `-w` form). **`cis_ref`,
+  `disa_stig_ref`, and `acsc_ism_alignment` are applied at the section
+  level**, matching the granularity the source document itself uses
+  (framework references are stated once per section intro, not
+  per-rule, except in the 5 tabular sections) — where a section mixes
+  several distinct rule groups under one reference (e.g. §8 "sudo and
+  Privilege Escalation" states `RHEL-09-654150` once for the whole
+  section, covering both the `/etc/sudoers` watch and the unrelated
+  `/usr/bin/mount`/`/usr/sbin/reboot` privileged-command rules also filed
+  under that section), every rule in that section carries the same
+  reference text. Treat these fields as "this rule lives in a
+  framework-relevant section," not as a verified per-rule compliance
+  citation — the source document's own header says the same about
+  itself, and this table inherits that limitation mechanically rather
+  than resolving it.
+
+  Each row also carries a `switches_explained` field: every flag in the
+  rule (`-w`, `-p`, `-k`, `-a always,exit`, `-S <syscall,...>`, `-F
+  <field><op><value>`, `-D`, `-b`, `-f`, `-e`, `-i`) tokenized in order,
+  each with a plain-English explanation — generated by a small,
+  deterministic auditctl-syntax decoder in `build.py` (checked against
+  `man auditctl`/`man 7 audit.rules`, covering exactly the ~60-term
+  vocabulary this dataset actually uses: syscalls, `-F` field names,
+  permission letters, architectures, and the two `errno` names it
+  filters on — not a general-purpose auditctl parser). In `events.json`-
+  style fashion, it's a nested array of `{token, explanation}` objects in
+  the JSON file and the same structure JSON-serialized into the CSV
+  cell. All 321 rows resolve to a full explanation for every token — see
+  the Auditd Rules tab's detail view for the rendered form.
 
 ## Web lookup
 
 `index.html` is a self-contained (no build step, no external requests)
-lookup page — the same design as `Winevent-catalogue`'s, scaled down to
-match this repo's smaller log/category space: search all 61 events by ID
+lookup page with three tabs.
+
+**Events** — the same design as `Winevent-catalogue`'s, scaled down to
+match this repo's smaller log/category space: search all 77 events by ID
 or keyword; filter by Log or Category via searchable multi-select
 comboboxes (3 log families — `audit`, `ssh`, `systemd` — each with a
 handful of sub-logs, so the plain grouped-combobox approach the Windows
@@ -221,15 +310,36 @@ toggle to show only curated priority-signal events, plus a second toggle
 for events mapped to an ACSC ISM OFFICIAL control; active filters surface
 as removable chips above the results. View full detail — description,
 sample log text, field schema, MITRE ATT&CK mapping, ACSC ISM control
-link, and how-to-collect configuration steps — plus inline reference
+link, CIS RHEL 9/DISA STIG IDs where mined, and how-to-collect
+configuration steps — plus inline reference
 tables where they're directly relevant to the selected event (PAM result
 codes on credential-validation events, the capabilities table on the
 CAPSET event, common errno codes on the SYSCALL event, the full SSH
-disconnect table on any `ssh/protocol` event). A Reference tables tab
-covers all 9 reference tables with the same single-search-filters-
-everything, sticky-jump-nav, height-capped-scrolling, collapsed-by-
-default-accordion behavior as the Windows repo's Reference tab. Open it
-directly in a browser.
+disconnect table on any `ssh/protocol` event).
+
+**Auditd Rules** — the same search/filter/detail layout applied to all
+321 rows of `data/reference/auditd_rules.csv`: a free-text search across
+the rule text, title, category, audit key, description, every
+CIS/DISA-STIG/ACSC-ISM reference field, and every switch's explanation
+text (so searching `6.3.3.8`, `RHEL-09-654150`, `sudo_config`, or even a
+concept like "kernel module" or "root privileges" that only appears in
+an explanation, all work), plus a searchable multi-select Category
+combobox ordered by the source document's own section numbering (1–88)
+rather than alphabetically. The detail view shows the full `auditd_rule`
+in a code block, then a **Switches & Arguments Explained** section
+breaking the rule into one card per flag with its plain-English meaning
+(e.g. `-F auid>=1000` → why `auid` rather than `uid` matters for
+attributing an action through `su`/`sudo`, and why 1000 specifically),
+alongside its CIS/STIG/ACSC fields and a source note pointing back to
+the originating section of `docs/auditd-rules-master-reference.md`.
+
+**Reference tables** — covers all 9 accordion-style reference tables
+(`auditd_rules` gets its own dedicated tab instead, given its size) with
+the same single-search-filters-everything, sticky-jump-nav,
+height-capped-scrolling, collapsed-by-default-accordion behavior as the
+Windows repo's Reference tab.
+
+Open `index.html` directly in a browser.
 
 ## Source & verification
 

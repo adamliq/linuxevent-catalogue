@@ -230,5 +230,133 @@
     "event_ids": "f77379a8-490b-408b-be5f-6940505a777b, d93fb3c9-c24d-451a-97ce-a615ce59c00b, a596d6fe-7bfa-4994-828e-72309e95d61e",
     "reference_url": "https://www.freedesktop.org/software/systemd/man/latest/journald.conf.html",
     "nist_800_53_au": "AU-2, AU-4, AU-9"
+  },
+  {
+    "subcategory": "File Deletion",
+    "config_path": "/etc/audit/rules.d/audit.rules",
+    "steps": "auditctl -a always,exit -F arch=b64 -S rmdir,unlink,unlinkat,rename,renameat,renameat2 -F auid>=1000 -F auid!=unset -k file_delete (repeat with arch=b32).",
+    "event_ids": "1300",
+    "reference_url": "",
+    "nist_800_53_au": "AU-2, AU-3, AU-12"
+  },
+  {
+    "subcategory": "DAC Permission Change",
+    "config_path": "/etc/audit/rules.d/audit.rules",
+    "steps": "auditctl -a always,exit -F arch=b64 -S chmod,fchmod,fchmodat -F auid>=1000 -F auid!=unset -k permissions && auditctl -a always,exit -F arch=b64 -S chown,fchown,lchown,fchownat -F auid>=1000 -F auid!=unset -k ownership (repeat with arch=b32).",
+    "event_ids": "1300",
+    "reference_url": "",
+    "nist_800_53_au": "AU-2, AU-3, AU-12"
+  },
+  {
+    "subcategory": "Filesystem Mounts",
+    "config_path": "/etc/audit/rules.d/audit.rules",
+    "steps": "auditctl -a always,exit -F arch=b64 -S mount,umount2 -F auid>=1000 -F auid!=unset -k mounts (repeat with arch=b32, adding umount).",
+    "event_ids": "1300",
+    "reference_url": "",
+    "nist_800_53_au": "AU-2, AU-3, AU-12"
+  },
+  {
+    "subcategory": "Removable Media",
+    "config_path": "/etc/audit/rules.d/audit.rules",
+    "steps": "auditctl -w /media/ -p wa -k removable_media && auditctl -w /run/media/ -p wa -k removable_media. Use with care on workstations due to event volume.",
+    "event_ids": "1302",
+    "reference_url": "",
+    "nist_800_53_au": "AU-2, AU-3, AU-12"
+  },
+  {
+    "subcategory": "Extended Attributes",
+    "config_path": "/etc/audit/rules.d/audit.rules",
+    "steps": "auditctl -a always,exit -F arch=b64 -S setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F auid>=1000 -F auid!=unset -k xattr (repeat with arch=b32); optionally also -w /usr/bin/chcon -p x -k permissions.",
+    "event_ids": "1300",
+    "reference_url": "",
+    "nist_800_53_au": "AU-2, AU-3, AU-12"
+  },
+  {
+    "subcategory": "Scheduled Tasks",
+    "config_path": "/etc/audit/rules.d/audit.rules",
+    "steps": "auditctl -w /etc/crontab -p wa -k scheduled_tasks && auditctl -w /etc/cron.d/ -p wa -k scheduled_tasks (repeat for cron.hourly/daily/weekly/monthly and /var/spool/cron/).",
+    "event_ids": "1302",
+    "reference_url": "",
+    "nist_800_53_au": "AU-2, AU-3, AU-12"
+  },
+  {
+    "subcategory": "Dynamic Linker Manipulation",
+    "config_path": "/etc/audit/rules.d/audit.rules",
+    "steps": "auditctl -w /etc/ld.so.preload -p wa -k library_injection && auditctl -w /etc/ld.so.conf -p wa -k library_config.",
+    "event_ids": "1302",
+    "reference_url": "",
+    "nist_800_53_au": "AU-2, AU-3, AU-12"
+  },
+  {
+    "subcategory": "Package Management",
+    "config_path": "/etc/audit/rules.d/audit.rules",
+    "steps": "auditctl -w /usr/bin/rpm -p x -k software_install && auditctl -w /usr/bin/dnf -p x -k software_install (add /usr/bin/yum on older releases).",
+    "event_ids": "1302",
+    "reference_url": "",
+    "nist_800_53_au": "AU-2, AU-3, AU-12"
+  },
+  {
+    "subcategory": "DNS Configuration",
+    "config_path": "/etc/audit/rules.d/audit.rules",
+    "steps": "auditctl -w /etc/resolv.conf -p wa -k dns_config && auditctl -w /etc/nsswitch.conf -p wa -k dns_config.",
+    "event_ids": "1302",
+    "reference_url": "",
+    "nist_800_53_au": "AU-2, AU-3, AU-12"
+  },
+  {
+    "subcategory": "SSH Host Keys",
+    "config_path": "/etc/audit/rules.d/audit.rules",
+    "steps": "auditctl -w /etc/ssh/ssh_host_rsa_key -p wa -k ssh_host_keys (repeat for ssh_host_ecdsa_key and ssh_host_ed25519_key).",
+    "event_ids": "1302",
+    "reference_url": "",
+    "nist_800_53_au": "AU-2, AU-3, AU-12"
+  },
+  {
+    "subcategory": "PKI / Trusted Certificates",
+    "config_path": "/etc/audit/rules.d/audit.rules",
+    "steps": "auditctl -w /etc/pki/ca-trust/ -p wa -k trusted_certificates && auditctl -w /etc/pki/ca-trust/source/anchors/ -p wa -k trusted_certificates.",
+    "event_ids": "1302",
+    "reference_url": "",
+    "nist_800_53_au": "AU-2, AU-3, AU-12"
+  },
+  {
+    "subcategory": "Container Administration",
+    "config_path": "/etc/audit/rules.d/audit.rules",
+    "steps": "auditctl -w /usr/bin/docker -p x -k container_admin && auditctl -w /etc/docker/ -p wa -k docker_config (add /usr/bin/podman and /etc/containers/ where Podman is used instead).",
+    "event_ids": "1302",
+    "reference_url": "",
+    "nist_800_53_au": "AU-2, AU-3, AU-12"
+  },
+  {
+    "subcategory": "Identity Provider Configuration",
+    "config_path": "/etc/audit/rules.d/audit.rules",
+    "steps": "auditctl -w /etc/krb5.conf -p wa -k kerberos && auditctl -w /etc/sssd/sssd.conf -p wa -k identity_provider.",
+    "event_ids": "1302",
+    "reference_url": "",
+    "nist_800_53_au": "AU-2, AU-3, AU-12"
+  },
+  {
+    "subcategory": "Process Injection",
+    "config_path": "/etc/audit/rules.d/audit.rules",
+    "steps": "auditctl -a always,exit -F arch=b64 -S ptrace -k process_injection (repeat with arch=b32). Expect high volume on developer workstations; scope with -F auid>=1000 if needed.",
+    "event_ids": "1300",
+    "reference_url": "",
+    "nist_800_53_au": "AU-2, AU-3, AU-12"
+  },
+  {
+    "subcategory": "Namespace Manipulation",
+    "config_path": "/etc/audit/rules.d/audit.rules",
+    "steps": "auditctl -a always,exit -F arch=b64 -S unshare,setns -F auid>=1000 -F auid!=unset -k namespace.",
+    "event_ids": "1300",
+    "reference_url": "",
+    "nist_800_53_au": "AU-2, AU-3, AU-12"
+  },
+  {
+    "subcategory": "Anti-Forensics",
+    "config_path": "/etc/audit/rules.d/audit.rules",
+    "steps": "auditctl -w /usr/bin/shred -p x -k anti_forensics && auditctl -w /usr/bin/truncate -p x -k anti_forensics.",
+    "event_ids": "1302",
+    "reference_url": "",
+    "nist_800_53_au": "AU-2, AU-3, AU-12"
   }
 ]
