@@ -133,6 +133,24 @@ flagged low-confidence entries instead of guessing.
     `data/reference/acsc_ism_controls.csv` for the full control list with
     its complete related-rules text, and the "ACSC ISM OFFICIAL controls"
     section of the Reference tables tab.
+  - `cis_control` / `disa_stig_id` — CIS RHEL 9 Benchmark v2.0.0 §6.3.3
+    control ID(s) and DISA RHEL 9 STIG `RHEL-09-654xxx` ID(s), mined from
+    `docs/auditd-rules-master-reference.md` — the same document
+    `data/reference/auditd_rules.csv` is parsed from — at the (category,
+    subcategory) level, same as `acsc_ism_control`, plus one event-level
+    override (the pam_faillock lockout event gets `RHEL-09-654250`
+    specifically rather than its subcategory's blanket tag, since that's
+    exactly what that STIG ID is about). Populated on 22 events (`cis_control`)
+    and 19 events (`disa_stig_id`) of the 61 — only where a section of the
+    master reference gives an *exact* identifier and this catalogue's own
+    event mechanism plausibly corresponds to that section's rule (e.g.
+    SELinux/AppArmor AVC *denial* events are deliberately **not** tagged
+    with §20's `6.3.3.14`, because that control covers auditing changes to
+    the MAC *policy/config* — this catalogue's separate MAC Policy
+    subcategory — not AVC denial records, which §20 doesn't actually
+    cover). Sections that only say "aligns with 30-stig.rules" without a
+    numbered ID contribute a `cis_control` but leave `disa_stig_id` blank,
+    rather than citing a non-exact alignment as if it were a verified ID.
   - `nist_800_53_au` — NIST SP 800-53 Audit and Accountability (AU) control
     ID(s): `AU-9` (Protection of Audit Information) for log/audit-tampering
     events, `AU-8` (Time Stamps) for the clock-change event, `AU-4` (Audit
@@ -277,7 +295,8 @@ toggle to show only curated priority-signal events, plus a second toggle
 for events mapped to an ACSC ISM OFFICIAL control; active filters surface
 as removable chips above the results. View full detail — description,
 sample log text, field schema, MITRE ATT&CK mapping, ACSC ISM control
-link, and how-to-collect configuration steps — plus inline reference
+link, CIS RHEL 9/DISA STIG IDs where mined, and how-to-collect
+configuration steps — plus inline reference
 tables where they're directly relevant to the selected event (PAM result
 codes on credential-validation events, the capabilities table on the
 CAPSET event, common errno codes on the SYSCALL event, the full SSH

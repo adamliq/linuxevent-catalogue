@@ -14,6 +14,8 @@
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-3, AU-12",
     "acsc_ism_control": "0582; 1546",
+    "cis_control": "",
+    "disa_stig_id": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -59,6 +61,8 @@
     "priority_signal": "Yes",
     "nist_800_53_au": "AU-2, AU-3, AU-12",
     "acsc_ism_control": "0582; 1546",
+    "cis_control": "",
+    "disa_stig_id": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -101,6 +105,8 @@
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-3, AU-12",
     "acsc_ism_control": "0582; 1546",
+    "cis_control": "",
+    "disa_stig_id": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -146,6 +152,8 @@
     "priority_signal": "Yes",
     "nist_800_53_au": "AU-2, AU-3, AU-12",
     "acsc_ism_control": "0582; 1546",
+    "cis_control": "",
+    "disa_stig_id": "RHEL-09-654250",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -188,6 +196,8 @@
     "priority_signal": "Yes",
     "nist_800_53_au": "AU-2, AU-3, AU-12",
     "acsc_ism_control": "0582; 1546",
+    "cis_control": "",
+    "disa_stig_id": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -230,6 +240,8 @@
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-3, AU-12",
     "acsc_ism_control": "",
+    "cis_control": "",
+    "disa_stig_id": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -272,6 +284,8 @@
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-3, AU-12",
     "acsc_ism_control": "",
+    "cis_control": "",
+    "disa_stig_id": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -313,6 +327,8 @@
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-3, AU-12",
     "acsc_ism_control": "",
+    "cis_control": "",
+    "disa_stig_id": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -354,6 +370,8 @@
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-3, AU-12",
     "acsc_ism_control": "0582",
+    "cis_control": "6.3.3.11; 6.3.3.12",
+    "disa_stig_id": "RHEL-09-654250; RHEL-09-654255",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -396,6 +414,8 @@
     "priority_signal": "Yes",
     "nist_800_53_au": "AU-2, AU-3, AU-12",
     "acsc_ism_control": "0582",
+    "cis_control": "6.3.3.11; 6.3.3.12",
+    "disa_stig_id": "RHEL-09-654250; RHEL-09-654255",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -440,6 +460,8 @@
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-3, AU-12",
     "acsc_ism_control": "0582",
+    "cis_control": "6.3.3.11; 6.3.3.12",
+    "disa_stig_id": "RHEL-09-654250; RHEL-09-654255",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -483,6 +505,8 @@
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-3, AU-12",
     "acsc_ism_control": "0582",
+    "cis_control": "6.3.3.11; 6.3.3.12",
+    "disa_stig_id": "RHEL-09-654250; RHEL-09-654255",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -524,6 +548,8 @@
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-3, AU-12",
     "acsc_ism_control": "0582",
+    "cis_control": "6.3.3.11; 6.3.3.12",
+    "disa_stig_id": "RHEL-09-654250; RHEL-09-654255",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -565,6 +591,8 @@
     "priority_signal": "",
     "nist_800_53_au": "AU-3",
     "acsc_ism_control": "",
+    "cis_control": "",
+    "disa_stig_id": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -604,6 +632,8 @@
     "priority_signal": "Yes",
     "nist_800_53_au": "AU-2, AU-3, AU-12",
     "acsc_ism_control": "0582; 1546",
+    "cis_control": "6.3.3.1; 6.3.3.3",
+    "disa_stig_id": "RHEL-09-654150",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -644,6 +674,8 @@
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-12",
     "acsc_ism_control": "",
+    "cis_control": "",
+    "disa_stig_id": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -681,6 +713,8 @@
     "priority_signal": "Yes",
     "nist_800_53_au": "AU-2, AU-3, AU-12",
     "acsc_ism_control": "0582",
+    "cis_control": "6.3.3.8",
+    "disa_stig_id": "RHEL-09-654220; RHEL-09-654225; RHEL-09-654230; RHEL-09-654235; RHEL-09-654240; RHEL-09-654245",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -722,6 +756,8 @@
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-3, AU-12",
     "acsc_ism_control": "0582",
+    "cis_control": "6.3.3.8",
+    "disa_stig_id": "RHEL-09-654220; RHEL-09-654225; RHEL-09-654230; RHEL-09-654235; RHEL-09-654240; RHEL-09-654245",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -763,6 +799,8 @@
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-3, AU-12",
     "acsc_ism_control": "0582",
+    "cis_control": "6.3.3.8",
+    "disa_stig_id": "RHEL-09-654220; RHEL-09-654225; RHEL-09-654230; RHEL-09-654235; RHEL-09-654240; RHEL-09-654245",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -805,6 +843,8 @@
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-3, AU-12",
     "acsc_ism_control": "0582",
+    "cis_control": "6.3.3.8",
+    "disa_stig_id": "RHEL-09-654220; RHEL-09-654225; RHEL-09-654230; RHEL-09-654235; RHEL-09-654240; RHEL-09-654245",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -846,6 +886,8 @@
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-3, AU-12",
     "acsc_ism_control": "0582",
+    "cis_control": "6.3.3.8",
+    "disa_stig_id": "RHEL-09-654220; RHEL-09-654225; RHEL-09-654230; RHEL-09-654235; RHEL-09-654240; RHEL-09-654245",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -887,6 +929,8 @@
     "priority_signal": "Yes",
     "nist_800_53_au": "AU-2, AU-3, AU-12",
     "acsc_ism_control": "0582",
+    "cis_control": "6.3.3.8",
+    "disa_stig_id": "RHEL-09-654220; RHEL-09-654225; RHEL-09-654230; RHEL-09-654235; RHEL-09-654240; RHEL-09-654245",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -929,6 +973,8 @@
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-3, AU-12",
     "acsc_ism_control": "",
+    "cis_control": "",
+    "disa_stig_id": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -983,6 +1029,8 @@
     "priority_signal": "",
     "nist_800_53_au": "AU-3",
     "acsc_ism_control": "",
+    "cis_control": "",
+    "disa_stig_id": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1015,6 +1063,8 @@
     "priority_signal": "",
     "nist_800_53_au": "AU-3",
     "acsc_ism_control": "",
+    "cis_control": "",
+    "disa_stig_id": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1044,6 +1094,8 @@
     "priority_signal": "",
     "nist_800_53_au": "AU-3",
     "acsc_ism_control": "",
+    "cis_control": "",
+    "disa_stig_id": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1071,6 +1123,8 @@
     "priority_signal": "Yes",
     "nist_800_53_au": "AU-2, AU-3, AU-12",
     "acsc_ism_control": "0582",
+    "cis_control": "",
+    "disa_stig_id": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1108,6 +1162,8 @@
     "priority_signal": "Yes",
     "nist_800_53_au": "AU-2, AU-3, AU-12",
     "acsc_ism_control": "0582",
+    "cis_control": "6.3.3.15–6.3.3.19 (group; exact sub-control unverified)",
+    "disa_stig_id": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1137,6 +1193,8 @@
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-9, AU-12",
     "acsc_ism_control": "0582",
+    "cis_control": "",
+    "disa_stig_id": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1173,6 +1231,8 @@
     "priority_signal": "Yes",
     "nist_800_53_au": "AU-2, AU-9, AU-12",
     "acsc_ism_control": "0582",
+    "cis_control": "",
+    "disa_stig_id": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1209,6 +1269,8 @@
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-8",
     "acsc_ism_control": "",
+    "cis_control": "",
+    "disa_stig_id": "RHEL-09-654195; RHEL-09-654200",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1246,6 +1308,8 @@
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-8",
     "acsc_ism_control": "",
+    "cis_control": "",
+    "disa_stig_id": "RHEL-09-654195; RHEL-09-654200",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1283,6 +1347,8 @@
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-9",
     "acsc_ism_control": "0582",
+    "cis_control": "6.3.1",
+    "disa_stig_id": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1319,6 +1385,8 @@
     "priority_signal": "Yes",
     "nist_800_53_au": "AU-2, AU-9",
     "acsc_ism_control": "0582",
+    "cis_control": "6.3.1",
+    "disa_stig_id": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1355,6 +1423,8 @@
     "priority_signal": "Yes",
     "nist_800_53_au": "AU-2, AU-9",
     "acsc_ism_control": "0582",
+    "cis_control": "6.3.1",
+    "disa_stig_id": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1386,6 +1456,8 @@
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-9",
     "acsc_ism_control": "0582",
+    "cis_control": "6.3.1",
+    "disa_stig_id": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1419,6 +1491,8 @@
     "priority_signal": "Yes",
     "nist_800_53_au": "AU-2, AU-3, AU-12",
     "acsc_ism_control": "",
+    "cis_control": "",
+    "disa_stig_id": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1458,6 +1532,8 @@
     "priority_signal": "Yes",
     "nist_800_53_au": "AU-2, AU-3, AU-12",
     "acsc_ism_control": "",
+    "cis_control": "",
+    "disa_stig_id": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1497,6 +1573,8 @@
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-9",
     "acsc_ism_control": "0582",
+    "cis_control": "6.3.3.14",
+    "disa_stig_id": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1531,6 +1609,8 @@
     "priority_signal": "Yes",
     "nist_800_53_au": "AU-2, AU-9",
     "acsc_ism_control": "0582",
+    "cis_control": "6.3.3.14",
+    "disa_stig_id": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1567,6 +1647,8 @@
     "priority_signal": "Yes",
     "nist_800_53_au": "AU-2, AU-12",
     "acsc_ism_control": "",
+    "cis_control": "",
+    "disa_stig_id": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1603,6 +1685,8 @@
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-12",
     "acsc_ism_control": "",
+    "cis_control": "",
+    "disa_stig_id": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1637,6 +1721,8 @@
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-3",
     "acsc_ism_control": "",
+    "cis_control": "",
+    "disa_stig_id": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1668,6 +1754,8 @@
     "priority_signal": "Yes",
     "nist_800_53_au": "AU-2, AU-3",
     "acsc_ism_control": "",
+    "cis_control": "",
+    "disa_stig_id": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1699,6 +1787,8 @@
     "priority_signal": "Yes",
     "nist_800_53_au": "AU-2, AU-3",
     "acsc_ism_control": "",
+    "cis_control": "",
+    "disa_stig_id": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1730,6 +1820,8 @@
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-3",
     "acsc_ism_control": "",
+    "cis_control": "",
+    "disa_stig_id": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1761,6 +1853,8 @@
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-12",
     "acsc_ism_control": "",
+    "cis_control": "",
+    "disa_stig_id": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1792,6 +1886,8 @@
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-12",
     "acsc_ism_control": "",
+    "cis_control": "",
+    "disa_stig_id": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1824,6 +1920,8 @@
     "priority_signal": "Yes",
     "nist_800_53_au": "AU-2, AU-12",
     "acsc_ism_control": "",
+    "cis_control": "",
+    "disa_stig_id": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1856,6 +1954,8 @@
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-12",
     "acsc_ism_control": "",
+    "cis_control": "",
+    "disa_stig_id": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1887,6 +1987,8 @@
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-12",
     "acsc_ism_control": "",
+    "cis_control": "",
+    "disa_stig_id": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1919,6 +2021,8 @@
     "priority_signal": "Yes",
     "nist_800_53_au": "AU-2, AU-12",
     "acsc_ism_control": "",
+    "cis_control": "",
+    "disa_stig_id": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1948,6 +2052,8 @@
     "priority_signal": "",
     "nist_800_53_au": "AU-2",
     "acsc_ism_control": "",
+    "cis_control": "",
+    "disa_stig_id": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -1977,6 +2083,8 @@
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-8",
     "acsc_ism_control": "",
+    "cis_control": "",
+    "disa_stig_id": "RHEL-09-654195; RHEL-09-654200",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -2004,6 +2112,8 @@
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-8",
     "acsc_ism_control": "",
+    "cis_control": "",
+    "disa_stig_id": "RHEL-09-654195; RHEL-09-654200",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -2031,6 +2141,8 @@
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-3, AU-12",
     "acsc_ism_control": "0582",
+    "cis_control": "6.3.3.11; 6.3.3.12",
+    "disa_stig_id": "RHEL-09-654250; RHEL-09-654255",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -2062,6 +2174,8 @@
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-3, AU-12",
     "acsc_ism_control": "0582",
+    "cis_control": "6.3.3.11; 6.3.3.12",
+    "disa_stig_id": "RHEL-09-654250; RHEL-09-654255",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -2092,6 +2206,8 @@
     "priority_signal": "Yes",
     "nist_800_53_au": "AU-2, AU-8",
     "acsc_ism_control": "0988",
+    "cis_control": "6.3.3.4",
+    "disa_stig_id": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -2119,6 +2235,8 @@
     "priority_signal": "",
     "nist_800_53_au": "AU-2, AU-9",
     "acsc_ism_control": "1405",
+    "cis_control": "",
+    "disa_stig_id": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -2149,6 +2267,8 @@
     "priority_signal": "Yes",
     "nist_800_53_au": "AU-2, AU-9",
     "acsc_ism_control": "1405",
+    "cis_control": "",
+    "disa_stig_id": "",
     "field_schema": {
       "header": {
         "log_name": "string",
@@ -2179,6 +2299,8 @@
     "priority_signal": "",
     "nist_800_53_au": "AU-4, AU-9",
     "acsc_ism_control": "1405",
+    "cis_control": "",
+    "disa_stig_id": "",
     "field_schema": {
       "header": {
         "log_name": "string",
