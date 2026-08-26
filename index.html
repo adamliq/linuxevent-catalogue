@@ -169,6 +169,14 @@
   .search-box {
     position: relative;
     flex: 1 1 320px;
+    /* Without this, the box has no floor: next to the Log/Category
+       combos and the two toggle buttons (which can't shrink below their
+       own nowrap label width), it was the only element flex-shrink could
+       squeeze — at some in-between widths, down to ~150px of visible
+       text space, clipping the placeholder mid-word. This floor makes
+       the row wrap onto its own line instead of crushing the input past
+       a legible width. */
+    min-width: 220px;
   }
   .search-box input {
     width: 100%;
@@ -180,6 +188,8 @@
     background: var(--surface);
     color: var(--ink);
     outline: none;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .search-box input:focus { border-color: var(--accent); }
   .search-box svg {

@@ -488,7 +488,13 @@ page. The Reference tables tab's sticky search-and-jump-nav toolbar
 switches to a single horizontally scrolling row of pills below 640px
 specifically so the pinned header stays a fixed, small height instead of
 growing tall enough to cover the screen once its 9 pills wrap onto many
-rows.
+rows. Every search box also has a `min-width` floor and ellipsis
+overflow: at in-between widths (an Events-tab search row squeezed next
+to the Log/Category combos and the two toggle buttons, none of which
+can shrink below their own label text), the search input used to be the
+only flexible element and could get crushed down to where its
+placeholder clipped mid-word with no visual cue; now it either wraps
+onto its own row or truncates cleanly with "…".
 
 **Events** — the same design as `Winevent-catalogue`'s, scaled down to
 match this repo's smaller log/category space: search all 77 events by ID
