@@ -79,7 +79,12 @@
   a { color: var(--accent); }
 
   .app {
-    max-width: 1180px;
+    /* Fills wide desktop viewports instead of capping at a fixed width
+       (1180px left ~740px of unused margin on a 1920px screen) — grows
+       with the viewport up to a 1600px ceiling so very large/ultrawide
+       monitors don't stretch text lines and list rows past a readable
+       width. */
+    max-width: min(1600px, 94vw);
     margin: 0 auto;
     padding: 28px 20px 60px;
     display: flex;
@@ -120,12 +125,14 @@
 
   nav.tabs {
     display: flex;
+    flex-wrap: wrap;
     gap: 4px;
     background: var(--surface-2);
     border: 1px solid var(--line);
     border-radius: 8px;
     padding: 3px;
     width: fit-content;
+    max-width: 100%;
   }
   nav.tabs button {
     appearance: none;
@@ -162,6 +169,14 @@
   .search-box {
     position: relative;
     flex: 1 1 320px;
+    /* Without this, the box has no floor: next to the Log/Category
+       combos and the two toggle buttons (which can't shrink below their
+       own nowrap label width), it was the only element flex-shrink could
+       squeeze — at some in-between widths, down to ~150px of visible
+       text space, clipping the placeholder mid-word. This floor makes
+       the row wrap onto its own line instead of crushing the input past
+       a legible width. */
+    min-width: 220px;
   }
   .search-box input {
     width: 100%;
@@ -173,8 +188,23 @@
     background: var(--surface);
     color: var(--ink);
     outline: none;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .search-box input:focus { border-color: var(--accent); }
+  /* iOS Safari auto-zooms the page on focus for any text input rendered
+     under 16px — the 14.25px (.search-box) and 12.75px (.panel-search,
+     below) sizes below trigger it, so tapping any search box on an
+     iPhone jars the whole page in and out of a zoomed state. Bump to
+     16px specifically for touch/coarse-pointer devices (phones,
+     tablets) so this never happens, while leaving the smaller desktop
+     sizing exactly as designed. */
+  @media (pointer: coarse) {
+    .search-box input,
+    .combo-panel .panel-search input {
+      font-size: 16px;
+    }
+  }
   .search-box svg {
     position: absolute;
     left: 12px;
@@ -291,6 +321,7 @@
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    min-width: 0;
   }
   .list-count {
     padding: 10px 14px;
@@ -369,6 +400,7 @@
     box-shadow: var(--shadow);
     padding: 24px 26px 28px;
     min-height: 68vh;
+    min-width: 0;
   }
   .detail-empty {
     display: flex;
@@ -637,6 +669,20 @@
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
+  }
+  /* .ref-toolbar is sticky (position:sticky; top:0) so it stays pinned
+     while the page scrolls — on a narrow viewport, wrapping 9 pills onto
+     many rows makes the pinned toolbar tall enough to cover most of the
+     screen. Below 640px, scroll the pills horizontally in one row
+     instead so the sticky toolbar stays compact. */
+  @media (max-width: 640px) {
+    .ref-nav {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .ref-nav a { flex: 0 0 auto; }
   }
   .ref-nav a.no-match { display: none; }
   .ref-nav a {

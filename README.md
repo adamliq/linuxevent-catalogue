@@ -472,7 +472,36 @@ flagged low-confidence entries instead of guessing.
 ## Web lookup
 
 `index.html` is a self-contained (no build step, no external requests)
-lookup page with four tabs.
+lookup page with four tabs. The page fills wide desktop viewports rather
+than capping at a fixed width — it grows with the browser window up to a
+1600px ceiling (so a 1920px+ display isn't left with ~700px of unused
+margin on each side, and wide reference tables like the CIM-enriched
+`auditd_fields` one fit without needing their own internal scroll), while
+still stopping short of the raw viewport edge so text lines and list rows
+don't stretch unreadably wide on an ultrawide monitor. Responsive down to
+a 360px-wide mobile viewport with no horizontal page scroll at the other
+end: the top-level and submenu pill navs wrap onto multiple rows once
+they run out of room, each list/detail split (Events, Auditd Rules,
+Fapolicyd) stacks to a single column below 860px, and every wide table
+scrolls independently inside its own container rather than widening the
+page. The Reference tables tab's sticky search-and-jump-nav toolbar
+switches to a single horizontally scrolling row of pills below 640px
+specifically so the pinned header stays a fixed, small height instead of
+growing tall enough to cover the screen once its 9 pills wrap onto many
+rows. Every search box also has a `min-width` floor and ellipsis
+overflow: at in-between widths (an Events-tab search row squeezed next
+to the Log/Category combos and the two toggle buttons, none of which
+can shrink below their own label text), the search input used to be the
+only flexible element and could get crushed down to where its
+placeholder clipped mid-word with no visual cue; now it either wraps
+onto its own row or truncates cleanly with "…". Every search input's
+font-size also bumps to 16px specifically on `(pointer: coarse)`
+(touch) devices — every one of them rendered at 14.25px/12.75px on
+desktop, both under Mobile Safari's 16px auto-zoom threshold, so tapping
+any search box on an iPhone used to jar the whole page in and out of a
+zoomed state; verified against an emulated iPhone 13 that the computed
+font-size is now 16px there while desktop stays at its original
+smaller size.
 
 **Events** — the same design as `Winevent-catalogue`'s, scaled down to
 match this repo's smaller log/category space: search all 77 events by ID
