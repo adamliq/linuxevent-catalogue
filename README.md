@@ -494,7 +494,14 @@ to the Log/Category combos and the two toggle buttons, none of which
 can shrink below their own label text), the search input used to be the
 only flexible element and could get crushed down to where its
 placeholder clipped mid-word with no visual cue; now it either wraps
-onto its own row or truncates cleanly with "…".
+onto its own row or truncates cleanly with "…". Every search input's
+font-size also bumps to 16px specifically on `(pointer: coarse)`
+(touch) devices — every one of them rendered at 14.25px/12.75px on
+desktop, both under Mobile Safari's 16px auto-zoom threshold, so tapping
+any search box on an iPhone used to jar the whole page in and out of a
+zoomed state; verified against an emulated iPhone 13 that the computed
+font-size is now 16px there while desktop stays at its original
+smaller size.
 
 **Events** — the same design as `Winevent-catalogue`'s, scaled down to
 match this repo's smaller log/category space: search all 77 events by ID

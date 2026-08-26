@@ -192,6 +192,19 @@
     text-overflow: ellipsis;
   }
   .search-box input:focus { border-color: var(--accent); }
+  /* iOS Safari auto-zooms the page on focus for any text input rendered
+     under 16px — the 14.25px (.search-box) and 12.75px (.panel-search,
+     below) sizes below trigger it, so tapping any search box on an
+     iPhone jars the whole page in and out of a zoomed state. Bump to
+     16px specifically for touch/coarse-pointer devices (phones,
+     tablets) so this never happens, while leaving the smaller desktop
+     sizing exactly as designed. */
+  @media (pointer: coarse) {
+    .search-box input,
+    .combo-panel .panel-search input {
+      font-size: 16px;
+    }
+  }
   .search-box svg {
     position: absolute;
     left: 12px;
