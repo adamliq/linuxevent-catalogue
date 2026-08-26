@@ -120,12 +120,14 @@
 
   nav.tabs {
     display: flex;
+    flex-wrap: wrap;
     gap: 4px;
     background: var(--surface-2);
     border: 1px solid var(--line);
     border-radius: 8px;
     padding: 3px;
     width: fit-content;
+    max-width: 100%;
   }
   nav.tabs button {
     appearance: none;
@@ -291,6 +293,7 @@
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    min-width: 0;
   }
   .list-count {
     padding: 10px 14px;
@@ -369,6 +372,7 @@
     box-shadow: var(--shadow);
     padding: 24px 26px 28px;
     min-height: 68vh;
+    min-width: 0;
   }
   .detail-empty {
     display: flex;
@@ -637,6 +641,20 @@
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
+  }
+  /* .ref-toolbar is sticky (position:sticky; top:0) so it stays pinned
+     while the page scrolls — on a narrow viewport, wrapping 9 pills onto
+     many rows makes the pinned toolbar tall enough to cover most of the
+     screen. Below 640px, scroll the pills horizontally in one row
+     instead so the sticky toolbar stays compact. */
+  @media (max-width: 640px) {
+    .ref-nav {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .ref-nav a { flex: 0 0 auto; }
   }
   .ref-nav a.no-match { display: none; }
   .ref-nav a {
