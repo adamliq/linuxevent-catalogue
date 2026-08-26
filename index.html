@@ -79,7 +79,12 @@
   a { color: var(--accent); }
 
   .app {
-    max-width: 1180px;
+    /* Fills wide desktop viewports instead of capping at a fixed width
+       (1180px left ~740px of unused margin on a 1920px screen) — grows
+       with the viewport up to a 1600px ceiling so very large/ultrawide
+       monitors don't stretch text lines and list rows past a readable
+       width. */
+    max-width: min(1600px, 94vw);
     margin: 0 auto;
     padding: 28px 20px 60px;
     display: flex;
