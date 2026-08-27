@@ -468,11 +468,15 @@ flagged low-confidence entries instead of guessing.
   (that file only covers the 2 tools an administrator runs day-to-day)
   but is included here for a complete man-page set. Powers the
   Fapolicyd tab's Man submenu.
+- `data/reference/companion_tools.csv` / `.json` — 2 rows: other tools
+  by the same author, linked from the Companion Tools tab. Columns:
+  `name`, `description`, `url`. Not generated from any upstream source —
+  just a small static list of external links.
 
 ## Web lookup
 
 `index.html` is a self-contained (no build step, no external requests)
-lookup page with four tabs. The page fills wide desktop viewports rather
+lookup page with five tabs. The page fills wide desktop viewports rather
 than capping at a fixed width — it grows with the browser window up to a
 1600px ceiling (so a 1920px+ display isn't left with ~700px of unused
 margin on each side, and wide reference tables like the CIM-enriched
@@ -672,6 +676,15 @@ their data from in the first place.
 the same single-search-filters-everything, sticky-jump-nav,
 height-capped-scrolling, collapsed-by-default-accordion behavior as the
 Windows repo's Reference tab.
+
+**Companion Tools** — a simple static tab, not backed by any of this
+repo's own catalogued data: a small grid of link cards
+(`data/reference/companion_tools.csv` / `.json`, 2 rows) to other tools
+by the same author —
+[`Winevent-catalogue`](https://github.com/adamliq/Winevent-catalogue)
+and
+[Splunk Taxonomy — My Tools](https://adamliq.github.io/Splunk_Taxonomy/#my-tools).
+No search box; there's nothing here to filter.
 
 Open `index.html` directly in a browser.
 
